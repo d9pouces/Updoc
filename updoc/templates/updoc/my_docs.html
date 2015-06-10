@@ -33,7 +33,7 @@
                     <li><a href="{% url 'updoc.views.show_doc' doc_id=doc.1 path='' %}">{{ doc.0 }}</a>
                         <a href="{% url 'updoc.views.show_doc' doc_id=doc.1 path=doc.2 %}">/ {{ doc.2 }}</a></li>
                     {% empty %}
-                    <li>{% trans 'No document found' %}</li>
+                    {% if not uploads.count %}<li>{% trans 'No document found' %}</li>{% endif %}
                 {% endfor %}
             </ul>
             </p>

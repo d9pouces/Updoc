@@ -13,7 +13,7 @@ import elasticsearch
 
 
 def create_index():
-    return
+    return []
     if not settings.ELASTIC_SEARCH['host']:
         return []
     host = settings.ELASTIC_SEARCH['host'][0]
@@ -84,7 +84,7 @@ def search_archive(query, archive_id=None, extension=None):
     """
     return a list of (UploadDoc.id, relpath) containing the query
     """
-    return
+    return [], 0
     if not settings.ELASTIC_SEARCH['host']:
         return [], 0
     es = elasticsearch.Elasticsearch(settings.ELASTIC_SEARCH['host'])

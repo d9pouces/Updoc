@@ -125,6 +125,10 @@ class LastDocs(models.Model):
     count = models.IntegerField(db_index=True, blank=True, default=1)
     last = models.DateTimeField(_('last'), db_index=True, auto_now=True)
 
+    @classmethod
+    def query(cls, request):
+        return query(cls, request)
+
 
 class RewrittenUrl(models.Model):
     user = models.ForeignKey(User, db_index=True, null=True, blank=True)

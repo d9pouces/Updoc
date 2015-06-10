@@ -11,13 +11,14 @@
 
                 {% endif %}
                 <li><p>{{ doc.upload_time|date:"SHORT_DATETIME_FORMAT" }}</p></li>
-                <li>
-                    <p>
-                        <small><a
-                                href="{% url 'updoc.views.show_doc_alt' doc_id=doc.id path='' %}">{% trans 'Alternative link (no authentication)' %}</a>
-                        </small>
-                    </p>
-                </li>
+                {% if df_remote_authenticated %}
+                    <li>
+                        <p>
+                            <small><a
+                                    href="{% url 'updoc.views.show_doc_alt' doc_id=doc.id path='' %}">{% trans 'Alternative link (no authentication)' %}</a>
+                            </small>
+                        </p>
+                    </li>{% endif %}
                 <li>
                     <p><a class="btn btn-sm btn-primary" role="button"
                           href="{% url 'updoc.views.compress_archive' doc_id=doc.id fmt='zip' %}">
@@ -27,7 +28,7 @@
                 {% if editable %}
                     <li>
                         <p>
-                            <button class="btn btn-xs btn-danger"
+                            <button class="btn btn-sm btn-danger"
                                     onclick="return df.call('updoc.delete_doc_confirm', {doc_id: {{ doc.id }} });">{% bootstrap_icon "trash" %}
                                 {% trans 'Delete' %}
                             </button>

@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 from updoc.models import RssItem, UploadDoc, LastDocs, Keyword
 from updoc.models import RssRoot
+from updoc.utils import bool_settings
 
 __author__ = 'flanker'
 
@@ -80,7 +81,7 @@ class MostViewedDocsFeed(Feed):
         """:type obj: django.contrib.auth.models.User"""
         if obj is not None:
             return LastDocs.objects.filter(user=obj).select_related().order_by('-count')[0:30]
-        elif not settings.PUBLIC_INDEX or not settings.PUBLIC_DOCS:
+        elif not bool_settings(settings.PUBLIC_INDEX) or not bool_settings(settings.PUBLIC_DOCS):
             return []
         return LastDocs.objects.filter(user=None).select_related().order_by('-count')[0:30]
 
@@ -127,7 +128,7 @@ class LastDocsFeed(Feed):
     # noinspection PyMethodMayBeStatic
     def items(self, obj):
         """:type obj: django.contrib.auth.models.User"""
-        if obj is None and (not settings.PUBLIC_INDEX or not settings.PUBLIC_DOCS):
+        if obj is None and (not bool_settings(settings.PUBLIC_INDEX) or not bool_settings(settings.PUBLIC_DOCS)):
             return []
         return UploadDoc.objects.order_by('-upload_time')[0:30]
 

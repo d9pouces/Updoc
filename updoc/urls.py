@@ -14,7 +14,8 @@ urlpatterns = patterns(
     url(r'^delete_doc/(?P<doc_id>\d+)\.html$', 'updoc.views.delete_doc'),
     url(r'^show/(?P<doc_id>\d+)/(?P<path>.*)$', 'updoc.views.show_doc'),
     url(r'^show_alt/(?P<doc_id>\d+)/(?P<path>.*)$', 'updoc.views.show_doc_alt'),
-    url(r'^download/(?P<doc_id>\d+)/(?P<fmt>zip|bz2|gz|xz)$', 'updoc.views.compress_archive'),
+    url(r'^download/(?P<doc_id>\d+)\.(?P<fmt>zip|bz2|gz|xz)$', 'updoc.views.compress_archive'),
+    url(r'^show_search_results\.html$', 'updoc.views.show_search_results'),
+    url(r'^show_all_docs\.html$', 'updoc.views.show_all_docs'),
     # url(r'^edit/(?P<doc_id>\d+)/$', 'updoc.views.edit_doc'),
-    # url(r'^full_list\.html$', 'updoc.views.full_list'),
 )

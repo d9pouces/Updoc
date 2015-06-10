@@ -10,9 +10,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{% url 'updoc.views.index' %}" title="{% trans 'Index' %}">
-                <img src="{% static 'images/logo.png' %}" alt="{% trans 'UpDoc' %}" class="logo"/>
-            </a>
+            <a class="navbar-brand" href="{% url 'updoc.views.index' %}" title="{% trans 'Index' %}">{{ df_project_name }}</a>
             {% if perms.updoc.add_uploaddoc %}
                 <a class="navbar-brand" href="{% url 'updoc.views.upload' %}" title="{% trans 'Upload a document' %}">
                     {% bootstrap_icon 'cloud-upload' %}
@@ -42,11 +40,12 @@
         </div>
         <div class="navbar-collapse collapse">
 
-            <form class="navbar-form navbar-right" role="form">
+            <form class="navbar-form navbar-right" id="search_form" role="form" method="get" action="{% url 'updoc.views.show_search_results' %}">
                 <div class="form-group has-success has-feedback">
                     <input name="search" placeholder="{% trans 'Search' %}" type="text" class="form-control"
                            id="inputSuccess4"/>
-                    <span class="glyphicon glyphicon-search form-control-feedback"></span>
+                    {% if doc_id %}<input name="doc_id" type="hidden" value="{{ doc_id }}"/>{% endif %}
+                    <span class="glyphicon glyphicon-search form-control-feedback" onclick="$('#search_form').submit();"></span>
                 </div>
             </form>
         </div>

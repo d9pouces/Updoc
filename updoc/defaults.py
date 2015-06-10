@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from updoc.utils import strip_split
 
 __author__ = 'flanker'
 
@@ -8,8 +7,11 @@ PUBLIC_BOOKMARKS = '1'
 PUBLIC_BOOKMARKS_HELP = 'Are bookmarks publicly available?'
 PUBLIC_PROXIES = '1'
 PUBLIC_PROXIES_HELP = 'Is proxy.pac file publicly available?'
+PUBLIC_INDEX = '1'
+PUBLIC_INDEX_HELP = 'Are documentations publicly available?'
+PUBLIC_DOCS = '1'
+PUBLIC_DOCS_HELP = 'Are documentations publicly available?'
 WS4REDIS_EMULATION_INTERVAL = 5000
-
 
 # ELASTIC_SEARCH = {
 #     'host': strip_split(ES_HOSTS),

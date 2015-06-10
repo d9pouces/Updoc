@@ -14,7 +14,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
 from django.core.files.uploadedfile import UploadedFile
 from django.core.urlresolvers import reverse
-from django.db.models import F
+from django.db.models import F, Count, Q
 from django.http.response import HttpResponseRedirect, Http404, HttpResponse, StreamingHttpResponse, HttpResponseNotModified
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
@@ -28,10 +28,12 @@ from django.views.static import was_modified_since
 import markdown
 
 from djangofloor.views import send_file
-from updoc.forms import UrlRewriteForm, FileUploadForm, UploadApiForm, MetadatadUploadForm
+from updoc.forms import UrlRewriteForm, FileUploadForm, UploadApiForm, MetadatadUploadForm, DocSearchForm
+from updoc.indexation import search_archive
 from updoc.models import ProxyfiedHost, RssRoot, RssItem, RewrittenUrl, UploadDoc, Keyword, LastDocs
 from updoc.process import process_new_file
 from updoc.utils import bool_settings, strip_split, list_directory
+from elasticsearch.exceptions import ConnectionError as ESError
 
 __author__ = 'flanker'
 
@@ -78,7 +80,7 @@ def send_file_replace_url(request, filename, allow_replace=False):
 
 
 def compress_archive(request, doc_id, fmt='zip'):
-    if request.user.is_anonymous() and not settings.PUBLIC_DOCS:
+    if request.user.is_anonymous() and not bool_settings(settings.PUBLIC_DOCS):
         raise Http404
     tmp_file = tempfile.NamedTemporaryFile()
     doc = get_object_or_404(UploadDoc, id=doc_id)
@@ -109,7 +111,21 @@ def compress_archive(request, doc_id, fmt='zip'):
 
 @cache_control(no_cache=True)
 def index(request):
-    template_values = {}
+    if request.user.is_anonymous() and not bool_settings(settings.PUBLIC_INDEX):
+        messages.info(request, _('You must be logged to see documentations.'))
+        keywords_with_counts, recent_uploads, recent_checked = [], [], []
+    else:
+        keywords_with_counts = Keyword.objects.all().annotate(count=Count('uploaddoc')).filter(count__gt=0)\
+            .order_by('-count')[0:15]
+        recent_uploads = UploadDoc.objects.order_by('-upload_time')[0:10]
+        recent_checked = LastDocs.query(request).select_related().order_by('-last')[0:20]
+    if request.user.is_anonymous() and not bool_settings(settings.PUBLIC_BOOKMARKS):
+        rss_roots = []
+    else:
+        rss_roots = RssRoot.objects.all().order_by('name')
+    template_values = {'recent_checked': recent_checked, 'title': _('Updoc'), 'rss_roots': rss_roots,
+                       'recent_uploads': recent_uploads, 'keywords': keywords_with_counts,
+                       'list_title': _('Recent uploads'), }
     return render_to_response('updoc/index.html', template_values, RequestContext(request))
 
 
@@ -164,7 +180,7 @@ def my_docs(request):
     uploads = UploadDoc.query(request).order_by('-upload_time').select_related()
     rw_urls = RewrittenUrl.query(request).order_by('src')
     template_values = {'uploads': uploads, 'title': _('My documents'), 'rw_urls': rw_urls,
-                       'rw_form': form, 'editable': True}
+                       'rw_form': form, 'editable': True, 'has_search_results': False, }
     return render_to_response('updoc/my_docs.html', template_values, RequestContext(request))
 
 
@@ -335,3 +351,66 @@ def show_doc(request, doc_id, path=''):
         except UnicodeDecodeError:
             pass
     return send_file_replace_url(request, full_path, allow_replace=True)
+
+
+def show_search_results(request):
+    """Index view, displaying and processing a form."""
+    search = DocSearchForm(request.GET)
+    pattern, doc_id = '', ''
+    if search.is_valid():
+        pattern = search.cleaned_data['search']
+        doc_id = search.cleaned_data['doc_id'] or ''
+        # ElasticSearch
+    es_search = []
+    es_total = 0
+    if request.user.is_anonymous() and not bool_settings(settings.PUBLIC_INDEX):
+        messages.info(request, _('You must be logged to search across docs.'))
+    else:
+        try:
+            es_search, es_total = search_archive(pattern, archive_id=doc_id)
+        except ESError:
+            messages.error(request, _('Unable to use indexed search.'))
+    extra_obj = {}
+    for obj in UploadDoc.objects.filter(id__in=set([x[0] for x in es_search])).only('id', 'name'):
+        extra_obj[obj.id] = obj.name
+    es_result = []
+    for es in es_search:
+        if es[0] not in extra_obj:
+            continue
+        es_result.append((extra_obj[es[0]], es[0], es[1]))
+    es_result.sort(key=lambda x: x[1])
+    es_data = {'results': es_result, 'total': es_total, }
+
+    # classical search
+    if not doc_id:
+        docs = UploadDoc.objects.all()
+        # list of UploadDoc.name, UploadDoc.id, path, UploadDoc.upload_time
+        if len(pattern) > 3:
+            docs = docs.filter(Q(name__icontains=pattern) | Q(keywords__value__icontains=pattern))
+        else:
+            docs = docs.filter(Q(name__iexact=pattern) | Q(keywords__value__iexact=pattern))
+        docs = docs.distinct().select_related()
+    else:
+        docs = None
+    template_values = {'uploads': docs, 'title': _('Search results'), 'rw_form': None,
+                       'editable': False, 'es_data': es_data, 'doc_id': doc_id, }
+    return render_to_response('updoc/my_docs.html', template_values, RequestContext(request))
+
+
+def show_all_docs(request):
+    user = request.user if request.user.is_authenticated() else None
+    search = DocSearchForm(request.GET)
+    if request.user.is_anonymous() and not bool_settings(settings.PUBLIC_INDEX):
+        messages.info(request, _('You must be logged to see documentations.'))
+        keywords_with_counts, recent_uploads, recent_checked = [], [], []
+    else:
+        recent_uploads = UploadDoc.objects.order_by('name')
+        recent_checked = LastDocs.objects.filter(user=user).select_related().order_by('-last')[0:40]
+    if request.user.is_anonymous() and not bool_settings(settings.PUBLIC_BOOKMARKS):
+        rss_roots = []
+    else:
+        rss_roots = RssRoot.objects.all().order_by('name')
+    template_values = {'recent_checked': recent_checked, 'title': _('Updoc'), 'rss_roots': rss_roots,
+                       'recent_uploads': recent_uploads, 'search': search, 'keywords': [],
+                       'list_title': _('All documents'), }
+    return render_to_response('updoc/index.html', template_values, RequestContext(request))
