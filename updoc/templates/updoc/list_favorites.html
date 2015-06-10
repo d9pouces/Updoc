@@ -1,0 +1,29 @@
+{% extends "updoc/base.html" %}{% load staticfiles i18n bootstrap3 djangofloor %}
+{% block content %}
+    <div class="row">
+        <div class="col-lg-4">
+            <h2>{% trans 'Groups' %}</h2>
+            <ul class="list-unstyled">
+                {% for root in roots %}
+                    <li class="list-group-item{% if root.id == current_id %} bg-info{% endif %}">
+                        <a class="{% if root.id == current_id %} text-success{% endif %}"
+                           href="{% url 'updoc.views.show_favorite' root_id=root.id %}">{{ root.name }}</a>
+                        <a href="{% url 'favorites' root_id=root.id %}">{% fontawesome_icon 'rss-square' large=True %}</a>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">{% trans 'No group found' %}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-lg-8">
+            <h2>{{ current_root_name }}</h2>
+            <ul class="list-unstyled">
+                {% for value in values %}
+                    <li class="list-group-item"><a href="{{ value.url }}">{{ value.name }}</a></li>
+                {% empty %}
+                    <li class="list-group-item">{% trans 'No element found.' %}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}

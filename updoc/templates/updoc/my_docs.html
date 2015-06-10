@@ -1,0 +1,72 @@
+{% extends "updoc/base.html" %}{% load staticfiles i18n bootstrap3 %}
+{% block content %}
+    <div class="row">
+        <div class="col-12 col-sm-12 col-lg-12">
+            <h2>{{ title }}</h2>
+
+            <p>
+            <ul class="list-unstyled">
+                {% if uploads %}{% for doc in uploads %}
+                    <li>
+                        <a href="{% url 'updoc.views.show_doc' doc_id=doc.id path='' %}">{{ doc.name }}</a>
+                        <small>{% trans ', upload date: ' %}{{ doc.upload_time|date:"SHORT_DATETIME_FORMAT" }}</small>
+                        {% if doc.keywords.count %}<span class="keywords">({{ doc.keywords.all|join:', ' }})
+                            </span>{% endif %}
+                        {% if doc.index %}<span class="index_page">
+                                    [ <a href="{% url 'updoc.views.show_doc' doc_id=doc.id path=doc.index %}">{% trans 'Index' %}</a> ]
+                                    </span>{% endif %}
+                        {% if editable %}
+                            <button class="btn btn-xs btn-danger"
+                                    onclick="return df.call('updoc.delete_doc_confirm', {doc_id: {{ doc.id }} });">{% bootstrap_icon "trash" %}
+                                {% trans 'Delete' %}
+                            </button>{% endif %}
+                    </li>
+                    {% empty %}
+                    {% if not es_data %}<li>{% trans 'No document found' %}</li>{% endif %}
+                {% endfor %}{% endif %}
+
+                {% for doc in es_data.results %}
+                    {% if forloop.first %}{% if es_data.total > 1 %}
+                        <li>{% blocktrans with total=es_data.total %}{{ total }} documents found.{% endblocktrans %} </li>
+                    {% endif %}
+                    {% endif %}
+                    <li><a href="{% url 'updoc.views.show_doc' doc_id=doc.1 path='' %}">{{ doc.0 }}</a>
+                        <a href="{% url 'updoc.views.show_doc' doc_id=doc.1 path=doc.2 %}">/ {{ doc.2 }}</a></li>
+                    {% empty %}
+                    <li>{% trans 'No document found' %}</li>
+                {% endfor %}
+            </ul>
+            </p>
+        </div>
+        {% if rw_form %}
+            <div class="col-12 col-sm-12 col-lg-12">
+                <h2>{% trans 'My rewritten URLs' %}</h2>
+
+                <p>
+                <ul class="list-unstyled">
+                    {% for url in rw_urls %}
+                        <li>
+                            <a href="{{ url.src }}">{{ url.src }}</a> {% trans 'redirected to:' %}
+                            <a href="{{ url.dst }}">{{ url.dst }}</a>
+                            <button class="btn btn-xs btn-danger"
+                                    onclick="return df.call('updoc.delete_url_confirm', {url_id: {{ url.id }} });">{% bootstrap_icon "trash" %}
+                                {% trans 'Delete' %}
+                            </button>
+                        </li>
+                        {% empty %}
+                        <li>{% trans 'No URL found' %}</li>
+                    {% endfor %}
+                </ul>
+                </p><h2>{% trans 'Add a new URL to rewrite' %}</h2>
+
+                <p>            {% trans 'This URL will be rewritten in all HTML, CSS and JS files.' %}</p>
+
+                <form action="?" method="post" class="form">
+                    {% csrf_token %} {% bootstrap_form rw_form %}
+                    {% buttons %}
+                        <button type="submit"
+                                class="btn btn-primary">{% bootstrap_icon "ok-sign" %} {% trans 'Add this URL' %}</button>
+                    {% endbuttons %}</form>
+            </div>{% endif %}
+    </div>
+{% endblock %}

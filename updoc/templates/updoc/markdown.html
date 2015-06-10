@@ -1,0 +1,35 @@
+{% extends "updoc/doc_properties.html" %}{% load staticfiles i18n bootstrap3 djangofloor %}
+{% block main_content %}
+    <div class="col-lg-10 col-md-9 col-xs-12 col-sm-12">
+        <h2>{% trans 'Document:' %}
+                        <span {% if editable %}contenteditable="true"
+                              title="{% trans 'Click here to edit the title, ESC to validate.' %}"
+                              onblur="edit_title({{ doc.id }}, this);"{% endif %}>{{ doc }}
+                            {% if editable and not doc.name %}{% trans 'Click to edit title' %}{% endif %}</span>
+            <img class="hidden" id="loading_title" src="{% static 'images/ajax-loader.gif' %}"
+                 alt="{% trans 'loading…' %}"/>
+        </h2>
+
+        <div>
+            <h4>
+                {% trans 'Keywords:' %}
+                <small {% if editable %}contenteditable="true"
+                       title="{% trans 'Click here to edit keywords, ESC to validate.' %}"
+                       onblur="edit_keywords({{ doc.id }}, this);"{% endif %} style="width: 100%;">
+                    {{ keywords }}{% if editable and not keywords %}
+                        {% trans 'Click to add keywords' %}{% endif %}</small>
+                <img class="hidden" id="loading_keywords" src="{% static 'images/ajax-loader.gif' %}"
+                     alt="{% trans 'loading…' %}"/>
+            </h4>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <ol class="breadcrumb" style="margin-bottom: 0; ">{% for p in paths %}{% if forloop.last %}
+                        <li class="active">{{ p.1 }}</li>{% else %}
+                        <li><a href="{{ p.0 }}">{{ p.1 }}</a></li>{% endif %}{% endfor %}
+                    </ol>
+                </div>
+                <div class="panel-body">{{ content }}</div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

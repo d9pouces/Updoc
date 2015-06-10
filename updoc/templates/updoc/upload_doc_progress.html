@@ -1,0 +1,7 @@
+{% load i18n %}{% load bootstrap3 %}<form action="?" method="POST">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    {% buttons %}
+
+<button type="submit" class="btn btn-primary">{% bootstrap_icon "save" %} {% trans 'Validate!' %}</button>{% endbuttons %}
+</form>
