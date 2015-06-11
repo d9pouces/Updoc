@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
+import os
+from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
+import shutil
 
 from djangofloor.decorators import connect, SignalRequest
+from djangofloor.tasks import call
 from updoc.models import RewrittenUrl, UploadDoc, Keyword
+from updoc.process import process_uploaded_file
+from django.utils.translation import ugettext as _
 
 __author__ = 'flanker'
 
@@ -36,6 +42,54 @@ def edit_doc_keywords(request: SignalRequest, doc_id: int, keywords: str):
     for keyword in [x.strip() for x in keywords.lower().split() if x.strip()]:
         if keyword:
             doc.keywords.add(Keyword.get(keyword))
+
+
+@connect(path='updoc.process_file', allow_from_client=False, delayed=True)
+def process_file(request: SignalRequest, doc_id: int, filename: str, original_filename: str):
+    """
+    * uncompress file if needed otherwise copy it
+    * index its content
+    * remove it
+
+    Remove all if an error occurred
+
+    :param request:
+    :param doc_id:
+    :param filename:
+    :param original_filename:
+    """
+    temp_file = None
+    destination_root = None
+    doc = None
+    # noinspection PyBroadException
+    try:
+        temp_file = open(filename, 'rb')
+        doc = UploadDoc.query(request).get(pk=doc_id)
+        destination_root = os.path.join(settings.MEDIA_ROOT, 'docs', doc.uid[0:2], doc.uid)
+        process_uploaded_file(doc, temp_file, original_filename=Start oforiginal_filename, destination_root=destination_root)
+        call('df.messages.info', request, html=_('%(name)s has been uploaded and indexed') % {'name': doc.name})
+    except Exception as e:
+        if destination_root and os.path.isdir(destination_root):
+            shutil.rmtree(destination_root)
+        UploadDoc.query(request).filter(pk=doc_id).delete()
+        if doc:
+            call('df.messages.error', request, html=_('An error happened during the processing of %(name)s: %(error)s') % {'name': doc.name, 'error': str(e)})
+        else:
+            call('df.messages.error', request, html=_('Unable to process query'))
+    finally:
+        if temp_file:
+            temp_file.close()
+        os.remove(filename)
+
+
+@connect(path='updoc.delete_file', allow_from_client=False, delayed=True)
+def process_file(request: SignalRequest, doc_id: int):
+    """
+    :param request:
+    :param doc_id:
+    """
+    for obj in UploadDoc.objects.filter(id=doc_id):
+        obj.delete()
 
 if __name__ == '__main__':
     import doctest

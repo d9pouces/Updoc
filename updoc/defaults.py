@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from djangofloor.utils import DirectoryPath
 
 __author__ = 'flanker'
 
@@ -66,7 +67,7 @@ FLOOR_INSTALLED_APPS = ['updoc', ]
 FLOOR_INDEX = 'updoc.views.index'
 FLOOR_URL_CONF = 'updoc.root_urls.urls'
 FLOOR_PROJECT_NAME = 'UpDoc!'
-
+FILE_UPLOAD_TEMP_DIR = DirectoryPath('{LOCAL_PATH}/tmp')
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '5I0zJQuHzqcACuzGIwTAC3cV6RlZpjV8MNUETYd5KZXg6UoI4G'
 

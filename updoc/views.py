@@ -6,6 +6,7 @@ import stat
 import tarfile
 import tempfile
 import datetime
+import uuid
 import zipfile
 
 from django.conf import settings
@@ -26,6 +27,7 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django.views.static import was_modified_since
 import markdown
+from djangofloor.tasks import call
 
 from djangofloor.views import send_file
 from updoc.forms import UrlRewriteForm, FileUploadForm, UploadApiForm, MetadatadUploadForm, DocSearchForm
@@ -198,11 +200,8 @@ def delete_url(request, url_id):
 def delete_doc(request, doc_id):
     obj = get_object_or_404(UploadDoc.query(request), id=doc_id)
     name = obj.name
-    try:
-        obj.delete()
-        messages.info(request, _('%(doc)s successfully deleted') % {'doc': name})
-    except IOError:
-        messages.error(request, _('Unable to delete %(doc)s ') % {'doc': name})
+    call('updoc.delete_file', request, doc_id=doc_id)
+    messages.info(request, _('%(doc)s will be quickly deleted') % {'doc': name})
     return HttpResponseRedirect(reverse('updoc.views.my_docs'))
 
 
@@ -240,12 +239,21 @@ def upload_doc_progress(request):
     if not form.is_valid():
         raise PermissionDenied
     uploaded_file = request.FILES['file']
-    obj = process_new_file(uploaded_file, request)
-    # offer a correct name for the newly uploaded document
+    temp_file = tempfile.NamedTemporaryFile(mode='wb', dir=settings.FILE_UPLOAD_TEMP_DIR, delete=False)
+    chunk = uploaded_file.read(16384)
+    while chunk:
+        temp_file.write(chunk)
+        chunk = uploaded_file.read(16384)
+    temp_file.flush()
+
     basename = os.path.basename(uploaded_file.name).rpartition('.')[0]
-    if basename[-4:] == '.tar':
+    if basename.endswith('.tar'):
         basename = basename[:-4]
-    form = MetadatadUploadForm(initial={'pk': obj.pk, 'name': basename, })
+    doc = UploadDoc(name=basename, user=request.user if request.user.is_authenticated() else None, uid=str(uuid.uuid1()))
+    doc.save()
+    call('updoc.process_file', request, doc_id=doc.id, filename=temp_file.name, original_filename=uploaded_file.name)
+    # offer a correct name for the newly uploaded document
+    form = MetadatadUploadForm(initial={'pk': doc.pk, 'name': basename, })
     template_values = {'form': form, }
     return render_to_response('updoc/upload_doc_progress.html', template_values, RequestContext(request))
 
@@ -267,14 +275,13 @@ def upload_doc_api(request):
         #         return HttpResponse(_('Invalid password for user %(u)s') % {'u': username}, status=401)
         #     request.user = user
         # else:
-        return HttpResponse(_('You must be logged to upload files.'), status=401)
+        return HttpResponse(_('You must be logged to upload files.\n'), status=401)
     elif request.method != 'POST':
-        return HttpResponse(_('Only POST requests are allowed.'), status=400)
+        return HttpResponse(_('Only POST requests are allowed.\n'), status=400)
     form = UploadApiForm(request.GET)
     if not form.is_valid():
-        raise Http404
-    # read the request and push it into a tmp file
-    tmp_file = tempfile.TemporaryFile(mode='w+b')
+        return HttpResponse(_('You must supply filename, name and keywords in your query.\n'), status=400)
+    tmp_file = tempfile.NamedTemporaryFile(mode='wb', dir=settings.FILE_UPLOAD_TEMP_DIR, delete=False)
     c = False
     chunk = request.read(32768)
     while chunk:
@@ -282,28 +289,22 @@ def upload_doc_api(request):
         c = True
         chunk = request.read(32768)
     tmp_file.flush()
-    tmp_file.seek(0)
     if not c:
-        return HttpResponse(_('Empty file. You must POST a valid file.'), status=400)
+        os.remove(tmp_file.name)
+        return HttpResponse(_('Empty file. You must POST a valid file.\n'), status=400)
     # ok, we have the tmp file
-    uploaded_file = UploadedFile(name=form.cleaned_data['filename'], file=tmp_file)
 
-    existing_obj = None
-    existing_objs = list(UploadDoc.objects.filter(user=user, name=form.cleaned_data['name'])[0:1])
+    existing_objs = list(UploadDoc.query(request).filter(name=form.cleaned_data['name'])[0:1])
     if existing_objs:
-        existing_obj = existing_objs[0]
-        existing_obj.clean_archive()
-    try:
-        obj = process_new_file(uploaded_file, request, obj=existing_obj)
-        obj.name = form.cleaned_data['name']
-        obj.save()
-        for keyword in strip_split(form.cleaned_data['keywords'].lower()):
-            obj.keywords.add(Keyword.get(keyword))
-    except Exception as e:
-        return HttpResponse(str(e), status=400)
-    finally:
-        tmp_file.close()
-    return HttpResponse(_('File successfully uploaded and indexed.'), status=200)
+        doc = existing_objs[0]
+        doc.keywords.clear()
+    else:
+        doc = UploadDoc(uid=str(uuid.uuid1()), name=form.cleaned_data['name'], user=user)
+        doc.save()
+    for keyword in strip_split(form.cleaned_data['keywords'].lower()):
+        doc.keywords.add(Keyword.get(keyword))
+    call('updoc.process_file', request, doc_id=doc.id, filename=tmp_file.name, original_filename=os.path.basename(form.cleaned_data['filename']))
+    return HttpResponse(_('File successfully uploaded. It will be uncompressed and indexed.\n'), status=200)
 
 
 @cache_page(60 * 15)

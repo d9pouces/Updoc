@@ -107,11 +107,10 @@ class UploadDoc(models.Model):
             shutil.rmtree(path)
         if self.id:
             delete_archive(self.id)
-        self.keywords.clear()
-        self.user_id = None
 
     def delete(self, using=None):
         self.clean_archive()
+        self.keywords.clear()
         super(UploadDoc, self).delete(using=using)
 
     @classmethod

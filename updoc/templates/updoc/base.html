@@ -34,7 +34,7 @@
                 <a class="navbar-brand" href="{% url 'account_login' %}">{% fontawesome_icon 'sign-in' %}</a>
             {% endif %}
             {% if user and user.is_superuser %}
-                <a class="navbar-brand" href="{% url 'admin:index' %}" title="{% trans 'Administration' %}">{% bootstrap_icon 'wrench' %}</a>
+                <a id="link_admin" class="navbar-brand" href="{% url 'admin:index' %}" title="{% trans 'Administration' %}">{% bootstrap_icon 'wrench' %}</a>
             {% endif %}
 
         </div>
