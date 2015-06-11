@@ -3,16 +3,15 @@ import os
 from djangofloor.utils import DirectoryPath
 
 __author__ = 'flanker'
-
 HOST = 'http://{BIND_ADDRESS}'
 PUBLIC_BOOKMARKS = '1'
-PUBLIC_BOOKMARKS_HELP = 'Are bookmarks publicly available?'
+PUBLIC_BOOKMARKS_HELP = 'Are bookmarks publicly available? (1/0)'
 PUBLIC_PROXIES = '1'
-PUBLIC_PROXIES_HELP = 'Is proxy.pac file publicly available?'
+PUBLIC_PROXIES_HELP = 'Is proxy.pac file publicly available? (1/0)'
 PUBLIC_INDEX = '1'
-PUBLIC_INDEX_HELP = 'Are documentations publicly available?'
+PUBLIC_INDEX_HELP = 'Are documentations publicly available? (1/0)'
 PUBLIC_DOCS = '1'
-PUBLIC_DOCS_HELP = 'Are documentations publicly available?'
+PUBLIC_DOCS_HELP = 'Are documentations publicly available? (1/0)'
 WS4REDIS_EMULATION_INTERVAL = 5000
 LOCAL_PATH = os.path.join(os.path.dirname(__file__), '..', 'django_data')
 
