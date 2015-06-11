@@ -2,6 +2,9 @@
 """all ElasticSearch-related functions are defined in this module.
 
 """
+import functools
+from updoc.utils import strip_split
+
 __author__ = 'flanker'
 
 import base64
@@ -12,48 +15,59 @@ from django.conf import settings
 import elasticsearch
 
 
+@functools.lru_cache()
+def es_hosts():
+    return strip_split(settings.ES_HOSTS)
+
+
+@functools.lru_cache()
+def es_tika_extensions():
+    return set(strip_split(settings.ES_TIKA_EXTENSIONS))
+
+
+@functools.lru_cache()
+def es_plain_extensions():
+    return set(strip_split(settings.ES_PLAIN_EXTENSIONS))
+
+
+@functools.lru_cache()
+def es_excluded_dir():
+    return set(strip_split(settings.ES_EXCLUDED_DIR))
+
+
 def create_index():
-    return []
-    if not settings.ELASTIC_SEARCH['host']:
+    if not es_hosts():
         return []
-    host = settings.ELASTIC_SEARCH['host'][0]
-    index = settings.ELASTIC_SEARCH['index']
-    doc_type = settings.ELASTIC_SEARCH['doc_type']
+    host = es_hosts()[0]
     queries = []
-    query = "curl -XPUT 'http://%s/%s/'" % (host, index)
+    query = "curl -XPUT 'http://%s/%s/'" % (host, settings.ES_INDEX)
     queries.append(query)
-    query = "curl -XPUT 'http://%s/%s/%s/_mapping' -d" % (host, index, doc_type)
-    query += '\'{"%s": {"properties": {"content": {"type": "attachment"}}}}\'' % doc_type
+    query = "curl -XPUT 'http://%s/%s/%s/_mapping' -d" % (host, settings.ES_INDEX, settings.ES_DOC_TYPE)
+    query += '\'{"%s": {"properties": {"content": {"type": "attachment"}}}}\'' % settings.ES_DOC_TYPE
     queries.append(query)
     return queries
 
 
 def index_archive(archive_id, root_path):
-    return
-    if not settings.ELASTIC_SEARCH['host']:
+    if not es_hosts():
         return
-    es = elasticsearch.Elasticsearch(settings.ELASTIC_SEARCH['host'])
-    tika_extensions = settings.ELASTIC_SEARCH['tika_extensions']
-    plain_extensions = settings.ELASTIC_SEARCH['plain_extensions']
-    all_extensions = tika_extensions.union(plain_extensions)
-    doc_type = settings.ELASTIC_SEARCH['doc_type']
-    index = settings.ELASTIC_SEARCH['index']
-    max_size = settings.ELASTIC_SEARCH['max_size']
-    exclude_dir = settings.ELASTIC_SEARCH['exclude_dir']
+    es = elasticsearch.Elasticsearch(es_hosts())
+    all_extensions = es_tika_extensions() | es_plain_extensions()
+    excluded_dir = es_excluded_dir()
     for (root, dirnames, filenames) in os.walk(root_path):
         dir_index = 0
         while dir_index < len(dirnames):
-            if dirnames[dir_index] in exclude_dir:
+            if dirnames[dir_index] in excluded_dir:
                 del dirnames[dir_index]
             else:
                 dir_index += 1
         for filename in filenames:
             extension = filename.rpartition('.')[2]
             full_path = os.path.join(root, filename)
-            if extension not in all_extensions or os.path.getsize(full_path) > max_size:
+            if extension not in all_extensions or os.path.getsize(full_path) > settings.ES_MAX_SIZE:
                 continue
             value, content = '', ''
-            if extension in plain_extensions:
+            if extension in es_plain_extensions():
                 try:
                     with codecs.open(full_path, 'rb', encoding='utf-8') as fd:
                         value = fd.read()
@@ -66,30 +80,24 @@ def index_archive(archive_id, root_path):
             doc_id = hashlib.sha1(('%d_%s' % (archive_id, relpath)).encode('utf-8')).hexdigest()
             document = {'archive_id': archive_id, 'path': relpath, 'content': content, 'value': value,
                         'name': os.path.basename(relpath), '_id': doc_id, 'extension': extension}
-            es.index(index=index, doc_type=doc_type, body=document, id=doc_id)
+            es.index(index=settings.ES_INDEX, doc_type=settings.ES_DOC_TYPE, body=document, id=doc_id)
 
 
 def delete_archive(archive_id):
-    return
-    if not settings.ELASTIC_SEARCH['host']:
+    if not es_hosts():
         return
-    es = elasticsearch.Elasticsearch(settings.ELASTIC_SEARCH['host'])
-    doc_type = settings.ELASTIC_SEARCH['doc_type']
-    index = settings.ELASTIC_SEARCH['index']
+    es = elasticsearch.Elasticsearch(es_hosts())
     es_query = {'query': {'term': {'archive_id': archive_id, }}, }
-    es.delete_by_query(index=index, doc_type=doc_type, body=es_query)
+    es.delete_by_query(index=settings.ES_INDEX, doc_type=settings.ES_DOC_TYPE, body=es_query)
 
 
 def search_archive(query, archive_id=None, extension=None):
     """
     return a list of (UploadDoc.id, relpath) containing the query
     """
-    return [], 0
-    if not settings.ELASTIC_SEARCH['host']:
+    if not es_hosts():
         return [], 0
-    es = elasticsearch.Elasticsearch(settings.ELASTIC_SEARCH['host'])
-    doc_type = settings.ELASTIC_SEARCH['doc_type']
-    index = settings.ELASTIC_SEARCH['index']
+    es = elasticsearch.Elasticsearch(es_hosts())
     es_query = {'query': {'filtered': {'query': {'query_string': {'query': query, }},
                                        'filter': {}}}, 'size': 100,
                 '_source': {'include': ['archive_id', 'path']}, }
@@ -97,7 +105,7 @@ def search_archive(query, archive_id=None, extension=None):
         es_query['query']['filtered']['filter'].setdefault('term', {}).update({'archive_id': archive_id})
     if extension:
         es_query['query']['filtered']['filter'].setdefault('term', {}).update({'extension': extension})
-    values = es.search(index=index, doc_type=doc_type, body=es_query)
+    values = es.search(index=settings.ES_INDEX, doc_type=settings.ES_DOC_TYPE, body=es_query)
     result_objs = []
     for hit in values.get('hits', {}).get('hits', []):
         result_objs.append((hit['_source']['archive_id'], hit['_source']['path']))

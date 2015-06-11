@@ -13,15 +13,27 @@ PUBLIC_DOCS = '1'
 PUBLIC_DOCS_HELP = 'Are documentations publicly available?'
 WS4REDIS_EMULATION_INTERVAL = 5000
 
-# ELASTIC_SEARCH = {
-#     'host': strip_split(ES_HOSTS),
-#     'index': ES_INDEX,
-#     'tika_extensions': set(strip_split(ES_TIKA_EXTENSIONS)),
-#     'max_size': ES_MAX_SIZE,
-#     'exclude_dir': set(strip_split(ES_EXCLUDED_DIR)),
-#     'doc_type': ES_DOC_TYPE,
-#     'plain_extensions': set(strip_split(ES_PLAIN_EXTENSIONS)),
-# }
+ES_HOSTS = 'localhost:9200'
+ES_INDEX = 'updoc_index'
+ES_TIKA_EXTENSIONS = 'pdf,html,doc,odt,rtf,epub'
+ES_MAX_SIZE = 30 * 1024 * 1024
+ES_DOC_TYPE = 'document'
+ES_PLAIN_EXTENSIONS = 'txt,csv,md,rst'
+ES_EXCLUDED_DIR = '_sources,_static'
+
+TEMPLATE_CONTEXT_PROCESSORS = [
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.request',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
+    'django.contrib.messages.context_processors.messages',
+    'djangofloor.context_processors.context_base',
+    'updoc.context_processors.most_checked',
+    'allauth.account.context_processors.account',
+    'allauth.socialaccount.context_processors.socialaccount', ]
 
 ########################################################################################################################
 # sessions
