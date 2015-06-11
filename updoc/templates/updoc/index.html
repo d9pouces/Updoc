@@ -42,13 +42,13 @@
         {% if keywords %}
             <div class="col-sm-6 col-lg-12 col-xs-12 col-md-12">
                 <h4>{% trans 'Keywords' %} [
-                    <small><a href="{% url 'updoc.views.full_list' %}">{% trans 'All documents' %}</a></small>
+                    <small><a href="{% url 'updoc.views.show_all_docs' %}">{% trans 'All documents' %}</a></small>
                     ]
                 </h4>
                 <p>
                 <ul class="list-inline">
                     {% for kw in keywords %}
-                        <li><a href="{% url 'updoc.views.index' %}?search={{ kw.value }}">{{ kw.value }}</a>
+                        <li><a href="{% url 'updoc.views.show_search_results' %}?search={{ kw.value }}">{{ kw.value }}</a>
                         </li>
                         {% empty %}
                         <li>{% trans 'No keyword found' %}</li>

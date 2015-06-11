@@ -1,4 +1,4 @@
-{% extends "updoc/base.html" %}{% load i18n bootstrap3 %}
+{% extends "updoc/base.html" %}{% load i18n bootstrap3 staticfiles %}
 {% block content %}
     <div class="row">
         <div class="col-lg-2 col-md-3 hidden-xs hidden-sm">
@@ -38,6 +38,53 @@
             </ul>
             </p>
         </div>
-        {% block main_content %}{% endblock %}
+        <div class="col-lg-10 col-md-9 col-xs-12 col-sm-12 fuelux">
+
+
+            <h2>{% trans 'Document:' %}{% if editable %}
+                <span class="placard" data-ellipsis="true" id="document_name_placard">
+                    <div class="placard-popup"></div>
+                    <input class="form-control placard-field" value="{{ doc.name }}" name="title" required="required" placeholder="{% trans 'please enter a name' %}">
+
+                    <div class="placard-footer">
+                        <a class="placard-cancel" href="#">{% trans 'Cancel' %}</a>
+                        <button class="btn btn-primary btn-xs placard-accept" type="button">{% trans 'Save' %}</button>
+                    </div>
+                </span>{% else %}{{ doc.name }}{% endif %}
+            </h2>
+            <h4>{% trans 'Keywords:' %}{% if editable %}
+                <span class="placard" data-ellipsis="true" id="document_keywords_placard">
+                    <div class="placard-popup"></div>
+                    <input class="form-control placard-field" value="{{ keywords }}" name="title" required="required" placeholder="{% trans 'Please enter keywords' %}">
+
+                    <div class="placard-footer">
+                        <a class="placard-cancel" href="#">{% trans 'Cancel' %}</a>
+                        <button class="btn btn-primary btn-xs placard-accept" type="button">{% trans 'Save' %}</button>
+                    </div>
+                </span>{% else %}{{ keywords }}{% endif %}
+            </h4>
+
+            <script>
+                var document_name = $('#document_name_placard');
+                document_name.placard({
+                    onAccept: function (options) {
+                        console.info({doc_id: {{ doc.pk }}, name: options.value});
+                        document_name.placard('setValue', options.value);
+                        df.call('updoc.edit_doc_name', {doc_id: {{ doc.pk }}, name: options.value});
+                        document_name.placard('hide');
+                    }
+                });
+                var document_keywords = $('#document_keywords_placard');
+                document_keywords.placard({
+                    onAccept: function (options) {
+                        document_keywords.placard('setValue', options.value);
+                        df.call('updoc.edit_doc_keywords', {doc_id: {{ doc.pk }}, keywords: options.value});
+                        document_keywords.placard('hide');
+                    }
+                });
+            </script>
+            {% block main_content %}{% endblock %}
+        </div>
     </div>
+
 {% endblock %}

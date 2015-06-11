@@ -31,9 +31,9 @@
     <pre>FILENAME=filename.zip
 NAME=name-version
 KEYWORDS=keyword1,keyword2
-USERNAME=
+{% if not df_remote_authenticated %}USERNAME=
 PASSWORD=
-curl --data-binary @$FILENAME -u $USERNAME:$PASSWORD --anyauth {{ root_host }}{% url 'updoc.views.upload_doc_api' %}?filename=$FILENAME&amp;name=$NAME&amp;keywords=$KEYWORDS</pre>
+{% endif %}curl --data-binary @$FILENAME -u {% if not df_remote_authenticated %}$USERNAME:$PASSWORD{% else %}:{% endif %} --anyauth {{ root_host }}{% url 'updoc.views.upload_doc_api' %}?filename=$FILENAME&amp;name=$NAME&amp;keywords=$KEYWORDS</pre>
 
     <script>
         $(function () {

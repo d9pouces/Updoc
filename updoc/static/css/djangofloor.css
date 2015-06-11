@@ -1,0 +1,20 @@
+.placard-field {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: normal;
+    line-height: 1.1;
+    color: #317eac;
+}
+h4 .placard-field {
+    font-size: 18px;
+}
+
+h2 .placard-field {
+    font-size: 30px;
+}
+
+#id_file {
+    height: 100px;
+    width: 100%;
+    padding: 8% 10% 18% 10%;
+    font-size: 22px;
+}

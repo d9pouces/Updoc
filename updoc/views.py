@@ -206,6 +206,7 @@ def delete_doc(request, doc_id):
     return HttpResponseRedirect(reverse('updoc.views.my_docs'))
 
 
+@cache_control(no_cache=True)
 @login_required(login_url='/accounts/login/')
 def upload(request):
     """Index view, displaying and processing a form."""
@@ -232,6 +233,7 @@ def upload(request):
 
 
 @csrf_exempt
+@cache_control(no_cache=True)
 @permission_required('updoc.add_uploaddoc')
 def upload_doc_progress(request):
     form = FileUploadForm(request.POST, request.FILES)
@@ -304,10 +306,12 @@ def upload_doc_api(request):
     return HttpResponse(_('File successfully uploaded and indexed.'), status=200)
 
 
+@cache_page(60 * 15)
 def show_doc_alt(request, doc_id, path=''):
     return show_doc(request, doc_id, path=path)
 
 
+@cache_page(60 * 15)
 def show_doc(request, doc_id, path=''):
     if request.user.is_anonymous() and not bool_settings(settings.PUBLIC_DOCS):
         raise Http404
@@ -353,6 +357,7 @@ def show_doc(request, doc_id, path=''):
     return send_file_replace_url(request, full_path, allow_replace=True)
 
 
+@cache_control(no_cache=True)
 def show_search_results(request):
     """Index view, displaying and processing a form."""
     search = DocSearchForm(request.GET)
@@ -397,6 +402,7 @@ def show_search_results(request):
     return render_to_response('updoc/my_docs.html', template_values, RequestContext(request))
 
 
+@cache_control(no_cache=True)
 def show_all_docs(request):
     user = request.user if request.user.is_authenticated() else None
     search = DocSearchForm(request.GET)

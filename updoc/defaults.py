@@ -73,13 +73,24 @@ SECRET_KEY = '5I0zJQuHzqcACuzGIwTAC3cV6RlZpjV8MNUETYd5KZXg6UoI4G'
 PIPELINE_JS = {
     'default': {
         'source_filenames': ('js/jquery.min.js', 'bootstrap3/js/bootstrap.min.js', 'js/djangofloor.js', 'js/ws4redis.js',
-                             'js/jquery.ui.widget.js', 'js/jquery.iframe-transport.js', 'js/jquery.fileupload.js', ),
+                             'js/jquery.ui.widget.js', 'js/jquery.iframe-transport.js', 'js/jquery.fileupload.js',
+                             'js/fuelux.min.js', ),
         'output_filename': 'js/default.js',
     },
     'ie9': {
         'source_filenames': ('js/html5shiv.js', 'js/respond.min.js',),
         'output_filename': 'js/ie9.js',
     }
+}
+PIPELINE_CSS = {
+    'default': {
+        'source_filenames': ('bootstrap3/css/bootstrap.min.css', 'css/font-awesome.min.css',
+                             'css/fuelux.min.css', 'css/djangofloor.css', ),
+        'output_filename': 'css/default.css',
+        'extra_context': {
+            'media': 'all',
+        },
+    },
 }
 
 if __name__ == '__main__':
