@@ -1,0 +1,8 @@
+{% extends "updoc/base.html" %}{% load staticfiles i18n bootstrap3 djangofloor %}
+{% block content %}
+    <div class="container" style="margin-top: 10em; margin-bottom: 10em; ">
+        <p class="alert alert-danger"><strong>{% trans "Don't panic!" %}</strong>
+            {% trans "A strange error happened. Don't worry, admins have been warned." %}
+        </p>
+    </div>
+{% endblock %}

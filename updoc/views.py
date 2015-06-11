@@ -262,19 +262,6 @@ def upload_doc_progress(request):
 def upload_doc_api(request):
     user = request.user if request.user.is_authenticated() else None
     if user is None:
-        # username = request.GET.get('username', '')
-        # password = request.GET.get('password', '')
-        # username = unquote(username)
-        # password = unquote(password)
-        # if username and password:
-        #     users = get_user_model().objects.filter(username=username)[0:1]
-        #     if not users:
-        #         return HttpResponse(_('Invalid user %(u)s') % {'u': username}, status=401)
-        #     user = users[0]
-        #     if not user.check_password(password):
-        #         return HttpResponse(_('Invalid password for user %(u)s') % {'u': username}, status=401)
-        #     request.user = user
-        # else:
         return HttpResponse(_('You must be logged to upload files.\n'), status=401)
     elif request.method != 'POST':
         return HttpResponse(_('Only POST requests are allowed.\n'), status=400)

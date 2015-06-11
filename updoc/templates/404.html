@@ -1,0 +1,8 @@
+{% extends "updoc/base.html" %}{% load staticfiles i18n bootstrap3 djangofloor %}
+{% block content %}
+    <div class="container" style="margin-top: 10em; margin-bottom: 10em; ">
+        <p class="alert alert-danger"><strong>{% trans 'Page not found.' %}</strong>
+            {% trans 'Sorry, the page you requested cannot be found.' %}
+        </p>
+    </div>
+{% endblock %}

@@ -1,0 +1,148 @@
+# No description yet.
+# Copyright (C) flanker
+# This file is distributed under the same license as the {package} package.
+# flanker <flanker@19pouces.net>, 2013.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: updoc 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-11-13 23:45+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: flanker <flanker@19pouces.net>\n"
+"Language-Team: flanker <flanker@19pouces.net>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: updoc/login.py:9 updoc/views.py:56 updoc/views.py:75
+msgid "Name"
+msgstr "Nom"
+
+#: updoc/login.py:10 updoc/views.py:57 updoc/views.py:77
+msgid "Keywords"
+msgstr "Mots-clefs"
+
+#: updoc/models.py:40
+msgid "keyword"
+msgstr "mot-clef"
+
+#: updoc/models.py:54
+msgid "uid"
+msgstr "uid"
+
+#: updoc/models.py:55
+msgid "title"
+msgstr "titre"
+
+#: updoc/models.py:56
+msgid "path"
+msgstr "chemin"
+
+#: updoc/models.py:59
+msgid "upload time"
+msgstr "date d'ajout"
+
+#: updoc/models.py:66
+msgid "sample person"
+msgstr ""
+
+#: updoc/models.py:67
+msgid "sample persons"
+msgstr ""
+
+#: updoc/models.py:79
+msgid "last"
+msgstr ""
+
+#: updoc/sample.py:41
+msgid "This message should be translated"
+msgstr ""
+
+#: updoc/utils.py:21
+msgid "Documents"
+msgstr "Documents"
+
+#: updoc/utils.py:23
+msgid "Downloads"
+msgstr "Téléchargements"
+
+#: updoc/utils.py:25
+msgid "Library"
+msgstr "Bibliothèque"
+
+#: updoc/utils.py:27
+msgid "Movies"
+msgstr "Films"
+
+#: updoc/utils.py:29
+msgid "Music"
+msgstr "Musique"
+
+#: updoc/utils.py:31
+msgid "Pictures"
+msgstr "Images"
+
+#: updoc/utils.py:33
+msgid "Public"
+msgstr "Public"
+
+#: updoc/utils.py:35
+msgid "System"
+msgstr "Système"
+
+#: updoc/utils.py:79
+msgid "root"
+msgstr "Racine"
+
+#: updoc/views.py:44
+msgid "file"
+msgstr "Fichier"
+
+#: updoc/views.py:76
+msgid "Please enter a name"
+msgstr "Merci d'entrer un nom"
+
+#: updoc/views.py:78
+msgid "Please enter some keywords"
+msgstr "Merci d'entrer des mots-clefs"
+
+#: updoc/views.py:93
+msgid "File successfully uploaded"
+msgstr "Fichier ajouté correctement"
+
+#: updoc/views.py:103
+msgid "Unable to upload this file"
+msgstr "Impossible d'ajouter le fichier"
+
+#: updoc/views.py:106
+msgid "Upload a new file"
+msgstr "Ajouter un fichier"
+
+#: updoc/views.py:117
+msgid "My documents"
+msgstr "Mes documents"
+
+#: updoc/views.py:129
+#, python-format
+msgid "%(doc)s successfully deleted"
+msgstr "%(doc)s a été supprimé correctement"
+
+#: updoc/views.py:131
+#, python-format
+msgid "Unable to delete %(doc)s "
+msgstr "Impossible de supprimer %(doc)s"
+
+#: updoc/views.py:252
+msgid "Search results"
+msgstr "Résultats"
+
+#: updoc/views.py:258
+msgid "Updoc"
+msgstr "UpDoc"
+
+#: updoc/tests/test_translation.py:32
+msgid "test_string"
+msgstr ""

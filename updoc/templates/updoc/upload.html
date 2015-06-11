@@ -1,7 +1,7 @@
 {% extends "updoc/base.html" %}{% load staticfiles i18n bootstrap3 djangofloor %}
 {% block title %}{% trans 'Upload a new file' %}{% endblock %}
 {% block content %}
-    <div class="row">
+    <div class="row" style="margin-top: 3em;">
         <div class="col-12 col-sm-12 col-lg-12">
             <div class="alert alert-info big" id="upload_input">
                 <input id="id_file" name="file" data-url="{% url 'updoc.views.upload_doc_progress' %}" type="file"/>
@@ -33,7 +33,7 @@ NAME=name-version
 KEYWORDS=keyword1,keyword2
 {% if not df_remote_authenticated %}USERNAME=
 PASSWORD=
-{% endif %}curl --data-binary @$FILENAME -u {% if not df_remote_authenticated %}$USERNAME:$PASSWORD{% else %}:{% endif %} --anyauth {{ root_host }}{% url 'updoc.views.upload_doc_api' %}?filename=$FILENAME&amp;name=$NAME&amp;keywords=$KEYWORDS</pre>
+{% endif %}curl --data-binary @$FILENAME -u {% if not df_remote_authenticated %}$USERNAME:$PASSWORD --basic{% else %}: --anyauth{% endif %} {{ root_host }}{% url 'updoc.views.upload_doc_api' %}?filename=$FILENAME&amp;name=$NAME&amp;keywords=$KEYWORDS</pre>
 
     <script>
         $(function () {
