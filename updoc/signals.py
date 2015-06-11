@@ -6,7 +6,7 @@ from django.template.loader import render_to_string
 import shutil
 
 from djangofloor.decorators import connect, SignalRequest
-from djangofloor.tasks import call
+from djangofloor.tasks import call, SESSION
 from updoc.models import RewrittenUrl, UploadDoc, Keyword
 from updoc.process import process_uploaded_file
 from django.utils.translation import ugettext as _
@@ -66,16 +66,16 @@ def process_file(request: SignalRequest, doc_id: int, filename: str, original_fi
         temp_file = open(filename, 'rb')
         doc = UploadDoc.query(request).get(pk=doc_id)
         destination_root = os.path.join(settings.MEDIA_ROOT, 'docs', doc.uid[0:2], doc.uid)
-        process_uploaded_file(doc, temp_file, original_filename=Start oforiginal_filename, destination_root=destination_root)
-        call('df.messages.info', request, html=_('%(name)s has been uploaded and indexed') % {'name': doc.name})
+        process_uploaded_file(doc, temp_file, original_filename=original_filename, destination_root=destination_root)
+        call('df.messages.info', request, sharing=SESSION, html=_('%(name)s has been uploaded and indexed') % {'name': doc.name})
     except Exception as e:
         if destination_root and os.path.isdir(destination_root):
             shutil.rmtree(destination_root)
         UploadDoc.query(request).filter(pk=doc_id).delete()
         if doc:
-            call('df.messages.error', request, html=_('An error happened during the processing of %(name)s: %(error)s') % {'name': doc.name, 'error': str(e)})
+            call('df.messages.error', request, sharing=SESSION, html=_('An error happened during the processing of %(name)s: %(error)s') % {'name': doc.name, 'error': str(e)})
         else:
-            call('df.messages.error', request, html=_('Unable to process query'))
+            call('df.messages.error', request, sharing=SESSION, html=_('Unable to process query'))
     finally:
         if temp_file:
             temp_file.close()
@@ -88,8 +88,9 @@ def process_file(request: SignalRequest, doc_id: int):
     :param request:
     :param doc_id:
     """
-    for obj in UploadDoc.objects.filter(id=doc_id):
-        obj.delete()
+    for doc in UploadDoc.objects.filter(id=doc_id):
+        doc.delete()
+        call('df.messages.info', request, sharing=SESSION, html=_('%(name)s has been deleted') % {'name': doc.name})
 
 if __name__ == '__main__':
     import doctest

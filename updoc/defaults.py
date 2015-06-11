@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 from djangofloor.utils import DirectoryPath
 
 __author__ = 'flanker'
@@ -13,6 +14,7 @@ PUBLIC_INDEX_HELP = 'Are documentations publicly available?'
 PUBLIC_DOCS = '1'
 PUBLIC_DOCS_HELP = 'Are documentations publicly available?'
 WS4REDIS_EMULATION_INTERVAL = 5000
+LOCAL_PATH = os.path.join(os.path.dirname(__file__), '..', 'django_data')
 
 ES_HOSTS = 'localhost:9200'
 ES_INDEX = 'updoc_index'
