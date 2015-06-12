@@ -195,7 +195,7 @@ On Debian 7, you probably should use something like::
 Application
 -----------
 
-Now, it's time to install UpDoc::
+Now, it's time to install UpDoc (use Python3.2 on Debian 7)::
 
         sudo mkdir -p /var/updoc
         sudo adduser --disabled-password updoc
@@ -205,6 +205,7 @@ Now, it's time to install UpDoc::
         sudo -u updoc -i
         SERVICE_NAME=updoc.example.com
         mkvirtualenv updoc -p `which python3.4`
+        workon updoc
         pip install setuptools --upgrade
         pip install pip --upgrade
         pip install updoc psycopg2
@@ -244,6 +245,9 @@ Now, it's time to install UpDoc::
         host = localhost
         port = 5432
         EOF
+
+        # Debian7 only
+        echo "CACHES = {'default': {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}}" > $VIRTUAL_ENV/etc/updoc/settings.py
 
         updoc-manage migrate auth
         # this command will finish in error :(
