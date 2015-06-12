@@ -6,8 +6,8 @@ import codecs
 import os.path
 
 from setuptools import setup, find_packages
-
 from updoc import __version__ as version
+
 
 # get README content from README.md file
 with codecs.open(os.path.join(os.path.dirname(__file__), 'README.md'), encoding='utf-8') as fd:
@@ -21,7 +21,7 @@ entry_points = {
     ]
 }
 
-requirements = ['djangofloor', 'elasticsearch', 'requests', 'gunicorn', 'markdown', ]
+requirements = ['djangofloor', 'elasticsearch', 'requests', 'gunicorn', 'markdown', 'hiredis', ]
 try:
     # noinspection PyPackageRequirements
     import ipaddress

@@ -1,7 +1,9 @@
 # coding=utf-8
-import json
+from django.conf import settings
+from django.contrib.auth.models import Group
+from django.contrib.auth.models import Permission
 from django.core.management import BaseCommand
-import subprocess
+
 from updoc.indexation import create_index, index_archive
 from updoc.models import UploadDoc
 from updoc.progress.progressbar import ProgressBar
@@ -31,11 +33,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         queries = create_index()
         for query in queries:
-            print(query)
-            stdout = subprocess.check_output(query, shell=True, stderr=subprocess.PIPE)
-            message = json.loads(stdout.decode('utf-8'))
-            if message.get('status', 200) >= 300:
-                print(message.get('error'))
+            if query and query.status_code > 400:
+                print(query.status_code, query.text)
             else:
                 print('ok')
         # noinspection PyTypeChecker
@@ -44,3 +43,6 @@ class Command(BaseCommand):
             index_archive(updoc.id, updoc.path)
             pb.add()
         pb.finish()
+        a = Group.objects.get_or_create(name=str(settings.FLOOR_DEFAULT_GROUP_NAME))[0]
+        p = Permission.objects.get(codename='add_uploaddoc')
+        a.permissions.add(p)

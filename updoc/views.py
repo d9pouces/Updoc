@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 import mimetypes
+import datetime
+import uuid
+import zipfile
+
 import os
 import re
 import stat
 import tarfile
 import tempfile
-import datetime
-import uuid
-import zipfile
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
-from django.core.files.uploadedfile import UploadedFile
 from django.core.urlresolvers import reverse
 from django.db.models import F, Count, Q
 from django.http.response import HttpResponseRedirect, Http404, HttpResponse, StreamingHttpResponse, HttpResponseNotModified
@@ -23,19 +22,18 @@ from django.utils.timezone import utc
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
-from django.views.decorators.cache import cache_control, cache_page
+from django.views.decorators.cache import cache_page, never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.static import was_modified_since
 import markdown
-from djangofloor.tasks import call
+from elasticsearch.exceptions import ConnectionError as ESError
 
+from djangofloor.tasks import call
 from djangofloor.views import send_file
 from updoc.forms import UrlRewriteForm, FileUploadForm, UploadApiForm, MetadatadUploadForm, DocSearchForm
 from updoc.indexation import search_archive
 from updoc.models import ProxyfiedHost, RssRoot, RssItem, RewrittenUrl, UploadDoc, Keyword, LastDocs
-from updoc.process import process_new_file
-from updoc.utils import bool_settings, strip_split, list_directory
-from elasticsearch.exceptions import ConnectionError as ESError
+from updoc.utils import strip_split, list_directory
 
 __author__ = 'flanker'
 
@@ -82,7 +80,7 @@ def send_file_replace_url(request, filename, allow_replace=False):
 
 
 def compress_archive(request, doc_id, fmt='zip'):
-    if request.user.is_anonymous() and not bool_settings(settings.PUBLIC_DOCS):
+    if request.user.is_anonymous() and not settings.PUBLIC_DOCS:
         raise Http404
     tmp_file = tempfile.NamedTemporaryFile()
     doc = get_object_or_404(UploadDoc, id=doc_id)
@@ -111,9 +109,9 @@ def compress_archive(request, doc_id, fmt='zip'):
     return response
 
 
-@cache_control(no_cache=True)
+@never_cache
 def index(request):
-    if request.user.is_anonymous() and not bool_settings(settings.PUBLIC_INDEX):
+    if request.user.is_anonymous() and not settings.PUBLIC_INDEX:
         messages.info(request, _('You must be logged to see documentations.'))
         keywords_with_counts, recent_uploads, recent_checked = [], [], []
     else:
@@ -121,7 +119,7 @@ def index(request):
             .order_by('-count')[0:15]
         recent_uploads = UploadDoc.objects.order_by('-upload_time')[0:10]
         recent_checked = LastDocs.query(request).select_related().order_by('-last')[0:20]
-    if request.user.is_anonymous() and not bool_settings(settings.PUBLIC_BOOKMARKS):
+    if request.user.is_anonymous() and not settings.PUBLIC_BOOKMARKS:
         rss_roots = []
     else:
         rss_roots = RssRoot.objects.all().order_by('name')
@@ -131,9 +129,9 @@ def index(request):
     return render_to_response('updoc/index.html', template_values, RequestContext(request))
 
 
-@cache_control(no_cache=True)
+@never_cache
 def show_favorite(request, root_id=None):
-    if request.user.is_anonymous() and not bool_settings(settings.PUBLIC_BOOKMARKS):
+    if request.user.is_anonymous() and not settings.PUBLIC_BOOKMARKS:
         roots = []
         favorites = []
         messages.info(request, _('You must be logged to see this page.'))
@@ -159,7 +157,7 @@ def show_favorite(request, root_id=None):
 def show_proxies(request):
     proxies = ProxyfiedHost.objects.exclude(host='').order_by('priority')
     defaults = '; '.join([x.proxy_str() for x in ProxyfiedHost.objects.filter(host='').order_by('priority')])
-    if request.user.is_anonymous() and not bool_settings(settings.PUBLIC_PROXIES):
+    if request.user.is_anonymous() and not settings.PUBLIC_PROXIES:
         proxies = []
         defaults = ''
     if not defaults:
@@ -168,7 +166,7 @@ def show_proxies(request):
     return render_to_response('proxy.pac', template_values, content_type='application/x-ns-proxy-autoconfig')
 
 
-@cache_control(no_cache=True)
+@never_cache
 def my_docs(request):
     user = request.user if request.user.is_authenticated() else None
     if request.method == 'POST':
@@ -205,7 +203,7 @@ def delete_doc(request, doc_id):
     return HttpResponseRedirect(reverse('updoc.views.my_docs'))
 
 
-@cache_control(no_cache=True)
+@never_cache
 @login_required(login_url='/accounts/login/')
 def upload(request):
     """Index view, displaying and processing a form."""
@@ -232,7 +230,7 @@ def upload(request):
 
 
 @csrf_exempt
-@cache_control(no_cache=True)
+@never_cache
 @permission_required('updoc.add_uploaddoc')
 def upload_doc_progress(request):
     form = FileUploadForm(request.POST, request.FILES)
@@ -301,7 +299,7 @@ def show_doc_alt(request, doc_id, path=''):
 
 @cache_page(60 * 15)
 def show_doc(request, doc_id, path=''):
-    if request.user.is_anonymous() and not bool_settings(settings.PUBLIC_DOCS):
+    if request.user.is_anonymous() and not settings.PUBLIC_DOCS:
         raise Http404
     doc = get_object_or_404(UploadDoc, id=doc_id)
     root_path = doc.path
@@ -345,7 +343,7 @@ def show_doc(request, doc_id, path=''):
     return send_file_replace_url(request, full_path, allow_replace=True)
 
 
-@cache_control(no_cache=True)
+@never_cache
 def show_search_results(request):
     """Index view, displaying and processing a form."""
     search = DocSearchForm(request.GET)
@@ -356,7 +354,7 @@ def show_search_results(request):
         # ElasticSearch
     es_search = []
     es_total = 0
-    if request.user.is_anonymous() and not bool_settings(settings.PUBLIC_INDEX):
+    if request.user.is_anonymous() and not settings.PUBLIC_INDEX:
         messages.info(request, _('You must be logged to search across docs.'))
     else:
         try:
@@ -390,17 +388,17 @@ def show_search_results(request):
     return render_to_response('updoc/my_docs.html', template_values, RequestContext(request))
 
 
-@cache_control(no_cache=True)
+@never_cache
 def show_all_docs(request):
     user = request.user if request.user.is_authenticated() else None
     search = DocSearchForm(request.GET)
-    if request.user.is_anonymous() and not bool_settings(settings.PUBLIC_INDEX):
+    if request.user.is_anonymous() and not settings.PUBLIC_INDEX:
         messages.info(request, _('You must be logged to see documentations.'))
         keywords_with_counts, recent_uploads, recent_checked = [], [], []
     else:
         recent_uploads = UploadDoc.objects.order_by('name')
         recent_checked = LastDocs.objects.filter(user=user).select_related().order_by('-last')[0:40]
-    if request.user.is_anonymous() and not bool_settings(settings.PUBLIC_BOOKMARKS):
+    if request.user.is_anonymous() and not settings.PUBLIC_BOOKMARKS:
         rss_roots = []
     else:
         rss_roots = RssRoot.objects.all().order_by('name')

@@ -6,16 +6,15 @@
 Welcome to Updoc's documentation!
 =================================
 
+
+
 Overview:
 
 :doc:`installation`
     Instruction on how to get the distribution
 
-:doc:`tutorial`
-    Start here for a quick overview
-
-:doc:`api/index`
-    The complete API documentation, organized by modules
+:doc:`configuration`
+    All configuration options
 
 
 Full table of contents
@@ -25,8 +24,7 @@ Full table of contents
    :maxdepth: 4
 
    installation
-   tutorial
-   api/index
+   configuration
 
 Indices and tables
 ==================

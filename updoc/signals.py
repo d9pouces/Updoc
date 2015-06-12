@@ -91,6 +91,7 @@ def process_file(request: SignalRequest, doc_id: int):
     for doc in UploadDoc.objects.filter(id=doc_id):
         doc.delete()
         call('df.messages.info', request, sharing=SESSION, html=_('%(name)s has been deleted') % {'name': doc.name})
+        call('updoc.delete_doc_info', request, sharing=SESSION, doc_id=doc_id)
 
 if __name__ == '__main__':
     import doctest

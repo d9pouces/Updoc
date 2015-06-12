@@ -7,7 +7,7 @@
             <p>
             <ul class="list-unstyled">
                 {% if uploads %}{% for doc in uploads %}
-                    <li>
+                    <li class="updoc_{{ doc.id }}">
                         <a href="{% url 'updoc.views.show_doc' doc_id=doc.id path='' %}">{{ doc.name }}</a>
                         <small>{% trans ', upload date: ' %}{{ doc.upload_time|date:"SHORT_DATETIME_FORMAT" }}</small>
                         {% if doc.keywords.count %}<span class="keywords">({{ doc.keywords.all|join:', ' }})

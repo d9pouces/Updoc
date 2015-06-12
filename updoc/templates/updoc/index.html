@@ -9,7 +9,7 @@
             <p>
             <ul class="list-unstyled">
                 {% for doc in recent_uploads %}
-                    <li><a href="{% url 'updoc.views.show_doc' doc_id=doc.id path='' %}">{{ doc.name }}</a>
+                    <li class="updoc_{{ doc.id }}"><a href="{% url 'updoc.views.show_doc' doc_id=doc.id path='' %}">{{ doc.name }}</a>
                         {% if doc.index %}<span>
                                     [ <a href="{% url 'updoc.views.show_doc' doc_id=doc.id path=doc.index %}">{% trans 'Index' %}</a> ]
                                     </span>{% endif %}
@@ -27,7 +27,7 @@
             <p>
             <ul class="list-unstyled">
                 {% for doc in recent_checked %}
-                    <li>
+                    <li class="updoc_{{ doc.id }}">
                         <a href="{% url 'updoc.views.show_doc' doc_id=doc.doc.id path='' %}">{{ doc.doc.name }}</a>
                         {% if doc.doc.index %}<span class="index_page">
                                     [ <a href="{% url 'updoc.views.show_doc' doc_id=doc.doc.id path=doc.doc.index %}">{% trans 'Index' %}</a> ]

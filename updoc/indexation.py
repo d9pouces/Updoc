@@ -13,6 +13,7 @@ import hashlib
 import os
 from django.conf import settings
 import elasticsearch
+import requests
 
 
 @functools.lru_cache()
@@ -39,13 +40,12 @@ def create_index():
     if not es_hosts():
         return []
     host = es_hosts()[0]
-    queries = []
-    query = "curl -XPUT 'http://%s/%s/'" % (host, settings.ES_INDEX)
-    queries.append(query)
-    query = "curl -XPUT 'http://%s/%s/%s/_mapping' -d" % (host, settings.ES_INDEX, settings.ES_DOC_TYPE)
-    query += '\'{"%s": {"properties": {"content": {"type": "attachment"}}}}\'' % settings.ES_DOC_TYPE
-    queries.append(query)
-    return queries
+    r1 = requests.put('http://%s/%s/' % (host, settings.ES_INDEX))
+    r2 = None
+    if r1.status_code == 200:
+        data = '{"%s": {"properties": {"content": {"type": "attachment"}}}}' % settings.ES_DOC_TYPE
+        r2 = requests.put('http://%s/%s/%s/_mapping' % (host, settings.ES_INDEX, settings.ES_DOC_TYPE), data=data)
+    return r1, r2
 
 
 def index_archive(archive_id, root_path):

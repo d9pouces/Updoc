@@ -138,10 +138,6 @@ def list_directory(root, path, view_name, view_arg='path', view_kwargs=None,
     return directory
 
 
-def bool_settings(value):
-    return str(value).lower() in {'1', 'ok', 'yes', 'true'}
-
-
 def strip_split(value):
     """Split the value on "," and strip spaces of the result.
 

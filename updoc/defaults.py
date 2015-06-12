@@ -3,15 +3,16 @@ import os
 from djangofloor.utils import DirectoryPath
 
 __author__ = 'flanker'
-HOST = 'http://{BIND_ADDRESS}'
-PUBLIC_BOOKMARKS = '1'
-PUBLIC_BOOKMARKS_HELP = 'Are bookmarks publicly available? (1/0)'
-PUBLIC_PROXIES = '1'
-PUBLIC_PROXIES_HELP = 'Is proxy.pac file publicly available? (1/0)'
-PUBLIC_INDEX = '1'
-PUBLIC_INDEX_HELP = 'Are documentations publicly available? (1/0)'
-PUBLIC_DOCS = '1'
-PUBLIC_DOCS_HELP = 'Are documentations publicly available? (1/0)'
+PROTOCOL = 'http'
+HOST = '{PROTOCOL}://{SERVER_NAME}'
+PUBLIC_BOOKMARKS = True
+PUBLIC_BOOKMARKS_HELP = 'Are bookmarks publicly available?'
+PUBLIC_PROXIES = True
+PUBLIC_PROXIES_HELP = 'Is proxy.pac file publicly available?'
+PUBLIC_INDEX = True
+PUBLIC_INDEX_HELP = 'Are documentations publicly available?'
+PUBLIC_DOCS = True
+PUBLIC_DOCS_HELP = 'Are documentations publicly available?'
 WS4REDIS_EMULATION_INTERVAL = 5000
 LOCAL_PATH = os.path.join(os.path.dirname(__file__), '..', 'django_data')
 
@@ -37,6 +38,8 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     'allauth.account.context_processors.account',
     'allauth.socialaccount.context_processors.socialaccount', ]
 
+FLOOR_AUTHENTICATION_HEADER = None
+
 ########################################################################################################################
 # sessions
 ########################################################################################################################
@@ -50,10 +53,10 @@ TEMPLATE_CONTEXT_PROCESSORS = [
 ########################################################################################################################
 # caching
 ########################################################################################################################
-# CACHES = {
-#     'default': {'BACKEND': 'django_redis.cache.RedisCache', 'LOCATION': 'redis://{REDIS_HOST}:{REDIS_PORT}/11',
-#                 'OPTIONS': {'CLIENT_CLASS': 'django_redis.client.DefaultClient', 'PARSER_CLASS': 'redis.connection.HiredisParser', }, },
-#     }
+CACHES = {
+    'default': {'BACKEND': 'django_redis.cache.RedisCache', 'LOCATION': 'redis://{REDIS_HOST}:{REDIS_PORT}/11',
+                'OPTIONS': {'CLIENT_CLASS': 'django_redis.client.DefaultClient', 'PARSER_CLASS': 'redis.connection.HiredisParser', }, },
+    }
 
 ########################################################################################################################
 # django-redis-websocket
@@ -63,8 +66,8 @@ TEMPLATE_CONTEXT_PROCESSORS = [
 # celery
 ########################################################################################################################
 USE_CELERY = True
-
-FLOOR_INSTALLED_APPS = ['updoc', ]
+EXTRA_INSTALLED_APP = 'bootstrap3'
+FLOOR_INSTALLED_APPS = ['updoc', '{EXTRA_INSTALLED_APP}']
 FLOOR_INDEX = 'updoc.views.index'
 FLOOR_URL_CONF = 'updoc.root_urls.urls'
 FLOOR_PROJECT_NAME = 'UpDoc!'
@@ -76,7 +79,7 @@ PIPELINE_JS = {
     'default': {
         'source_filenames': ('js/jquery.min.js', 'bootstrap3/js/bootstrap.min.js', 'js/djangofloor.js', 'js/ws4redis.js',
                              'js/jquery.ui.widget.js', 'js/jquery.iframe-transport.js', 'js/jquery.fileupload.js',
-                             'js/fuelux.min.js', ),
+                             'js/fuelux.min.js', 'js/updoc.js', ),
         'output_filename': 'js/default.js',
     },
     'ie9': {
@@ -94,8 +97,3 @@ PIPELINE_CSS = {
         },
     },
 }
-
-if __name__ == '__main__':
-    import doctest
-
-    doctest.testmod()
