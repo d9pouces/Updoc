@@ -30,6 +30,7 @@ I only present the installation with Apache, but an installation behind nginx sh
 
         sudo apt-get install apache2 libapache2-mod-xsendfile
         sudo a2enmod headers proxy proxy_http
+        sudo a2dissite 000-default.conf
         SERVICE_NAME=updoc.example.com
         cat << EOF | sudo tee /etc/apache2/sites-available/updoc.conf
         <VirtualHost *:80>
@@ -171,8 +172,6 @@ UpDoc uses ElasticSearch to index documents.::
         sudo apt-get update
         sudo apt-get install openjdk-7-jre-headless elasticsearch
         sudo chown elasticsearch:elasticsearch /usr/share/elasticsearch
-        sudo /bin/systemctl daemon-reload
-        sudo /bin/systemctl enable elasticsearch.service
         sudo sed -i -s 's%#LOG_DIR=/var/log/elasticsearch%LOG_DIR=/var/log/elasticsearch%' /etc/default/elasticsearch
         sudo sed -i -s 's%#DATA_DIR=/var/lib/elasticsearch%DATA_DIR=/var/lib/elasticsearch%' /etc/default/elasticsearch
         sudo sed -i -s 's%#WORK_DIR=/tmp/elasticsearch%WORK_DIR=/tmp/elasticsearch%' /etc/default/elasticsearch
@@ -182,6 +181,8 @@ UpDoc uses ElasticSearch to index documents.::
         # if you still use IP v.4
         echo 'JAVA_OPTS="$JAVA_OPTS -Djava.net.preferIPv4Stack=true"' | sudo tee -a /usr/share/elasticsearch/bin/elasticsearch.in.sh
 
+        sudo /bin/systemctl daemon-reload
+        sudo /bin/systemctl enable elasticsearch.service
         sudo /bin/systemctl start elasticsearch.service
 
 
@@ -197,9 +198,9 @@ Application
 Now, it's time to install UpDoc::
 
         sudo mkdir -p /var/updoc
-        adduser --disabled-password updoc
+        sudo adduser --disabled-password updoc
         sudo chown updoc:www-data /var/updoc
-        sudo apt-get install virtualenvwrapper python3.4 supervisor python3.4-dev build-essential postgresql-client libpq-dev
+        sudo apt-get install virtualenvwrapper python3.4 python3.4-dev build-essential postgresql-client libpq-dev
         # application
         sudo -u updoc -i
         SERVICE_NAME=updoc.example.com
@@ -244,7 +245,6 @@ Now, it's time to install UpDoc::
         port = 5432
         EOF
 
-        updoc-manage collectstatic --noinput
         updoc-manage migrate auth
         # this command will finish in error :(
         updoc-manage migrate sites
@@ -262,11 +262,12 @@ Supervisor is required to automatically launch updoc::
         sudo apt-get install supervisor
         cat << EOF | sudo tee /etc/supervisor/conf.d/updoc.conf
         [program:updoc_gunicorn]
-        command = $VIRTUAL_ENV/bin/updoc-gunicorn
+        command = /home/updoc/.virtualenvs/updoc/bin/updoc-gunicorn
         user = updoc
         [program:updoc_celery]
-        command = $VIRTUAL_ENV/bin/updoc-celery worker
+        command = /home/updoc/.virtualenvs/updoc/bin/updoc-celery worker
         user = updoc
         EOF
+        sudo /etc/init.d/supervisor restart
 
 Now, Supervisor should start updoc after a reboot.
