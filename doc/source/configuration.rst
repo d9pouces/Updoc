@@ -1,6 +1,11 @@
 Complete configuration
 ======================
 
+You can look current settings with the following command::
+
+    updoc-manage config
+
+Here is the complete list of settings::
 
     [global]
     server_name = updoc.19pouces.net
@@ -33,3 +38,5 @@ Complete configuration
     password =
     host =
     port =
+
+If you need more complex settings, you can override default values (given in `djangofloor.defaults` and `updoc.defaults`) by creating a file named `[prefix]/etc/updoc/settings.py`.

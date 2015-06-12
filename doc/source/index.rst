@@ -6,7 +6,7 @@
 Welcome to Updoc's documentation!
 =================================
 
-
+UpDoc is a web application for uploading developer documentations.
 
 Overview:
 

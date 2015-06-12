@@ -11,9 +11,9 @@ Let's start by defining some variables::
 Database
 --------
 
-PostgreSQL is traditionnaly a good choice for Django::
+PostgreSQL is often a good choice for Django sites::
 
-        sudo apt-get install postgresql libpq-dev
+        sudo apt-get install postgresql
         echo "CREATE USER updoc" | sudo -u postgres psql -d postgres
         echo "ALTER USER updoc WITH ENCRYPTED PASSWORD 'upd0c-5trongp4ssw0rd'" | sudo -u postgres psql -d postgres
         echo "ALTER ROLE updoc CREATEDB" | sudo -u postgres psql -d postgres
@@ -179,6 +179,7 @@ UpDoc uses ElasticSearch to index documents.::
         sudo sed -i -s 's%#CONF_DIR=/etc/elasticsearch%CONF_DIR=/etc/elasticsearch%' /etc/default/elasticsearch
         sudo sed -i -s 's%#CONF_FILE=/etc/elasticsearch/elasticsearch.yml%CONF_FILE=/etc/elasticsearch/elasticsearch.yml%' /etc/default/elasticsearch
         sudo sed -i -s 's%#network.bind_host: 192.168.0.1%network.bind_host: 127.0.0.1%' /etc/elasticsearch/elasticsearch.yml
+        # if you still use IP v.4
         echo 'JAVA_OPTS="$JAVA_OPTS -Djava.net.preferIPv4Stack=true"' | sudo tee -a /usr/share/elasticsearch/bin/elasticsearch.in.sh
 
         sudo /bin/systemctl start elasticsearch.service
@@ -198,7 +199,7 @@ Now, it's time to install UpDoc::
         sudo mkdir -p /var/updoc
         adduser --disabled-password updoc
         sudo chown updoc:www-data /var/updoc
-        sudo apt-get install virtualenvwrapper python3.4 supervisor python3.4-dev build-essential postgresql-client
+        sudo apt-get install virtualenvwrapper python3.4 supervisor python3.4-dev build-essential postgresql-client libpq-dev
         # application
         sudo -u updoc -i
         SERVICE_NAME=updoc.example.com
