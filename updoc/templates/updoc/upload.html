@@ -33,7 +33,7 @@ NAME=name-version
 KEYWORDS=keyword1,keyword2
 {% if not df_remote_authenticated %}USERNAME=
 PASSWORD=
-{% endif %}curl --data-binary @$FILENAME -u {% if not df_remote_authenticated %}$USERNAME:$PASSWORD --basic{% else %}: --anyauth{% endif %} {{ root_host }}{% url 'updoc.views.upload_doc_api' %}?filename=$FILENAME&amp;name=$NAME&amp;keywords=$KEYWORDS</pre>
+{% endif %}curl --data-binary @$FILENAME -u {% if not df_remote_authenticated %}$USERNAME:$PASSWORD --basic{% else %}: --anyauth{% endif %} {{ root_host }}{% url 'updoc.views.upload_doc_api' %}?filename=$FILENAME\&amp;name=$NAME\&amp;keywords=$KEYWORDS</pre>
 
     <script>
         $(function () {
