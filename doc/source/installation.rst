@@ -31,6 +31,7 @@ I only present the installation with Apache, but an installation behind nginx sh
         sudo apt-get install apache2 libapache2-mod-xsendfile
         sudo a2enmod headers proxy proxy_http
         sudo a2dissite 000-default.conf
+        # sudo a2dissite 000-default on Debian 7
         SERVICE_NAME=updoc.example.com
         cat << EOF | sudo tee /etc/apache2/sites-available/updoc.conf
         <VirtualHost *:80>
@@ -81,7 +82,7 @@ If you want Kerberos authentication and SSL::
             ServerName $SERVICE_NAME
             RedirectPermanent / https://$SERVICE_NAME/
         </VirtualHost>
-        <VirtualHost *:80>
+        <VirtualHost *:443>
             ServerName $SERVICE_NAME
             SSLCertificateFile $PEM
             SSLEngine on
