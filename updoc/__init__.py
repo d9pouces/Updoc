@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 __author__ = 'flanker'
-__version__ = '1.6.7'
+__version__ = '1.6.8'

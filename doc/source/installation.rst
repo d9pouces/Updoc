@@ -250,10 +250,6 @@ Now, it's time to install UpDoc (use Python3.2 on Debian 7)::
         # Debian7 only
         echo "CACHES = {'default': {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}}" > $VIRTUAL_ENV/etc/updoc/settings.py
 
-        updoc-manage migrate auth
-        # this command will finish in error :(
-        updoc-manage migrate sites
-        updoc-manage migrate auth
         updoc-manage migrate
         updoc-manage init_es
         updoc-manage collectstatic --noinput

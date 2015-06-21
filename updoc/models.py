@@ -13,11 +13,11 @@ import shutil
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from updoc.indexation import delete_archive
+
 
 def query(cls, request):
     if isinstance(request, HttpRequest):
@@ -69,7 +69,7 @@ class UploadDoc(models.Model):
     name = models.CharField(_('title'), max_length=255, db_index=True, default='')
     path = models.CharField(_('path'), max_length=255, db_index=True)
     keywords = models.ManyToManyField(Keyword, db_index=True, blank=True)
-    user = models.ForeignKey(User, db_index=True, null=True, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, db_index=True, null=True, blank=True)
     upload_time = models.DateTimeField(_('upload time'), db_index=True, auto_now_add=True)
 
     def __str__(self):
@@ -120,7 +120,7 @@ class UploadDoc(models.Model):
 
 class LastDocs(models.Model):
     doc = models.ForeignKey(UploadDoc, db_index=True)
-    user = models.ForeignKey(User, db_index=True, null=True, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, db_index=True, null=True, blank=True)
     count = models.IntegerField(db_index=True, blank=True, default=1)
     last = models.DateTimeField(_('last'), db_index=True, auto_now=True)
 
@@ -130,7 +130,7 @@ class LastDocs(models.Model):
 
 
 class RewrittenUrl(models.Model):
-    user = models.ForeignKey(User, db_index=True, null=True, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, db_index=True, null=True, blank=True)
     src = models.CharField(_('Original URL'), db_index=True, max_length=255)
     dst = models.CharField(_('New URL'), db_index=True, max_length=255, blank=True, default='')
 
@@ -144,6 +144,7 @@ class RewrittenUrl(models.Model):
     @classmethod
     def query(cls, request):
         return query(cls, request)
+
 
 class ProxyfiedHost(models.Model):
     host = models.CharField(_('URL to proxify'), db_index=True, max_length=255, blank=True, default='',
