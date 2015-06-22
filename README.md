@@ -15,3 +15,4 @@ Main features:
 RSS feeds can be added as bookmarks folders in Firefox, so it is very easy to share sets of bookmarks in a company.
 Archives are fully indexed, so you can search any text inside all documentations, or inside a specific one.
 
+You can find a complete documentation here: http://updoc.readthedocs.org/en/latest/ .
