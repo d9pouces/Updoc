@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import locale
+
 __author__ = 'flanker'
 import os
 import datetime
@@ -115,7 +117,9 @@ def list_directory(root, path, view_name, view_arg='path', view_kwargs=None,
             dir_view_kwargs[dir_view_arg] = full_path[path_len + 1:]
             date = datetime.datetime.fromtimestamp(os.path.getmtime(full_path))
             directory.append(Element(icon, '..', reverse(dir_view_name, kwargs=dir_view_kwargs), None, date))
-        for name in os.listdir(dir_path):
+        listdir = os.listdir(dir_path)
+        listdir.sort(cmp=locale.strcoll)
+        for name in listdir:
             if not show_hidden and name and name[0] == '.':
                 continue
             full_path = os.path.abspath(os.path.join(dir_path, name))

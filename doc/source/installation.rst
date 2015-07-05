@@ -108,6 +108,7 @@ If you want Kerberos authentication and SSL::
                 KrbMethodNegotiate On
                 KrbSaveCredentials On
                 Require valid-user
+                RequestHeader set REMOTE_USER %{REMOTE_USER}s
             </Location>
             <Location /updoc/show_alt/>
                 Order deny,allow
