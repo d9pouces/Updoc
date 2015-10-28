@@ -131,7 +131,6 @@ def process_new_file(uploaded_file: UploadedFile, request: HttpRequest, obj: Upl
     return obj
 
 
-
 def process_uploaded_file(doc: UploadDoc, temp_file, original_filename: str, destination_root: str):
     """
     * Clean previous content if needed

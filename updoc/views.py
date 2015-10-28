@@ -237,19 +237,19 @@ def upload_doc_progress(request):
     if not form.is_valid():
         raise PermissionDenied
     uploaded_file = request.FILES['file']
-    temp_file = tempfile.NamedTemporaryFile(mode='wb', dir=settings.FILE_UPLOAD_TEMP_DIR, delete=False)
+    tmp_file = tempfile.NamedTemporaryFile(mode='wb', dir=settings.FILE_UPLOAD_TEMP_DIR, delete=False)
     chunk = uploaded_file.read(16384)
     while chunk:
-        temp_file.write(chunk)
+        tmp_file.write(chunk)
         chunk = uploaded_file.read(16384)
-    temp_file.flush()
+    tmp_file.flush()
 
     basename = os.path.basename(uploaded_file.name).rpartition('.')[0]
     if basename.endswith('.tar'):
         basename = basename[:-4]
     doc = UploadDoc(name=basename, user=request.user if request.user.is_authenticated() else None, uid=str(uuid.uuid1()))
     doc.save()
-    call('updoc.process_file', request, doc_id=doc.id, filename=temp_file.name, original_filename=uploaded_file.name)
+    call('updoc.process_file', request, doc_id=doc.id, filename=tmp_file.name, original_filename=uploaded_file.name)
     # offer a correct name for the newly uploaded document
     form = MetadatadUploadForm(initial={'pk': doc.pk, 'name': basename, })
     template_values = {'form': form, }

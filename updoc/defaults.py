@@ -35,8 +35,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     'django.contrib.messages.context_processors.messages',
     'djangofloor.context_processors.context_base',
     'updoc.context_processors.most_checked',
-    'allauth.account.context_processors.account',
-    'allauth.socialaccount.context_processors.socialaccount', ]
+    ]
 
 FLOOR_AUTHENTICATION_HEADER = None
 
