@@ -3,17 +3,17 @@
 
 """
 import functools
-from updoc.utils import strip_split
-
-__author__ = 'flanker'
-
 import base64
 import codecs
 import hashlib
 import os
-from django.conf import settings
 import elasticsearch
 import requests
+from  elasticsearch import helpers
+from django.conf import settings
+from updoc.utils import strip_split
+
+__author__ = 'flanker'
 
 
 @functools.lru_cache()
@@ -87,8 +87,14 @@ def delete_archive(archive_id):
     if not es_hosts():
         return
     es = elasticsearch.Elasticsearch(es_hosts())
-    es_query = {'query': {'term': {'archive_id': archive_id, }}, }
-    es.delete_by_query(index=settings.ES_INDEX, doc_type=settings.ES_DOC_TYPE, body=es_query)
+    while True:
+        es_query = {'query': {'filtered': {'filter': {'term': {'archive_id': archive_id}}}}, 'size': 1000, '_source': {'include': ['archive_id', 'path']}, }
+        values = es.search(index=settings.ES_INDEX, doc_type=settings.ES_DOC_TYPE, body=es_query)
+        ids = [hit['_id'] for hit in values.get('hits', {}).get('hits', [])]
+        if not ids:
+            break
+        actions = [{'delete': {'_index': settings.ES_INDEX, '_id': id_}} for id_ in ids]
+        helpers.bulk(es, actions, index=settings.ES_INDEX, refresh=True, doc_type=settings.ES_DOC_TYPE)
 
 
 def search_archive(query, archive_id=None, extension=None):
@@ -106,10 +112,9 @@ def search_archive(query, archive_id=None, extension=None):
     if extension:
         es_query['query']['filtered']['filter'].setdefault('term', {}).update({'extension': extension})
     values = es.search(index=settings.ES_INDEX, doc_type=settings.ES_DOC_TYPE, body=es_query)
-    result_objs = []
-    for hit in values.get('hits', {}).get('hits', []):
-        result_objs.append((hit['_source']['archive_id'], hit['_source']['path']))
+    result_objs = [(hit['_source']['archive_id'], hit['_source']['path']) for hit in values.get('hits', {}).get('hits', [])]
     return result_objs, values['hits']['total']
+
 
 if __name__ == '__main__':
     import doctest

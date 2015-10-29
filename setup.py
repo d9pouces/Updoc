@@ -21,7 +21,7 @@ entry_points = {
     ]
 }
 
-requirements = ['djangofloor', 'elasticsearch', 'requests', 'gunicorn', 'markdown', 'hiredis', ]
+requirements = ['djangofloor', 'elasticsearch>=2.0.0', 'requests', 'gunicorn', 'markdown', 'hiredis', ]
 try:
     # noinspection PyPackageRequirements
     import ipaddress
