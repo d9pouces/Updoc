@@ -87,14 +87,12 @@ def delete_archive(archive_id):
     if not es_hosts():
         return
     es = elasticsearch.Elasticsearch(es_hosts())
-    while True:
-        es_query = {'query': {'filtered': {'filter': {'term': {'archive_id': archive_id}}}}, 'size': 1000, '_source': {'include': ['archive_id', 'path']}, }
-        values = es.search(index=settings.ES_INDEX, doc_type=settings.ES_DOC_TYPE, body=es_query)
-        ids = [hit['_id'] for hit in values.get('hits', {}).get('hits', [])]
-        if not ids:
-            break
-        actions = [{'delete': {'_index': settings.ES_INDEX, '_id': id_}} for id_ in ids]
-        helpers.bulk(es, actions, index=settings.ES_INDEX, refresh=True, doc_type=settings.ES_DOC_TYPE)
+    es_query = {'query': {'filtered': {'filter': {'term': {'archive_id': archive_id}}}}, 'size': 100000, '_source': {'include': ['archive_id', 'path']}, }
+    values = es.search(index=settings.ES_INDEX, doc_type=settings.ES_DOC_TYPE, body=es_query)
+    ids = [hit['_id'] for hit in values.get('hits', {}).get('hits', [])]
+    if ids:
+        actions = [{'delete': {'_id': id_}} for id_ in ids]
+        helpers.bulk(es, actions, index=settings.ES_INDEX, refresh=True, doc_type=settings.ES_DOC_TYPE, stats_only=True)
 
 
 def search_archive(query, archive_id=None, extension=None):
