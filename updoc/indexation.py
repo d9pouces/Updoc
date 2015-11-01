@@ -9,7 +9,7 @@ import hashlib
 import os
 import elasticsearch
 import requests
-from  elasticsearch import helpers
+from elasticsearch import helpers
 from django.conf import settings
 from updoc.utils import strip_split
 
