@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-__author__ = 'flanker'
 from djangofloor.iniconf import OptionParser, bool_setting
+__author__ = 'flanker'
+
 
 def x_accel_converter(value):
     if bool_setting(value):
@@ -20,6 +21,7 @@ INI_MAPPING = [
     OptionParser('X_ACCEL_REDIRECT', 'global.x_accel_converter', x_accel_converter),
     OptionParser('FLOOR_AUTHENTICATION_HEADER', 'global.remote_user_header'),
     OptionParser('EXTRA_INSTALLED_APP', 'global.extra_app'),
+    OptionParser('FLOOR_DEFAULT_GROUP_NAME', 'global.default_group'),
 
     OptionParser('PUBLIC_BOOKMARKS', 'global.public_bookmarks', bool_setting),
     OptionParser('PUBLIC_PROXIES', 'global.public_proxies', bool_setting),
