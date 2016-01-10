@@ -67,15 +67,18 @@ def process_file(request: SignalRequest, doc_id: int, filename: str, original_fi
         doc = UploadDoc.query(request).get(pk=doc_id)
         destination_root = os.path.join(settings.MEDIA_ROOT, 'docs', doc.uid[0:2], doc.uid)
         process_uploaded_file(doc, temp_file, original_filename=original_filename, destination_root=destination_root)
-        call('df.messages.info', request, sharing=SESSION, html=_('%(name)s has been uploaded and indexed') % {'name': doc.name})
+        call('df.notify.info', request, sharing=SESSION,
+             message=_('%(name)s has been uploaded and indexed') % {'name': doc.name})
     except Exception as e:
         if destination_root and os.path.isdir(destination_root):
             shutil.rmtree(destination_root)
         UploadDoc.query(request).filter(pk=doc_id).delete()
         if doc:
-            call('df.messages.error', request, sharing=SESSION, html=_('An error happened during the processing of %(name)s: %(error)s') % {'name': doc.name, 'error': str(e)})
+            call('df.notify.error', request, sharing=SESSION,
+                 message=_('An error happened during the processing of %(name)s: %(error)s') %
+                 {'name': doc.name, 'error': str(e)})
         else:
-            call('df.messages.error', request, sharing=SESSION, html=_('Unable to process query'))
+            call('df.notify.error', request, sharing=SESSION, message=_('Unable to process query'))
     finally:
         if temp_file:
             temp_file.close()
@@ -90,7 +93,7 @@ def process_file(request: SignalRequest, doc_id: int):
     """
     for doc in UploadDoc.objects.filter(id=doc_id):
         doc.delete()
-        call('df.messages.info', request, sharing=SESSION, html=_('%(name)s has been deleted') % {'name': doc.name})
+        call('df.notify.info', request, sharing=SESSION, message=_('%(name)s has been deleted') % {'name': doc.name})
         call('updoc.delete_doc_info', request, sharing=SESSION, doc_id=doc_id)
 
 if __name__ == '__main__':

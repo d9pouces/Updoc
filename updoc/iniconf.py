@@ -22,6 +22,7 @@ INI_MAPPING = [
     OptionParser('FLOOR_AUTHENTICATION_HEADER', 'global.remote_user_header'),
     OptionParser('EXTRA_INSTALLED_APP', 'global.extra_app'),
     OptionParser('FLOOR_DEFAULT_GROUP_NAME', 'global.default_group'),
+    OptionParser('DEBUG', 'global.debug', converter=bool_setting),
 
     OptionParser('PUBLIC_BOOKMARKS', 'global.public_bookmarks', bool_setting),
     OptionParser('PUBLIC_PROXIES', 'global.public_proxies', bool_setting),
