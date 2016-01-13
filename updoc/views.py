@@ -35,7 +35,7 @@ from updoc.indexation import search_archive
 from updoc.models import ProxyfiedHost, RssRoot, RssItem, RewrittenUrl, UploadDoc, Keyword, LastDocs
 from updoc.utils import strip_split, list_directory
 
-__author__ = 'flanker'
+__author__ = 'Matthieu Gallet'
 
 
 range_re = re.compile(r'bytes=(\d+)-(\d+)')

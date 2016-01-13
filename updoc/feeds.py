@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from updoc.models import RssItem, UploadDoc, LastDocs, Keyword
 from updoc.models import RssRoot
 
-__author__ = 'flanker'
+__author__ = 'Matthieu Gallet'
 
 
 class KeywordFeed(Feed):

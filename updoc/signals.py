@@ -11,7 +11,7 @@ from updoc.models import RewrittenUrl, UploadDoc, Keyword
 from updoc.process import process_uploaded_file
 from django.utils.translation import ugettext as _
 
-__author__ = 'flanker'
+__author__ = 'Matthieu Gallet'
 
 
 @connect(path='updoc.delete_url_confirm')

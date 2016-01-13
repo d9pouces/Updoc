@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from djangofloor.iniconf import OptionParser, bool_setting
-__author__ = 'flanker'
+__author__ = 'Matthieu Gallet'
 
 
 def x_accel_converter(value):
@@ -34,6 +34,7 @@ INI_MAPPING = [
 
     OptionParser('REDIS_HOST', 'redis.host'),
     OptionParser('REDIS_PORT', 'redis.port'),
+    OptionParser('BROKER_DB', 'redis.broker_db', int),
 
     OptionParser('DATABASE_ENGINE', 'database.engine'),
     OptionParser('DATABASE_NAME', 'database.name'),

@@ -2,7 +2,7 @@
 import os
 from djangofloor.utils import DirectoryPath
 
-__author__ = 'flanker'
+__author__ = 'Matthieu Gallet'
 PROTOCOL = 'http'
 HOST = '{PROTOCOL}://{SERVER_NAME}'
 PUBLIC_BOOKMARKS = True
@@ -15,7 +15,7 @@ PUBLIC_DOCS = True
 PUBLIC_DOCS_HELP = 'Are documentations publicly available?'
 WS4REDIS_EMULATION_INTERVAL = 5000
 LOCAL_PATH = os.path.join(os.path.dirname(__file__), '..', 'django_data')
-
+BIND_ADDRESS = 'localhost:8129'
 ES_HOSTS = 'localhost:9200'
 ES_INDEX = 'updoc_index'
 ES_TIKA_EXTENSIONS = 'pdf,html,doc,odt,rtf,epub'

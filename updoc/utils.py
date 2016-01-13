@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import locale
 
-__author__ = 'flanker'
+__author__ = 'Matthieu Gallet'
 import os
 import datetime
 from django.core.urlresolvers import reverse

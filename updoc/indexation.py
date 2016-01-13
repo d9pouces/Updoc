@@ -13,7 +13,7 @@ from elasticsearch import helpers
 from django.conf import settings
 from updoc.utils import strip_split
 
-__author__ = 'flanker'
+__author__ = 'Matthieu Gallet'
 
 
 @functools.lru_cache()

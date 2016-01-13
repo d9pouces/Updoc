@@ -2,7 +2,7 @@
 """
 this module define which extensions own an icon.
 """
-__author__ = 'flanker'
+__author__ = 'Matthieu Gallet'
 
 ICONS = {
     'application-msword': {'docx', 'doc', 'dot', 'dotm', 'dotx'},

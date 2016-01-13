@@ -1,8 +1,6 @@
-.. Updoc documentation master file, created by
+{% extends 'djangofloor/dev/doc/source/index.rst' %}
 
-Welcome to UpDoc!'s documentation!
-==================================
-
+{% block description %}
 UpDoc is a web application for uploading developer documentations, with a few interesting tips.
 
 .. image:: _static/index.png
@@ -19,40 +17,12 @@ Main features:
 RSS feeds can be added as bookmarks folders in Firefox, so it is very easy to share sets of bookmarks in a company.
 Archives are fully indexed, so you can search any text inside all documentations, or inside a specific one.
 
+{% endblock %}
 
-:doc:`installation`
-    Instruction on how to get the distribution
-
-:doc:`configuration`
-    All configuration options
-
-:doc:`debian`
-    Packaging UpDoc! for Debian
-
-
+{% block screenshots %}
 
 .. image:: _static/dirlist.png
 
 .. image:: _static/upload.png
 
-.. image:: _static/bookmarks.png
-
-
-Full table of contents
-======================
-
-.. toctree::
-   :maxdepth: 1
-
-   installation
-   configuration
-   debian
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
+.. image:: _static/bookmarks.png{% endblock %}

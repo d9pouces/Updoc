@@ -2,7 +2,7 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-__author__ = 'flanker'
+__author__ = 'Matthieu Gallet'
 
 
 class FileUploadForm(forms.Form):

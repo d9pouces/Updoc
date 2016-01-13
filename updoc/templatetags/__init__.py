@@ -1,2 +1,2 @@
 # -*- coding: utf-8 -*-
-__author__ = 'flanker'
+__author__ = 'Matthieu Gallet'

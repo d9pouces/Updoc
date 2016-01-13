@@ -1,32 +1,52 @@
-Installing / Upgrading
-======================
+Installation
+============
 
-Here is a simple tutorial to install Updoc on a basic Debian/Linux installation.
+Like many Python packages, you can use several methods to install UpDoc!.
+The following packages are required:
+
+  * setuptools >= 3.0
+  * djangofloor >= 0.17.0  * elasticsearch>=2.0.0
+  * requests
+  * markdown
+  * hiredis
+
+Installing or Upgrading
+-----------------------
+
+Here is a simple tutorial to install UpDoc! on a basic Debian/Linux installation.
 You should easily adapt it on a different Linux or Unix flavor.
 
-Let's start by defining some variables::
-
-        SERVICE_NAME=updoc.example.com
 
 Database
 --------
 
-PostgreSQL is often a good choice for Django sites::
+PostgreSQL is often a good choice for Django sites:
 
-        sudo apt-get install postgresql
-        echo "CREATE USER updoc" | sudo -u postgres psql -d postgres
-        echo "ALTER USER updoc WITH ENCRYPTED PASSWORD 'upd0c-5trongp4ssw0rd'" | sudo -u postgres psql -d postgres
-        echo "ALTER ROLE updoc CREATEDB" | sudo -u postgres psql -d postgres
-        echo "CREATE DATABASE updoc OWNER updoc" | sudo -u postgres psql -d postgres
+.. code-block:: bash
 
-Updoc also requires Redis::
+   sudo apt-get install postgresql
+   echo "CREATE USER updoc" | sudo -u postgres psql -d postgres
+   echo "ALTER USER updoc WITH ENCRYPTED PASSWORD '5trongp4ssw0rd'" | sudo -u postgres psql -d postgres
+   echo "ALTER ROLE updoc CREATEDB" | sudo -u postgres psql -d postgres
+   echo "CREATE DATABASE updoc OWNER updoc" | sudo -u postgres psql -d postgres
 
-        sudo apt-get install redis-server
+
+UpDoc! also requires Redis:
+
+.. code-block:: bash
+
+    sudo apt-get install redis-server
+
+
+
+
 
 Apache
 ------
 
-I only present the installation with Apache, but an installation behind nginx should be similar.::
+I only present the installation with Apache, but an installation behind nginx should be similar.
+You cannot use different server names for browsing your mirror. If you use `updoc.example.org`
+in the configuration, you cannot use its IP address to access the website.
 
         sudo apt-get install apache2 libapache2-mod-xsendfile
         sudo a2enmod headers proxy proxy_http

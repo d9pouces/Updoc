@@ -12,7 +12,7 @@ import os
 from updoc.process import process_new_file
 from updoc.models import Keyword
 
-__author__ = 'flanker'
+__author__ = 'Matthieu Gallet'
 
 
 class AddPackage(BaseCommand):

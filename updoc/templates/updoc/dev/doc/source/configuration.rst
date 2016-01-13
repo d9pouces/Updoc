@@ -1,0 +1,9 @@
+{% extends 'djangofloor/dev/doc/source/configuration.rst' %}
+{% block extra_ini_configuration %}    public_bookmarks = true
+    public_proxies = true
+    public_index = true
+    public_docs = true
+    [elasticsearch]
+    hosts = 127.0.0.1:9200
+    index = updoc
+{% endblock %}

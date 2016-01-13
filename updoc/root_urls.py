@@ -4,7 +4,7 @@ from django.conf.urls import patterns, include, url
 from updoc.feeds import LastDocsFeed, FavoritesFeed, KeywordFeed
 from updoc.feeds import MostViewedDocsFeed
 
-__author__ = 'flanker'
+__author__ = 'Matthieu Gallet'
 
 urls = [
     url(r'^rss/favorites/(?P<root_id>\d+)/', FavoritesFeed(), name='favorites'),
@@ -15,5 +15,5 @@ urls = [
     url(r'^upload\.html$', 'updoc.views.upload'),
     url(r'^upload_doc_progress\.html$', 'updoc.views.upload_doc_progress'),
     url(r'^upload_api\.html', 'updoc.views.upload_doc_api'),
-    ('^index$', 'updoc.views.index'),
+    url('^index$', 'updoc.views.index'),
 ]

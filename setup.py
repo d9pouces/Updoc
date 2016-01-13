@@ -21,7 +21,7 @@ entry_points = {
     ]
 }
 
-requirements = ['djangofloor', 'elasticsearch>=2.0.0', 'requests', 'gunicorn', 'markdown', 'hiredis', ]
+requirements = ['djangofloor', 'elasticsearch>=2.0.0', 'requests', 'markdown', 'hiredis', ]
 try:
     # noinspection PyPackageRequirements
     import ipaddress
@@ -34,7 +34,7 @@ setup(
     version=version,
     description='Upload HTML documentations and share bookmarks',
     long_description=long_description,
-    author='flanker',
+    author='Matthieu Gallet',
     author_email='flanker@19pouces.net',
     license='CeCILL-B',
     url='https://github.com/d9pouces/Updoc',

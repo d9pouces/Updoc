@@ -9,7 +9,7 @@ from updoc.models import UploadDoc
 from updoc.progress.progressbar import ProgressBar
 from updoc.progress.widgets import Bar, Percentage
 
-__author__ = 'flanker'
+__author__ = 'Matthieu Gallet'
 
 
 class ImportProgressBar(ProgressBar):

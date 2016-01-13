@@ -4,7 +4,7 @@ from django.conf import settings
 from updoc import __version__
 from updoc.models import LastDocs
 
-__author__ = 'flanker'
+__author__ = 'Matthieu Gallet'
 
 
 def most_checked(request):

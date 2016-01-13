@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from updoc.models import ProxyfiedHost, RssRoot, RssItem, RewrittenUrl
 
-__author__ = 'flanker'
+__author__ = 'Matthieu Gallet'
 
 from django.contrib.admin import site, ModelAdmin, TabularInline
 from django.contrib.auth.models import Group

@@ -15,7 +15,7 @@ from updoc.indexation import index_archive, delete_archive
 from updoc.models import UploadDoc
 
 
-__author__ = 'flanker'
+__author__ = 'Matthieu Gallet'
 
 
 def open_with_dir(dst_path: str, mode='wb'):

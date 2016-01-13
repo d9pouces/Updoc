@@ -3,7 +3,7 @@ from django.http import HttpRequest
 from django.utils.functional import cached_property
 from djangofloor.decorators import SignalRequest
 
-__author__ = 'flanker'
+__author__ = 'Matthieu Gallet'
 
 # noinspection PyPackageRequirements
 import ipaddress
