@@ -1,4 +1,4 @@
-.. Updoc documentation master file, created by
+.. UpDoc! documentation master file, created by
 
 Welcome to UpDoc!'s documentation!
 ==================================
