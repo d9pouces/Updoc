@@ -60,7 +60,7 @@ Here is the complete list of settings:
   # the name of your webserver (should be a DNS name, but can be an IP address)
   time_zone = Europe/Paris
   # A string representing the time zone for this installation, or None. 
-  x_accel_converter = false
+  x_accel_converter = False
   # Nginx only. Set it to "true" or "false"
   x_send_file = False
   # Apache and LightHTTPd only. Use the XSendFile header for sending large files.

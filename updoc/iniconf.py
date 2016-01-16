@@ -10,7 +10,7 @@ def x_accel_converter(value):
 
 
 INI_MAPPING = DEFAULT + [
-    OptionParser('USE_X_SEND_FILE', 'global.x_send_file', bool_setting),
+    OptionParser('USE_X_SEND_FILE', 'global.x_send_file', bool_setting, doc_default_value=True),
     OptionParser('X_ACCEL_REDIRECT', 'global.x_accel_converter', x_accel_converter,
                  help_str='Nginx only. Set it to "true" or "false"', to_str=lambda x: 'True' if x else 'False'),
     OptionParser('PUBLIC_BOOKMARKS', 'global.public_bookmarks', bool_setting),

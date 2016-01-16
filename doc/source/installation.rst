@@ -55,6 +55,8 @@ in the configuration, you cannot use its IP address to access the website.
     sudo a2dissite 000-default.conf
     # sudo a2dissite 000-default on Debian7
     SERVICE_NAME=updoc.example.org
+    PROJECT_NAME=updoc
+    BIND_ADRESS=localhost:8129
     cat << EOF | sudo tee /etc/apache2/sites-available/updoc.conf
     <VirtualHost *:80>
         ServerName $SERVICE_NAME
@@ -92,6 +94,8 @@ If you want to use SSL:
 
     sudo apt-get install libapache2-mod-auth-kerb
     KEYTAB=/etc/apache2/http.`hostname -f`.keytab
+    PROJECT_NAME=updoc
+    BIND_ADRESS=localhost:8129
     # ok, I assume that you already have your keytab
     sudo a2enmod auth_kerb
     cat << EOF | sudo ktutil
@@ -237,6 +241,8 @@ Now, it's time to install UpDoc!:
 .. code-block:: bash
 
     SERVICE_NAME=updoc.example.org
+    PROJECT_NAME=updoc
+    BIND_ADRESS=localhost:8129
     sudo mkdir -p /var/updoc
     sudo adduser --disabled-password updoc
     sudo chown updoc:www-data /var/updoc
@@ -253,18 +259,18 @@ Now, it's time to install UpDoc!:
     cat << EOF > $VIRTUAL_ENV/etc/updoc/settings.ini
     [database]
     engine = django.db.backends.postgresql_psycopg2
-    name = updoc
-    user = updoc
-    password = 5trongp4ssw0rd
     host = localhost
+    name = $PROJECT_NAME
+    password = 5trongp4ssw0rd
     port = 5432
+    user = $PROJECT_NAME
     [elasticsearch]
     hosts = localhost:9200
     index = updoc_index
     [global]
     admin_email = admin@$SERVICE_NAME
-    bind_address = localhost:8129
-    data_path = /var/updoc
+    bind_address = $BIND_ADDRESS
+    data_path = /var/$PROJECT_NAME
     debug = False
     default_group = Users
     language_code = fr-fr
@@ -278,7 +284,7 @@ Now, it's time to install UpDoc!:
     server_name = $SERVICE_NAME
     time_zone = Europe/Paris
     x_accel_converter = False
-    x_send_file =  true
+    x_send_file = True
     [redis]
     broker_db = 13
     host = localhost
