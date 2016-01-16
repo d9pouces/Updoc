@@ -251,27 +251,6 @@ Now, it's time to install UpDoc!:
     pip install updoc psycopg2
     mkdir -p $VIRTUAL_ENV/etc/updoc
     cat << EOF > $VIRTUAL_ENV/etc/updoc/settings.ini
-    [global]
-    server_name = $SERVICE_NAME
-    protocol = http
-    ; use https if your Apache uses SSL
-    bind_address = localhost:8129
-    data_path = /var/updoc
-    admin_email = admin@$SERVICE_NAME
-    time_zone = Europe/Paris
-    language_code = fr-fr
-    x_send_file =  true
-    x_accel_converter = false
-    debug = false
-    remote_user_header = HTTP_REMOTE_USER
-    ; leave it blank if you do not use kerberos
-     public_bookmarks = true
-    public_proxies = true
-    public_index = true
-    public_docs = true
-    [elasticsearch]
-    hosts = 127.0.0.1:9200
-    index = updoc
     [database]
     engine = django.db.backends.postgresql_psycopg2
     name = updoc
@@ -279,10 +258,31 @@ Now, it's time to install UpDoc!:
     password = 5trongp4ssw0rd
     host = localhost
     port = 5432
+    [elasticsearch]
+    hosts = localhost:9200
+    index = updoc_index
+    [global]
+    admin_email = admin@$SERVICE_NAME
+    bind_address = localhost:8129
+    data_path = /var/updoc
+    debug = False
+    default_group = Users
+    language_code = fr-fr
+    protocol = http
+    public_bookmarks = True
+    public_docs = True
+    public_index = True
+    public_proxies = True
+    remote_user_header = HTTP_REMOTE_USER
+    secret_key = 5I0zJQuHzqcACuzGIwTAC3cV6RlZpjV8MNUETYd5KZXg6UoI4G
+    server_name = $SERVICE_NAME
+    time_zone = Europe/Paris
+    x_accel_converter = False
+    x_send_file =  true
     [redis]
-        host = localhost
-        port = 6379
-        broker_db = 13
+    broker_db = 13
+    host = localhost
+    port = 6379
     EOF
     updoc-manage migrate
     updoc-manage collectstatic --noinput

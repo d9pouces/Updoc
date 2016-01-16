@@ -10,14 +10,16 @@ PUBLIC_BOOKMARKS_HELP = 'Are bookmarks publicly available?'
 PUBLIC_PROXIES = True
 PUBLIC_PROXIES_HELP = 'Is proxy.pac file publicly available?'
 PUBLIC_INDEX = True
-PUBLIC_INDEX_HELP = 'Are documentations publicly available?'
+PUBLIC_INDEX_HELP = 'Is the list of all documentations publicly available?'
 PUBLIC_DOCS = True
 PUBLIC_DOCS_HELP = 'Are documentations publicly available?'
 WS4REDIS_EMULATION_INTERVAL = 5000
 LOCAL_PATH = os.path.join(os.path.dirname(__file__), '..', 'django_data')
 BIND_ADDRESS = 'localhost:8129'
 ES_HOSTS = 'localhost:9200'
+ES_HOSTS_HELP = 'IP:port of your ElasticSearch database, leave it empty if you do not use ElasticSearch'
 ES_INDEX = 'updoc_index'
+ES_INDEX_HELP = 'name of your ElasticSearch index'
 ES_TIKA_EXTENSIONS = 'pdf,html,doc,odt,rtf,epub'
 ES_MAX_SIZE = 30 * 1024 * 1024
 ES_DOC_TYPE = 'document'
@@ -37,7 +39,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     'updoc.context_processors.most_checked',
     ]
 
-FLOOR_AUTHENTICATION_HEADER = None
+# FLOOR_AUTHENTICATION_HEADER = None
 
 ########################################################################################################################
 # sessions
@@ -54,7 +56,8 @@ FLOOR_AUTHENTICATION_HEADER = None
 ########################################################################################################################
 CACHES = {
     'default': {'BACKEND': 'django_redis.cache.RedisCache', 'LOCATION': 'redis://{REDIS_HOST}:{REDIS_PORT}/11',
-                'OPTIONS': {'CLIENT_CLASS': 'django_redis.client.DefaultClient', 'PARSER_CLASS': 'redis.connection.HiredisParser', }, },
+                'OPTIONS': {'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+                            'PARSER_CLASS': 'redis.connection.HiredisParser', }, },
     }
 
 ########################################################################################################################
@@ -65,8 +68,7 @@ CACHES = {
 # celery
 ########################################################################################################################
 USE_CELERY = True
-EXTRA_INSTALLED_APP = 'bootstrap3'
-FLOOR_INSTALLED_APPS = ['updoc', '{EXTRA_INSTALLED_APP}']
+FLOOR_INSTALLED_APPS = ['updoc', ]
 FLOOR_INDEX = 'updoc.views.index'
 FLOOR_URL_CONF = 'updoc.root_urls.urls'
 FLOOR_PROJECT_NAME = 'UpDoc!'
@@ -76,9 +78,9 @@ SECRET_KEY = '5I0zJQuHzqcACuzGIwTAC3cV6RlZpjV8MNUETYd5KZXg6UoI4G'
 
 PIPELINE_JS = {
     'default': {
-        'source_filenames': ('js/jquery.min.js', 'bootstrap3/js/bootstrap.min.js', 'js/djangofloor.js', 'js/ws4redis.js',
-                             'js/jquery.ui.widget.js', 'js/jquery.iframe-transport.js', 'js/jquery.fileupload.js',
-                             'js/fuelux.min.js', 'js/updoc.js', ),
+        'source_filenames': ('js/jquery.min.js', 'bootstrap3/js/bootstrap.min.js', 'js/djangofloor.js',
+                             'js/ws4redis.js', 'js/jquery.ui.widget.js', 'js/jquery.iframe-transport.js',
+                             'js/jquery.fileupload.js', 'js/fuelux.min.js', 'js/updoc.js', ),
         'output_filename': 'js/default.js',
     },
     'ie9': {
