@@ -239,9 +239,6 @@ Now, it's time to install UpDoc!:
 
 .. code-block:: bash
 
-    SERVICE_NAME=updoc.example.org
-    PROJECT_NAME=updoc
-    BIND_ADRESS=localhost:8129
     sudo mkdir -p /var/updoc
     sudo adduser --disabled-password updoc
     sudo chown updoc:www-data /var/updoc
@@ -249,6 +246,8 @@ Now, it's time to install UpDoc!:
     # application
     sudo -u updoc -i
     SERVICE_NAME=updoc.example.org
+    PROJECT_NAME=updoc
+    BIND_ADRESS=localhost:8129
     mkvirtualenv updoc -p `which python3.4`
     workon updoc
     pip install setuptools --upgrade
