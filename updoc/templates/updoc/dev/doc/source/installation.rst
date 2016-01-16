@@ -27,6 +27,7 @@ If you have a recent Debian/Ubuntu distribution, you can directly install Elasti
 
     sudo apt-get install elasticsearch
 
+Otherwise, you should install a more recent version from their official repository:
 
 .. code-block:: bash
 
@@ -81,7 +82,7 @@ If you have a recent Debian/Ubuntu distribution, you can directly install Elasti
     sudo /bin/systemctl start elasticsearch.service
 
 
-On Debian 7, you probably should use something like::
+On Debian 7, you probably should use something like:
 
 .. code-block:: bash
 
