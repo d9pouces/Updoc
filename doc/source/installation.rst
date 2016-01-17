@@ -61,8 +61,6 @@ in the configuration, you cannot use its IP address to access the website.
         ServerName $SERVICE_NAME
         Alias /static/ /var/updoc/static/
         ProxyPass /static/ !
-        Alias /media/ /var/updoc/data/media/
-        ProxyPass /media/ !
         ProxyPass / http://localhost:8129/
         ProxyPassReverse / http://localhost:8129/
         DocumentRoot /var/updoc/static
@@ -120,8 +118,6 @@ If you want to use SSL:
         SSLEngine on
         Alias /static/ /var/updoc/static/
         ProxyPass /static/ !
-        Alias /media/ /var/updoc/data/media/
-        ProxyPass /media/ !
         ProxyPass / http://localhost:8129/
         ProxyPassReverse / http://localhost:8129/
         DocumentRoot /var/updoc/static

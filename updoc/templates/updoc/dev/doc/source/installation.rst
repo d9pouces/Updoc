@@ -18,6 +18,9 @@
     updoc-manage init_es
 {% endblock %}
 
+{% block webserver_ssl_media %}{% endblock %}
+{% block webserver_media %}{% endblock %}
+
 {% block other_application %}Elasticsearch
 =============
 
