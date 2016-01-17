@@ -185,15 +185,6 @@ Otherwise, you should install a more recent version from their official reposito
     sudo /bin/systemctl enable elasticsearch.service
     sudo service elasticsearch start
 
-sudo chown elasticsearch:elasticsearch /usr/share/elasticsearch
-sudo sed -i -s 's%#LOG_DIR=/var/log/elasticsearch%LOG_DIR=/var/log/elasticsearch%' /etc/default/elasticsearch
-sudo sed -i -s 's%#DATA_DIR=/var/lib/elasticsearch%DATA_DIR=/var/lib/elasticsearch%' /etc/default/elasticsearch
-sudo sed -i -s 's%#WORK_DIR=/tmp/elasticsearch%WORK_DIR=/tmp/elasticsearch%' /etc/default/elasticsearch
-sudo sed -i -s 's%#CONF_DIR=/etc/elasticsearch%CONF_DIR=/etc/elasticsearch%' /etc/default/elasticsearch
-sudo sed -i -s 's%#CONF_FILE=/etc/elasticsearch/elasticsearch.yml%CONF_FILE=/etc/elasticsearch/elasticsearch.yml%' /etc/default/elasticsearch
-sudo sed -i -s 's%#network.bind_host: 192.168.0.1%network.bind_host: 127.0.0.1%' /etc/elasticsearch/elasticsearch.yml
-# if you still use IP v.4
-echo 'JAVA_OPTS="$JAVA_OPTS -Djava.net.preferIPv4Stack=true"' | sudo tee -a /usr/share/elasticsearch/bin/elasticsearch.in.sh
 
 On Debian 7, you probably should use something like:
 
