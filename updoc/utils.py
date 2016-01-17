@@ -153,6 +153,8 @@ def strip_split(value):
     :return:
     :rtype:
     """
+    if value is None:
+        return []
     return [x.strip() for x in value.split(',') if x.strip()]
 
 

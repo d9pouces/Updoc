@@ -150,7 +150,8 @@ def process_uploaded_file(doc: UploadDoc, temp_file, original_filename: str, des
 
     # ok, let's go to decompress
     destination_root += os.path.sep
-    if original_filename[-7:] in ('.tar.gz', '.tar.xz') or original_filename[-8:] == '.tar.bz2' or original_filename[-4:] in ('.tar', '.tbz', '.tgz', '.txz'):
+    if original_filename[-7:] in ('.tar.gz', '.tar.xz') or original_filename[-8:] == '.tar.bz2'\
+            or original_filename[-4:] in ('.tar', '.tbz', '.tgz', '.txz'):
         tar_file = tarfile.open(name=original_filename, mode='r:*', fileobj=temp_file)
         names = [name_ for name_ in tar_file.getnames() if os.path.join(doc_uid, name_).startswith(doc_uid)]
         common_prefix = os.path.sep.join(os.path.commonprefix([name_.split(os.path.sep) for name_ in names]))
@@ -171,8 +172,10 @@ def process_uploaded_file(doc: UploadDoc, temp_file, original_filename: str, des
     elif original_filename[-4:] == '.zip':
         zip_file = zipfile.ZipFile(temp_file, mode='r')
 
-        obj_to_extract = [zipped_obj for zipped_obj in zip_file.infolist() if os.path.join(doc_uid, zipped_obj.filename).startswith(doc_uid)]
-        common_prefix = os.path.sep.join(os.path.commonprefix([obj_.filename.split(os.path.sep) for obj_ in obj_to_extract]))
+        obj_to_extract = [zipped_obj for zipped_obj in zip_file.infolist()
+                          if os.path.join(doc_uid, zipped_obj.filename).startswith(doc_uid)]
+        common_prefix = os.path.sep.join(os.path.commonprefix([obj_.filename.split(os.path.sep)
+                                                               for obj_ in obj_to_extract]))
         common_prefix_len = len(common_prefix)
         for zipped_obj in obj_to_extract:
             if zipped_obj.filename[-1:] == os.path.sep:

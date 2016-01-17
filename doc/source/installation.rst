@@ -52,7 +52,6 @@ in the configuration, you cannot use its IP address to access the website.
 
     SERVICE_NAME=updoc.example.org
     PROJECT_NAME=updoc
-    BIND_ADRESS=localhost:8129
     sudo apt-get install apache2 libapache2-mod-xsendfile
     sudo a2enmod headers proxy proxy_http
     sudo a2dissite 000-default.conf
@@ -62,19 +61,24 @@ in the configuration, you cannot use its IP address to access the website.
         ServerName $SERVICE_NAME
         Alias /static/ /var/updoc/static/
         ProxyPass /static/ !
-        Alias /media/ /var/updoc/media/
+        Alias /media/ /var/updoc/data/media/
         ProxyPass /media/ !
         ProxyPass / http://localhost:8129/
         ProxyPassReverse / http://localhost:8129/
         DocumentRoot /var/updoc/static
         ServerSignature off
+        <Location /static/>
+            Order deny,allow
+            Allow from all
+            Satisfy any
+        </Location>
         XSendFile on
-        XSendFilePath /var/updoc/media/
+        XSendFilePath /var/updoc/data/media
         # in older versions of XSendFile (<= 0.9), use XSendFileAllowAbove On
     </VirtualHost>
     EOF
-    sudo mkdir /var/updoc/
-    sudo chown -R www-data:www-data /var/updoc/
+    sudo mkdir /var/updoc
+    sudo chown -R www-data:www-data /var/updoc
     sudo a2ensite updoc.conf
     sudo apachectl -t
     sudo apachectl restart
@@ -116,7 +120,7 @@ If you want to use SSL:
         SSLEngine on
         Alias /static/ /var/updoc/static/
         ProxyPass /static/ !
-        Alias /media/ /var/updoc/media/
+        Alias /media/ /var/updoc/data/media/
         ProxyPass /media/ !
         ProxyPass / http://localhost:8129/
         ProxyPassReverse / http://localhost:8129/
@@ -142,7 +146,7 @@ If you want to use SSL:
             Satisfy any
         </Location>
         XSendFile on
-        XSendFilePath /var/updoc/media/
+        XSendFilePath /var/updoc/data/media
         # in older versions of XSendFile (<= 0.9), use XSendFileAllowAbove On
             <Location /updoc/show_alt/>
                 Order deny,allow
@@ -151,8 +155,8 @@ If you want to use SSL:
             </Location>
     </VirtualHost>
     EOF
-    sudo mkdir /var/updoc/
-    sudo chown -R www-data:www-data /var/updoc/
+    sudo mkdir /var/updoc
+    sudo chown -R www-data:www-data /var/updoc
     sudo a2ensite updoc.conf
     sudo apachectl -t
     sudo apachectl restart
@@ -247,7 +251,6 @@ Now, it's time to install UpDoc!:
     sudo -u updoc -i
     SERVICE_NAME=updoc.example.org
     PROJECT_NAME=updoc
-    BIND_ADRESS=localhost:8129
     mkvirtualenv updoc -p `which python3.4`
     workon updoc
     pip install setuptools --upgrade
@@ -258,17 +261,17 @@ Now, it's time to install UpDoc!:
     [database]
     engine = django.db.backends.postgresql_psycopg2
     host = localhost
-    name = $PROJECT_NAME
+    name = updoc
     password = 5trongp4ssw0rd
     port = 5432
-    user = $PROJECT_NAME
+    user = updoc
     [elasticsearch]
     hosts = localhost:9200
     index = updoc_index
     [global]
-    admin_email = admin@$SERVICE_NAME
-    bind_address = $BIND_ADDRESS
-    data_path = /var/$PROJECT_NAME
+    admin_email = admin@updoc.example.org
+    bind_address = localhost:8129
+    data_path = /var/updoc
     debug = False
     default_group = Users
     language_code = fr-fr
@@ -279,7 +282,7 @@ Now, it's time to install UpDoc!:
     public_proxies = True
     remote_user_header = HTTP_REMOTE_USER
     secret_key = 5I0zJQuHzqcACuzGIwTAC3cV6RlZpjV8MNUETYd5KZXg6UoI4G
-    server_name = $SERVICE_NAME
+    server_name = updoc.example.org
     time_zone = Europe/Paris
     x_accel_converter = False
     x_send_file = True

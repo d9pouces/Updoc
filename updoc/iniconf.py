@@ -22,4 +22,5 @@ INI_MAPPING = DEFAULT + [
     OptionParser('REDIS_HOST', 'redis.host'),
     OptionParser('REDIS_PORT', 'redis.port'),
     OptionParser('BROKER_DB', 'redis.broker_db', int),
+    OptionParser('BIND_ADDRESS', 'global.bind_address', doc_default_value='localhost:8129'),
 ]

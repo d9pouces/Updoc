@@ -12,17 +12,17 @@ Here is the complete list of settings:
 .. code-block:: ini
 
   [database]
-  engine = django.db.backends.sqlite3
+  engine = django.db.backends.postgresql_psycopg2
   # SQL database engine, can be 'django.db.backends.[postgresql_psycopg2|mysql|sqlite3|oracle]'.
-  host = 
+  host = localhost
   # Empty for localhost through domain sockets or "127.0.0.1" for localhost + TCP
-  name = ./django_data/data/database.sqlite3
+  name = updoc
   # Name of your database, or path to database file if using sqlite3.
-  password = 
+  password = 5trongp4ssw0rd
   # Database password (not used with sqlite3)
-  port = 
+  port = 5432
   # Database port, leave it empty for default (not used with sqlite3)
-  user = 
+  user = updoc
   # Database user (not used with sqlite3)
   [elasticsearch]
   hosts = localhost:9200
@@ -30,11 +30,11 @@ Here is the complete list of settings:
   index = updoc_index
   # name of your ElasticSearch index
   [global]
-  admin_email = admin@localhost
+  admin_email = admin@updoc.example.org
   # error logs are sent to this e-mail address
   bind_address = localhost:8129
   # The socket (IP address:port) to bind to.
-  data_path = ./django_data
+  data_path = /var/updoc
   # Base path for all data
   debug = False
   # A boolean that turns on/off debug mode.
@@ -56,13 +56,13 @@ Here is the complete list of settings:
   # HTTP header corresponding to the username when using HTTP authentication.Should be "HTTP_REMOTE_USER". Leave it empty to disable HTTP authentication.
   secret_key = 5I0zJQuHzqcACuzGIwTAC3cV6RlZpjV8MNUETYd5KZXg6UoI4G
   # A secret key for a particular Django installation. This is used to provide cryptographic signing, and should be set to a unique, unpredictable value.
-  server_name = localhost
+  server_name = updoc.example.org
   # the name of your webserver (should be a DNS name, but can be an IP address)
   time_zone = Europe/Paris
   # A string representing the time zone for this installation, or None. 
   x_accel_converter = False
   # Nginx only. Set it to "true" or "false"
-  x_send_file = False
+  x_send_file = True
   # Apache and LightHTTPd only. Use the XSendFile header for sending large files.
   [redis]
   broker_db = 13
