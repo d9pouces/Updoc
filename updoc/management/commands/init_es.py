@@ -35,8 +35,6 @@ class Command(BaseCommand):
         for query in queries:
             if query and query.status_code > 400:
                 print(query.status_code, query.text)
-            else:
-                print('ok')
         # noinspection PyTypeChecker
         pb = ImportProgressBar(UploadDoc)
         for updoc in UploadDoc.objects.all():

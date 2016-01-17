@@ -233,7 +233,7 @@ Now, it's time to install UpDoc!:
     port = 5432
     user = updoc
     [elasticsearch]
-    hosts = 
+    hosts = localhost:9200
     index = updoc_index
     [global]
     admin_email = admin@updoc.example.org

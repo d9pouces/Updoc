@@ -17,7 +17,7 @@ INI_MAPPING = DEFAULT + [
     OptionParser('PUBLIC_PROXIES', 'global.public_proxies', bool_setting),
     OptionParser('PUBLIC_INDEX', 'global.public_index', bool_setting),
     OptionParser('PUBLIC_DOCS', 'global.public_docs', bool_setting),
-    OptionParser('ES_HOSTS', 'elasticsearch.hosts'),
+    OptionParser('ES_HOSTS', 'elasticsearch.hosts', doc_default_value='localhost:9200'),
     OptionParser('ES_INDEX', 'elasticsearch.index'),
     OptionParser('REDIS_HOST', 'redis.host'),
     OptionParser('REDIS_PORT', 'redis.port'),
