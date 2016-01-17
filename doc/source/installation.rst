@@ -282,7 +282,8 @@ Supervisor is required to automatically launch updoc:
     command = /home/updoc/.virtualenvs/updoc/bin/updoc-celery worker
     user = updoc
     EOF
-    sudo /etc/init.d/supervisor restart
+    sudo service supervisor stop
+    sudo service supervisor start
 
 Now, Supervisor should start updoc after a reboot.
 
