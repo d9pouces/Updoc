@@ -25,7 +25,7 @@ Here is the complete list of settings:
   user = updoc
   # Database user (not used with sqlite3)
   [elasticsearch]
-  hosts = localhost:9200
+  hosts = 
   # IP:port of your ElasticSearch database, leave it empty if you do not use ElasticSearch
   index = updoc_index
   # name of your ElasticSearch index
