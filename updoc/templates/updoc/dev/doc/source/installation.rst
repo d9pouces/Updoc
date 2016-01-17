@@ -13,7 +13,7 @@
             </Location>
 {% endblock %}
 
-{% block post_application %}    moneta-manage createsuperuser
+{% block post_application %}    updoc-manage createsuperuser
     echo "CACHES = {'default': {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}}" > $VIRTUAL_ENV/etc/updoc/settings.py
     updoc-manage init_es
 {% endblock %}

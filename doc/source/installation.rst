@@ -260,7 +260,7 @@ Now, it's time to install UpDoc!:
     EOF
     updoc-manage migrate
     updoc-manage collectstatic --noinput
-    moneta-manage createsuperuser
+    updoc-manage createsuperuser
     echo "CACHES = {'default': {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}}" > $VIRTUAL_ENV/etc/updoc/settings.py
     updoc-manage init_es
 
