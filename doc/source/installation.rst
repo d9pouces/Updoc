@@ -5,7 +5,7 @@ Like many Python packages, you can use several methods to install UpDoc!.
 The following packages are required:
 
   * setuptools >= 3.0
-  * djangofloor >= 0.17.0
+  * djangofloor >= 0.18.0
   * elasticsearch>=2.0.0
   * requests
   * markdown
@@ -61,15 +61,15 @@ in the configuration, you cannot use its IP address to access the website.
         ServerName $SERVICE_NAME
         Alias /static/ /var/updoc/static/
         ProxyPass /static/ !
-        ProxyPass / http://localhost:8129/
-        ProxyPassReverse / http://localhost:8129/
-        DocumentRoot /var/updoc/static
-        ServerSignature off
         <Location /static/>
             Order deny,allow
             Allow from all
             Satisfy any
         </Location>
+        ProxyPass / http://localhost:8129/
+        ProxyPassReverse / http://localhost:8129/
+        DocumentRoot /var/updoc/static
+        ServerSignature off
         XSendFile on
         XSendFilePath /var/updoc/data/media
         # in older versions of XSendFile (<= 0.9), use XSendFileAllowAbove On
@@ -118,6 +118,11 @@ If you want to use SSL:
         SSLEngine on
         Alias /static/ /var/updoc/static/
         ProxyPass /static/ !
+        <Location /static/>
+            Order deny,allow
+            Allow from all
+            Satisfy any
+        </Location>
         ProxyPass / http://localhost:8129/
         ProxyPassReverse / http://localhost:8129/
         DocumentRoot /var/updoc/static
@@ -135,11 +140,6 @@ If you want to use SSL:
             KrbSaveCredentials On
             Require valid-user
             RequestHeader set REMOTE_USER %{REMOTE_USER}s
-        </Location>
-        <Location /static/>
-            Order deny,allow
-            Allow from all
-            Satisfy any
         </Location>
         XSendFile on
         XSendFilePath /var/updoc/data/media
@@ -203,8 +203,6 @@ Now, it's time to install UpDoc!:
     sudo apt-get install virtualenvwrapper python3.4 python3.4-dev build-essential postgresql-client libpq-dev
     # application
     sudo -u updoc -i
-    SERVICE_NAME=updoc.example.org
-    PROJECT_NAME=updoc
     mkvirtualenv updoc -p `which python3.4`
     workon updoc
     pip install setuptools --upgrade
@@ -259,6 +257,7 @@ supervisor
 Supervisor is required to automatically launch updoc:
 
 .. code-block:: bash
+
 
     sudo apt-get install supervisor
     cat << EOF | sudo tee /etc/supervisor/conf.d/updoc.conf

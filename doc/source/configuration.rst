@@ -1,6 +1,10 @@
 Complete configuration
 ======================
 
+
+Configuration options
+---------------------
+
 You can look current settings with the following command:
 
 .. code-block:: bash
@@ -100,3 +104,74 @@ or try to run the server interactively:
   updoc-manage runserver
   updoc-gunicorn
   updoc-celery worker
+
+
+
+Backup
+------
+
+A complete UpDoc! installation is made a different kinds of files:
+
+    * the code of your application and its dependencies (you should not have to backup them),
+    * static files (as they are provided by the code, you can lost them),
+    * configuration files (you can easily recreate it, or you must backup it),
+    * database content (you must backup it),
+    * user-created files (you must also backup them).
+
+Many backup stragegies exist, and you must choose one that fits your needs. We can only propose general-purpose strategies.
+
+We use logrotate to backup the database, with a new file each day.
+
+.. code-block:: bash
+
+  sudo mkdir -p /var/backups/updoc
+  sudo chown -r updoc: /var/backups/updoc
+  sudo -u updoc -i
+  cat << EOF > /home/updoc/.virtualenvs/updoc/etc/updoc/backup_db.conf
+  /var/backups/updoc/backup_db.sql.gz {
+    daily
+    rotate 20
+    nocompress
+    missingok
+    create 640 updoc updoc
+    postrotate
+    myproject-manage dumpdb | gzip > /var/backups/updoc/backup_db.sql.gz
+    endscript
+  }
+  EOF
+  touch /var/backups/updoc/backup_db.sql.gz
+  crontab -e
+  MAILTO=admin@updoc.example.org
+  0 1 * * * /home/updoc/.virtualenvs/updoc/bin/updoc-manage clearsessions
+  0 2 * * * logrotate -f /home/updoc/.virtualenvs/updoc/etc/updoc/backup_db.conf
+
+
+Backup of the user-created files can be done with rsync, with a full backup each month:
+If you have a lot of files to backup, beware of the available disk place!
+
+.. code-block:: bash
+
+  sudo mkdir -p /var/backups/updoc/media
+  sudo chown -r updoc: /var/backups/updoc
+  cat << EOF > /home/updoc/.virtualenvs/updoc/etc/updoc/backup_media.conf
+  /var/backups/updoc/backup_media.tar.gz {
+    monthly
+    rotate 6
+    nocompress
+    missingok
+    create 640 updoc updoc
+    postrotate
+    tar -czf /var/backups/updoc/backup_media.tar.gz /var/backups/updoc/media/
+    endscript
+  }
+  EOF
+  touch /var/backups/updoc/backup_media.tar.gz
+  crontab -e
+  MAILTO=admin@updoc.example.org
+  0 3 * * * rsync -arltDE /var/updoc/data/media/ /var/backups/updoc/media/
+  0 5 0 * * logrotate -f /home/updoc/.virtualenvs/updoc/etc/updoc/backup_media.conf
+
+
+
+Monitoring
+----------
