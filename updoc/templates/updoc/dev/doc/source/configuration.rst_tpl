@@ -1,4 +1,4 @@
-{% extends 'djangofloor/dev/doc/source/configuration.rst' %}
+{% extends 'djangofloor/dev/doc/source/configuration.rst_tpl' %}
 {% block extra_ini_configuration %}    public_bookmarks = true
     public_proxies = true
     public_index = true

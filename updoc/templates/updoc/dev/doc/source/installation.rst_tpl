@@ -1,4 +1,4 @@
-{% extends 'djangofloor/dev/doc/source/installation.rst' %}
+{% extends 'djangofloor/dev/doc/source/installation.rst_tpl' %}
 
 {% block post_dependencies %}
   * elasticsearch>=2.0.0

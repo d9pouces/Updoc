@@ -1,4 +1,4 @@
-{% extends 'djangofloor/dev/doc/source/index.rst' %}
+{% extends 'djangofloor/dev/doc/source/index.rst_tpl' %}
 
 {% block description %}
 UpDoc is a web application for uploading developer documentations, with a few interesting tips.
