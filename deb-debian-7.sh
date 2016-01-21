@@ -1,27 +1,34 @@
 #!/bin/bash
+
 # base packages
 sudo apt-get update
 sudo apt-get upgrade --yes
 sudo apt-get install --yes vim dh-make ntp rsync liblzma-dev tree
-sudo apt-get install --yes python3-all-dev virtualenvwrapper python3-tz python3-setuptools apache2 apache2-mpm-worker apache2-utils apache2.2-bin apache2.2-common libapr1 libaprutil1 libaprutil1-dbd-sqlite3 libaprutil1-ldap python-medusa python-meld3 ssl-cert supervisor python3-openid python3-gnupg
+sudo apt-get install --yes python3-all-dev virtualenvwrapper python3-tz python3-setuptools apache2 apache2-mpm-worker apache2-utils apache2.2-bin apache2.2-common libapr1 libaprutil1 libaprutil1-dbd-sqlite3 libaprutil1-ldap python-medusa python-meld3 ssl-cert supervisor
 source /etc/bash_completion.d/virtualenvwrapper
 
+
+
 # create the virtual env
-mkvirtualenv -p `which python3.4` djangofloor3
+mkvirtualenv -p `which python3` djangofloor3
 workon djangofloor3
 pip install setuptools --upgrade
 pip install pip --upgrade
-pip install debtools djangofloor
+pip install debtools djangofloor gunicorn==18.0
 python setup.py install
 
+
+
 # generate packages for all dependencies
-multideb -r -v -x stdeb-debian-8.cfg
+multideb -r -v -x stdeb-debian-7.cfg
 
 # creating package for updoc
 rm -rf `find * | grep pyc$`
-python setup.py bdist_deb_django -x stdeb-debian-8.cfg
+python setup.py bdist_deb_django -x stdeb-debian-7.cfg
 deb-dep-tree deb_dist/*deb
 mv deb_dist/*deb deb
+
+
 
 # install all packages
 sudo dpkg -i deb/python3-*.deb
@@ -31,7 +38,8 @@ IP=`/sbin/ifconfig | grep -Eo 'inet (addr:|adr:)?([0-9]*\.){3}[0-9]*' | grep -Eo
 sudo sed -i "s/localhost/$IP/g" /etc/apache2/sites-available/updoc.conf
 sudo sed -i "s/localhost/$IP/g" /etc/updoc/settings.ini
 sudo a2ensite updoc.conf
-sudo a2dissite 000-default.conf
+sudo a2dissite 000-default
 sudo -u updoc updoc-manage migrate
 sudo service supervisor restart
 sudo service apache2 restart
+

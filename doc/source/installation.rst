@@ -207,7 +207,7 @@ Now, it's time to install UpDoc!:
     workon updoc
     pip install setuptools --upgrade
     pip install pip --upgrade
-    pip install updoc psycopg2
+    pip install updoc psycopg2 gevent
     mkdir -p $VIRTUAL_ENV/etc/updoc
     cat << EOF > $VIRTUAL_ENV/etc/updoc/settings.ini
     [database]

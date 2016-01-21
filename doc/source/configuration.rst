@@ -1,3 +1,4 @@
+
 Complete configuration
 ======================
 
@@ -79,16 +80,9 @@ Here is the complete list of settings:
 
 
 If you need more complex settings, you can override default values (given in `djangofloor.defaults` and
-`updoc.defaults`) by creating a file named `[prefix]/etc/updoc/settings.py`.
+`updoc.defaults`) by creating a file named `/home/updoc/.virtualenvs/updoc/etc/updoc/settings.py`.
 
-Valid engines for your database are:
 
-  - `django.db.backends.sqlite3` (use the `name` option for its filepath)
-  - `django.db.backends.postgresql_psycopg2`
-  - `django.db.backends.mysql`
-  - `django.db.backends.oracle`
-
-Use `x_send_file` with Apache, and `x_accel_converter` with nginx.
 
 Debugging
 ---------
@@ -101,9 +95,11 @@ or try to run the server interactively:
   sudo service supervisor stop
   sudo -u updoc -i
   workon updoc
+  updoc-manage config
   updoc-manage runserver
   updoc-gunicorn
   updoc-celery worker
+
 
 
 
@@ -118,7 +114,7 @@ A complete UpDoc! installation is made a different kinds of files:
     * database content (you must backup it),
     * user-created files (you must also backup them).
 
-Many backup stragegies exist, and you must choose one that fits your needs. We can only propose general-purpose strategies.
+Many backup strategies exist, and you must choose one that fits your needs. We can only propose general-purpose strategies.
 
 We use logrotate to backup the database, with a new file each day.
 
@@ -171,7 +167,57 @@ If you have a lot of files to backup, beware of the available disk place!
   0 3 * * * rsync -arltDE /var/updoc/data/media/ /var/backups/updoc/media/
   0 5 0 * * logrotate -f /home/updoc/.virtualenvs/updoc/etc/updoc/backup_media.conf
 
+Restoring a backup
+~~~~~~~~~~~~~~~~~~
+
+.. code-block:: bash
+
+  cat /var/backups/updoc/backup_db.sql.gz | gunzip | /home/updoc/.virtualenvs/updoc/bin/updoc-manage dbshell
+  tar -C /var/updoc/data/media/ -xf /var/backups/updoc/backup_media.tar.gz
+
+
+
 
 
 Monitoring
 ----------
+
+
+You can use Nagios checks to monitor several points:
+
+  * connection to the application server (gunicorn or uwsgi):
+  * connection to the database servers (PostgreSQL and Redis),
+  * connection to the reverse-proxy server (apache or nginx),
+  * the validity of the SSL certificate (can be combined with the previous check),
+  * time of the last backup (database and files),
+  * living processes for gunicorn, celery, redis, postgresql, apache,
+  * standard checks for RAM, disk, swap…
+
+Here is a sample NRPE configuration file:
+
+.. code-block:: bash
+
+  cat << EOF | sudo tee /etc/nagios/nrpe.d/updoc.cfg
+  command[updoc_wsgi]=/usr/lib/nagios/plugins/check_http -H localhost -p 8129
+  command[updoc_redis]=/usr/lib/nagios/plugins/check_tcp -H localhost -p 6379
+  command[updoc_database]=/usr/lib/nagios/plugins/check_tcp -H localhost -p 5432
+  command[updoc_reverse_proxy]=/usr/lib/nagios/plugins/check_http -H updoc.example.org -p 80 -e 401
+  command[updoc_backup_db]=/usr/lib/nagios/plugins/check_file_age -w 172800 -c 432000 /var/backups/updoc/backup_db.sql.gz
+  command[updoc_backup_media]=/usr/lib/nagios/plugins/check_file_age -w 3024000 -c 6048000 /var/backups/updoc/backup_media.sql.gz
+  command[updoc_gunicorn]=/usr/lib/nagios/plugins/check_procs -C python -a '/home/updoc/.virtualenvs/updoc/bin/updoc-gunicorn'
+  command[updoc_celery]=/usr/lib/nagios/plugins/check_procs -C python -a '/home/updoc/.virtualenvs/updoc/bin/updoc-celery worker'
+  EOF
+
+
+
+LDAP groups
+-----------
+
+There are two possibilities to use LDAP groups, with their own pros and cons:
+
+  * on each request, use an extra LDAP connection to retrieve groups instead of looking in the SQL database,
+  * regularly synchronize groups between the LDAP server and the SQL servers.
+
+The second approach can be used without any modification in your code and remove a point of failure
+in the global architecture (if you allow some delay during the synchronization process).
+A tool exists for such synchronization: `MultiSync <https://github.com/d9pouces/Multisync>`_.

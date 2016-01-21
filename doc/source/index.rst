@@ -27,7 +27,7 @@ Archives are fully indexed, so you can search any text inside all documentations
     All configuration options
 
 :doc:`debian`
-    Packaging UpDoc! for Debian
+    Packaging UpDoc! for Debian or Ubuntu servers
 
 
 
