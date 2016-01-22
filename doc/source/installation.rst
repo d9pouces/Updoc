@@ -200,10 +200,10 @@ Now, it's time to install UpDoc!:
     sudo mkdir -p /var/updoc
     sudo adduser --disabled-password updoc
     sudo chown updoc:www-data /var/updoc
-    sudo apt-get install virtualenvwrapper python3.4 python3.4-dev build-essential postgresql-client libpq-dev
+    sudo apt-get install virtualenvwrapper python3.5 python3.5-dev build-essential postgresql-client libpq-dev
     # application
     sudo -u updoc -i
-    mkvirtualenv updoc -p `which python3.4`
+    mkvirtualenv updoc -p `which python3.5`
     workon updoc
     pip install setuptools --upgrade
     pip install pip --upgrade
@@ -226,6 +226,7 @@ Now, it's time to install UpDoc!:
     data_path = /var/updoc
     debug = False
     default_group = Users
+    extra_apps = 
     language_code = fr-fr
     protocol = http
     public_bookmarks = True
@@ -242,6 +243,8 @@ Now, it's time to install UpDoc!:
     broker_db = 13
     host = localhost
     port = 6379
+    [sentry]
+    dsn_url = 
     EOF
     updoc-manage migrate
     updoc-manage collectstatic --noinput
@@ -296,6 +299,7 @@ You can also use systemd to launch updoc:
     WantedBy=multi-user.target
     EOF
     systemctl enable updoc-gunicorn.service
+    sudo service updoc-gunicorn start
     cat << EOF | sudo tee /etc/systemd/system/updoc-celery.service
     [Unit]
     Description=UpDoc! Celery process
@@ -310,7 +314,8 @@ You can also use systemd to launch updoc:
     [Install]
     WantedBy=multi-user.target
     EOF
-    systemctl enable updoc-celery.service
+    sudo systemctl enable updoc-celery.service
+    sudo service updoc-celery start
 
 
 

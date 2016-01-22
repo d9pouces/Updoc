@@ -29,10 +29,14 @@ After installation and configuration, do not forget to create a superuser:
 
     sudo -u updoc updoc-manage createsuperuser
 
-
 Default configuration file is `/etc/updoc/settings.ini`.
 If you need more complex settings, you can override default values (given in `djangofloor.defaults` and
 `updoc.defaults`) by creating a file named `/etc/updoc/settings.py`.
+
+.. code-block:: bash
+
+    sudo service updoc-gunicorn start
+    sudo service updoc-celery start
 
 
 
@@ -91,7 +95,7 @@ If you have a lot of files to backup, beware of the available disk place!
     missingok
     create 640 updoc updoc
     postrotate
-    tar -czf /var/backups/updoc/backup_media.tar.gz /var/backups/updoc/media/
+    tar -C /var/backups/updoc/media/ -czf /var/backups/updoc/backup_media.tar.gz .
     endscript
   }
   EOF
@@ -117,13 +121,16 @@ Monitoring
 ----------
 
 
+Nagios or Shinken
+~~~~~~~~~~~~~~~~~
+
 You can use Nagios checks to monitor several points:
 
   * connection to the application server (gunicorn or uwsgi):
   * connection to the database servers (PostgreSQL and Redis),
   * connection to the reverse-proxy server (apache or nginx),
   * the validity of the SSL certificate (can be combined with the previous check),
-  * time of the last backup (database and files),
+  * creation date of the last backup (database and files),
   * living processes for gunicorn, celery, redis, postgresql, apache,
   * standard checks for RAM, disk, swap…
 
@@ -141,5 +148,26 @@ Here is a sample NRPE configuration file:
   command[updoc_gunicorn]=/usr/lib/nagios/plugins/check_procs -C python -a '/usr/local/bin/updoc-gunicorn'
   command[updoc_celery]=/usr/lib/nagios/plugins/check_procs -C python -a '/usr/local/bin/updoc-celery worker'
   EOF
+
+Sentry
+~~~~~~
+
+For using Sentry to log errors, you must add `raven.contrib.django.raven_compat` to the installed apps.
+
+.. code-block:: ini
+
+  [global]
+  extra_apps = raven.contrib.django.raven_compat
+  [sentry]
+  dsn_url = https://[key]:[secret]@app.getsentry.com/[project]
+
+Of course, the Sentry client (Raven) must be separately installed, before testing the installation:
+
+.. code-block:: bash
+
+  sudo -u updoc -i
+  updoc-manage raven test
+
+
 
 

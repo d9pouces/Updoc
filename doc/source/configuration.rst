@@ -45,6 +45,8 @@ Here is the complete list of settings:
   # A boolean that turns on/off debug mode.
   default_group = Users
   # Name of the default group for newly-created users.
+  extra_apps = 
+  # List of extra installed Django apps (separated by commas).
   language_code = fr-fr
   # A string representing the language code for this installation.
   protocol = http
@@ -76,6 +78,9 @@ Here is the complete list of settings:
   # hostname of your Redis database for Redis-based services (cache, Celery, websockets, sessions)
   port = 6379
   # port of your Redis database
+  [sentry]
+  dsn_url = 
+  # Sentry URL to send data to. https://docs.getsentry.com/
 
 
 
@@ -157,7 +162,7 @@ If you have a lot of files to backup, beware of the available disk place!
     missingok
     create 640 updoc updoc
     postrotate
-    tar -czf /var/backups/updoc/backup_media.tar.gz /var/backups/updoc/media/
+    tar -C /var/backups/updoc/media/ -czf /var/backups/updoc/backup_media.tar.gz .
     endscript
   }
   EOF
@@ -183,13 +188,16 @@ Monitoring
 ----------
 
 
+Nagios or Shinken
+~~~~~~~~~~~~~~~~~
+
 You can use Nagios checks to monitor several points:
 
   * connection to the application server (gunicorn or uwsgi):
   * connection to the database servers (PostgreSQL and Redis),
   * connection to the reverse-proxy server (apache or nginx),
   * the validity of the SSL certificate (can be combined with the previous check),
-  * time of the last backup (database and files),
+  * creation date of the last backup (database and files),
   * living processes for gunicorn, celery, redis, postgresql, apache,
   * standard checks for RAM, disk, swap…
 
@@ -207,6 +215,27 @@ Here is a sample NRPE configuration file:
   command[updoc_gunicorn]=/usr/lib/nagios/plugins/check_procs -C python -a '/home/updoc/.virtualenvs/updoc/bin/updoc-gunicorn'
   command[updoc_celery]=/usr/lib/nagios/plugins/check_procs -C python -a '/home/updoc/.virtualenvs/updoc/bin/updoc-celery worker'
   EOF
+
+Sentry
+~~~~~~
+
+For using Sentry to log errors, you must add `raven.contrib.django.raven_compat` to the installed apps.
+
+.. code-block:: ini
+
+  [global]
+  extra_apps = raven.contrib.django.raven_compat
+  [sentry]
+  dsn_url = https://[key]:[secret]@app.getsentry.com/[project]
+
+Of course, the Sentry client (Raven) must be separately installed, before testing the installation:
+
+.. code-block:: bash
+
+  sudo -u updoc -i
+  updoc-manage raven test
+
+
 
 
 
