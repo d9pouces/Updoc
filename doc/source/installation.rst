@@ -2,7 +2,8 @@ Installation
 ============
 
 Like many Python packages, you can use several methods to install UpDoc!.
-The following packages are required:
+UpDoc! designed to run with python3.5.x+.
+The following packages are also required:
 
   * setuptools >= 3.0
   * djangofloor >= 0.18.0
@@ -10,6 +11,10 @@ The following packages are required:
   * requests
   * markdown
   * hiredis
+
+
+Of course you can install it from the source, but the preferred way is to install it as a standard Python package, via pip.
+
 
 Installing or Upgrading
 -----------------------
@@ -246,6 +251,8 @@ Now, it's time to install UpDoc!:
     [sentry]
     dsn_url = 
     EOF
+    chmod 0400 $VIRTUAL_ENV/etc/updoc/settings.ini
+    # required since there are password in this file
     updoc-manage migrate
     updoc-manage collectstatic --noinput
     updoc-manage createsuperuser
