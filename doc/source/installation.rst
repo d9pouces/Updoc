@@ -2,7 +2,7 @@ Installation
 ============
 
 Like many Python packages, you can use several methods to install UpDoc!.
-UpDoc! designed to run with python3.4.x+.
+UpDoc! designed to run with python3.5.x+.
 The following packages are also required:
 
   * setuptools >= 3.0
@@ -205,10 +205,10 @@ Now, it's time to install UpDoc!:
     sudo mkdir -p /var/updoc
     sudo adduser --disabled-password updoc
     sudo chown updoc:www-data /var/updoc
-    sudo apt-get install virtualenvwrapper python3.4 python3.4-dev build-essential postgresql-client libpq-dev
+    sudo apt-get install virtualenvwrapper python3.5 python3.5-dev build-essential postgresql-client libpq-dev
     # application
     sudo -u updoc -i
-    mkvirtualenv updoc -p `which python3.4`
+    mkvirtualenv updoc -p `which python3.5`
     workon updoc
     pip install setuptools --upgrade
     pip install pip --upgrade
