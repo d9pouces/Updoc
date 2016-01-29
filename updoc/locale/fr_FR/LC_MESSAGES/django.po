@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-03 22:39+0100\n"
+"POT-Creation-Date: 2016-01-29 07:27+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,71 +16,121 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: login.py:9 views.py:65 views.py:71 views.py:100 templates/list_dir.html:73
+#: updoc/feeds.py:30
+#, python-format
+msgid "Documentations with keyword %(kw)s"
+msgstr "Documents avec le mot-clef %(kw)s"
+
+#: updoc/feeds.py:65
+msgid "Favorite documentations"
+msgstr "Documents préférées"
+
+#: updoc/feeds.py:66
+#, python-format
+msgid "Documentations of %(n)s"
+msgstr "Documents de %(n)s"
+
+#: updoc/feeds.py:76
+msgid "Most viewed documentations"
+msgstr "Documentations les plus lues"
+
+#: updoc/feeds.py:113
+msgid "Last documentations"
+msgstr "Dernières documentations"
+
+#: updoc/feeds.py:125
+msgid "Most recent documentations"
+msgstr "Documentations récentes"
+
+#: updoc/feeds.py:163
+msgid "List of bookmarks URLs."
+msgstr "Liste des marque-pages."
+
+#: updoc/forms.py:10
+msgid "file"
+msgstr "Fichier"
+
+#: updoc/forms.py:22 updoc/forms.py:30 updoc/templates/updoc/list_dir.html:16
 msgid "Name"
 msgstr "Nom"
 
-#: login.py:10 views.py:66 views.py:72 views.py:102 templates/index.html:41
+#: updoc/forms.py:23
+msgid "Please enter a name"
+msgstr "Merci d'entrer un nom"
+
+#: updoc/forms.py:24 updoc/forms.py:31 updoc/templates/updoc/index.html.py:44
 msgid "Keywords"
 msgstr "Mots-clefs"
 
-#: models.py:45
-msgid "keyword"
-msgstr "mot-clef"
+#: updoc/forms.py:25
+msgid "Please enter some keywords"
+msgstr "Merci d'entrer des mots-clefs"
 
-#: models.py:59
-msgid "uid"
-msgstr "uid"
+#: updoc/forms.py:29
+msgid "Filename"
+msgstr "Nom de fichier"
 
-#: models.py:60
-msgid "title"
-msgstr "titre"
+#: updoc/forms.py:36
+msgid "URL to rewrite"
+msgstr "URL à réécrire"
 
-#: models.py:61
-msgid "path"
-msgstr "chemin"
-
-#: models.py:64
-msgid "upload time"
-msgstr "date d'ajout"
-
-#: models.py:75
-msgid "documentation"
-msgstr "Document"
-
-#: models.py:76
-msgid "documentations"
-msgstr "Documents"
-
-#: models.py:115
-msgid "last"
-msgstr "dernière"
-
-#: models.py:120
-msgid "Original URL"
-msgstr "URL d'origine"
-
-#: models.py:121 views.py:78
+#: updoc/forms.py:37 updoc/models.py:135
 msgid "New URL"
 msgstr "Nouvelle URL"
 
-#: models.py:124
+#: updoc/models.py:54
+msgid "keyword"
+msgstr "mot-clef"
+
+#: updoc/models.py:68
+msgid "uid"
+msgstr "uid"
+
+#: updoc/models.py:69
+msgid "title"
+msgstr "titre"
+
+#: updoc/models.py:70
+msgid "path"
+msgstr "chemin"
+
+#: updoc/models.py:73
+msgid "upload time"
+msgstr "date d'ajout"
+
+#: updoc/models.py:80
+msgid "documentation"
+msgstr "Document"
+
+#: updoc/models.py:81
+msgid "documentations"
+msgstr "Documents"
+
+#: updoc/models.py:125
+msgid "last"
+msgstr "dernière"
+
+#: updoc/models.py:134
+msgid "Original URL"
+msgstr "URL d'origine"
+
+#: updoc/models.py:138
 msgid "Rewritten URL"
 msgstr "URL à réécrire"
 
-#: models.py:125
+#: updoc/models.py:139
 msgid "Rewritten URLs"
 msgstr "URL à réécrire"
 
-#: models.py:132
+#: updoc/models.py:150
 msgid "URL to proxify"
 msgstr "URL à proxifier"
 
-#: models.py:135
+#: updoc/models.py:153
 msgid "Proxy to use"
 msgstr "Proxy à utiliser"
 
-#: models.py:136
+#: updoc/models.py:154
 msgid ""
 "e.g. proxy.example.com:8080. Leave it empty if direct connexion. Several "
 "values can be given, separated by semi-colons (;)."
@@ -89,436 +138,294 @@ msgstr ""
 "ex. proxy.example.com:8080. Laisser vide pour une connexion directe. "
 "Plusieurs valeurs peuvent être spécifiées, séparées par ;."
 
-#: models.py:138
+#: updoc/models.py:156
 msgid "Priority"
 msgstr "Priorité"
 
-#: models.py:139
+#: updoc/models.py:157
 msgid "Low priorities are written first in proxy.pac"
 msgstr "Les proxys sont écrits par ordre de priorité croissante."
 
-#: models.py:142
+#: updoc/models.py:160
 msgid "Proxyfied host"
 msgstr "Hôte proxyfié"
 
-#: models.py:143
+#: updoc/models.py:161
 msgid "Proxified hosts"
 msgstr "Hôtes proxyfiés"
 
-#: models.py:146
+#: updoc/models.py:164
 #, python-format
 msgid "%(h)s via %(p)s"
 msgstr "%(h)s via %(p)s"
 
-#: models.py:166 models.py:182
+#: updoc/models.py:184 updoc/models.py:200
 msgid "name"
 msgstr "Nom"
 
-#: models.py:173
+#: updoc/models.py:191
 msgid "favorite group"
 msgstr "groupe de signets"
 
-#: models.py:174
+#: updoc/models.py:192
 msgid "favorite groups"
 msgstr "groupes de signets"
 
-#: models.py:181 utils.py:79 views.py:334
+#: updoc/models.py:199 updoc/utils.py:82 updoc/views.py:329
 msgid "root"
 msgstr "Racine"
 
-#: models.py:183
+#: updoc/models.py:201
 msgid "URL"
 msgstr "URL"
 
-#: models.py:186
+#: updoc/models.py:204
 msgid "element"
 msgstr "élément"
 
-#: models.py:187
+#: updoc/models.py:205
 msgid "elements"
 msgstr "éléments"
 
-#: utils.py:21
-msgid "Documents"
-msgstr "Documents"
-
-#: utils.py:23
-msgid "Downloads"
-msgstr "Téléchargements"
-
-#: utils.py:25
-msgid "Library"
-msgstr "Bibliothèque"
-
-#: utils.py:27
-msgid "Movies"
-msgstr "Films"
-
-#: utils.py:29
-msgid "Music"
-msgstr "Musique"
-
-#: utils.py:31
-msgid "Pictures"
-msgstr "Images"
-
-#: utils.py:33
-msgid "Public"
-msgstr "Public"
-
-#: utils.py:35
-msgid "System"
-msgstr "Système"
-
-#: views.py:52
-msgid "file"
-msgstr "Fichier"
-
-#: views.py:70
-msgid "Filename"
-msgstr "Nom de fichier"
-
-#: views.py:77
-msgid "URL to rewrite"
-msgstr "URL à réécrire"
-
-#: views.py:101
-msgid "Please enter a name"
-msgstr "Merci d'entrer un nom"
-
-#: views.py:103
-msgid "Please enter some keywords"
-msgstr "Merci d'entrer des mots-clefs"
-
-#: views.py:118
-msgid "File successfully uploaded"
-msgstr "Fichier ajouté correctement"
-
-#: views.py:128
-msgid "Unable to upload this file"
-msgstr "Impossible d'ajouter le fichier"
-
-#: views.py:131 templates/upload.html:4
-msgid "Upload a new file"
-msgstr "Ajouter un fichier"
-
-#: views.py:150 templates/tpl_main.html:34
-msgid "My documents"
-msgstr "Mes documents"
-
-#: views.py:163 views.py:177
+#: updoc/signals.py:71
 #, python-format
-msgid "%(doc)s successfully deleted"
-msgstr "%(doc)s a été supprimé correctement"
+msgid "%(name)s has been uploaded and indexed"
+msgstr "%(name)s a été ajouté et indexé."
 
-#: views.py:165 views.py:179
+#: updoc/signals.py:78
 #, python-format
-msgid "Unable to delete %(doc)s "
-msgstr "Impossible de supprimer %(doc)s"
+msgid "An error happened during the processing of %(name)s: %(error)s"
+msgstr "Une erreur est survenue lors du traitement de %(name)s : %(error)s."
 
-#: views.py:355
-msgid "You must be logged to see this page."
-msgstr "Vous devez être connectés pour voir cette page"
+#: updoc/signals.py:81
+msgid "Unable to process query"
+msgstr "Impossible de traiter la requête"
 
-#: views.py:356 views.py:367 templates/tpl_main.html:42
-msgid "Bookmarks"
-msgstr "Marque-pages"
-
-#: views.py:403
-msgid "You must be logged to upload files."
-msgstr "Vous devez être connectés pour ajouter des éléments"
-
-#: views.py:405
-msgid "Only POST requests are allowed."
-msgstr "Seules les requêtes POST sont autorisées."
-
-#: views.py:420
-msgid "Empty file. You must POST a valid file."
-msgstr "Fichier vide. Vous devez envoyer un fichier valide."
-
-#: views.py:439
-msgid "File successfully uploaded and indexed."
-msgstr "Fichier ajouté et indexé correctement."
-
-#: views.py:446 views.py:504
-msgid "You must be logged to see documentations."
-msgstr "Vous devez être connectés pour voir les documentations."
-
-#: views.py:455 views.py:515
-msgid "Updoc"
-msgstr "Updoc"
-
-#: views.py:457 templates/index.html:41
-msgid "All documents"
-msgstr "Tous les documents"
-
-#: views.py:472
-msgid "You must be logged to search across docs."
-msgstr "Vous devez être connectés pour chercher dans les documentations."
-
-#: views.py:477
-msgid "Unable to use indexed search."
-msgstr "Impossible d'utiliser la recherche indexée."
-
-#: views.py:500 templates/search.html:7
-msgid "Search results"
-msgstr "Résultats"
-
-#: views.py:517
-msgid "Recent uploads"
-msgstr "Ajouts récents"
-
-#: views.py:537
+#: updoc/signals.py:96
 #, python-format
-msgid "Documentations with keyword %(kw)s"
-msgstr "Documents avec le mot-clef %(kw)s"
+msgid "%(name)s has been deleted"
+msgstr "%(name)s a été supprimé"
 
-#: views.py:572
-msgid "Favorite documentations"
-msgstr "Documents préférées"
+#: updoc/templates/404.html:4
+msgid "Page not found."
+msgstr "Page non trouvée."
 
-#: views.py:573
-#, python-format
-msgid "Documentations of %(n)s"
-msgstr "Documents de %(n)s"
+#: updoc/templates/404.html:5
+msgid "Sorry, the page you requested cannot be found."
+msgstr "La page demandée n'a pas été trouvée."
 
-#: views.py:583
-msgid "Most viewed documentations"
-msgstr "Documentations les plus lues"
+#: updoc/templates/500.html:4
+msgid "Don't panic!"
+msgstr "Pas de panique !"
 
-#: views.py:620
-msgid "Last documentations"
-msgstr "Dernières documentations"
+#: updoc/templates/500.html:5
+msgid "A strange error happened. Don't worry, admins have been warned."
+msgstr "Une erreur étrange est arrivée. Pas de souci, les admins sont prévenus."
 
-#: views.py:632
-msgid "Most recent documentations"
-msgstr "Documentations récentes"
-
-#: views.py:670
-msgid "List of bookmarks URLs."
-msgstr "Liste des marque-pages."
-
-#: djangoproject/settings.py:199
-msgid "Users"
-msgstr "Utilisateurs"
-
-#: management/commands/configuration.py:15
-msgid "Read .ini configuration files: "
-msgstr "Fichier(s) de configuration lu(s) :"
-
-#: management/commands/configuration.py:18
-msgid "Content of the configuration, including default values:"
-msgstr "Contenu du fichier, avec les valeurs par défaut :"
-
-#: templates/403.html:5
-msgid "Permission denied"
-msgstr "Permission refusée"
-
-#: templates/403.html:7
-msgid "You do not have the permission to access this page."
-msgstr "Vous n'avez pas la permission d'accéder à cette page"
-
-#: templates/404.html:5
-msgid "Page not found"
-msgstr "Page non trouvée"
-
-#: templates/404.html:7
-msgid "The requested page was not found."
-msgstr "La page demandée n'a pas été trouvée"
-
-#: templates/500.html:5
-msgid "Server error"
-msgstr "Erreur serveur"
-
-#: templates/500.html:7
-msgid "An error was encountered on the server."
-msgstr "Une erreur est survenue sur le serveur"
-
-#: templates/base.html:32 templates/index.html:12 templates/index.html.py:31
-#: templates/my_docs.html:16 templates/root.html:21 templates/tpl_main.html:28
+#: updoc/templates/updoc/base.html:13 updoc/templates/updoc/index.html:14
+#: updoc/templates/updoc/index.html:33 updoc/templates/updoc/my_docs.html:16
 msgid "Index"
 msgstr "Index"
 
-#: templates/base.html:33 templates/base.html.py:34
-msgid "Admin"
-msgstr "Admin"
+#: updoc/templates/updoc/base.html:15
+msgid "Upload a document"
+msgstr "Ajout…"
 
-#: templates/index.html:16 templates/index.html.py:35
-#: templates/my_docs.html:25 templates/my_docs.html.py:35
-#: templates/search.html:15
-msgid "No document found"
-msgstr "Aucun document trouvé"
+#: updoc/templates/updoc/base.html:18 updoc/views.py:182
+msgid "My documents"
+msgstr "Mes documents"
 
-#: templates/index.html:23
-msgid "Recently viewed"
-msgstr "Visites récentes"
+#: updoc/templates/updoc/base.html:26 updoc/views.py:138 updoc/views.py:149
+msgid "Bookmarks"
+msgstr "Marque-pages"
 
-#: templates/index.html:48
-msgid "No keyword found"
-msgstr "Aucun mot-clef n'a été trouvé"
+#: updoc/templates/updoc/base.html:27
+msgid "proxy.pac"
+msgstr "proxy.pac"
 
-#: templates/list_dir.html:5 templates/markdown.html:5
-msgid "Properties"
-msgstr "Propriétés"
+#: updoc/templates/updoc/base.html:37
+msgid "Administration"
+msgstr "Administration"
 
-#: templates/list_dir.html:10 templates/markdown.html:10
-msgid "Uploaded by:"
-msgstr "Ajouté par : "
+#: updoc/templates/updoc/base.html:45
+msgid "Search"
+msgstr "Recherche"
 
-#: templates/list_dir.html:17 templates/markdown.html:17
-msgid "Alternative link (no authentication)"
-msgstr "Lien sans authentification"
+#: updoc/templates/updoc/base.html:59
+msgid "Matthieu Gallet, 2016."
+msgstr "Matthieu Gallet, 2016."
 
-#: templates/list_dir.html:24 templates/markdown.html:24
-msgid "Download as ZIP"
-msgstr "Format ZIP"
+#: updoc/templates/updoc/delete_doc_confirm.html:3
+#: updoc/templates/updoc/delete_url_confirm.html:3
+msgid "Close"
+msgstr "Fermé"
 
-#: templates/list_dir.html:30 templates/markdown.html:30
-#: templates/my_docs.html:19
-msgid "Delete this file?"
-msgstr "Voulez-vous supprimer ce fichier ?"
+#: updoc/templates/updoc/delete_doc_confirm.html:5
+msgid "Are you sure to delete this document?"
+msgstr "Êtes-vous sûr de supprimer ce document ?"
 
-#: templates/list_dir.html:32 templates/markdown.html:32
-#: templates/my_docs.html:21 templates/my_docs.html.py:53
+#: updoc/templates/updoc/delete_doc_confirm.html:8
+#, python-format
+msgid "Are you sure to delete %(name)s? This action cannot be undone."
+msgstr "Êtes-vous sûr de supprimer %(name)s ? Cette action ne peut être annulée."
+
+#: updoc/templates/updoc/delete_doc_confirm.html:12
+#: updoc/templates/updoc/delete_url_confirm.html:12
+#: updoc/templates/updoc/doc_properties.html:50
+#: updoc/templates/updoc/doc_properties.html:61
+msgid "Cancel"
+msgstr "Annuler"
+
+#: updoc/templates/updoc/delete_doc_confirm.html:13
+#: updoc/templates/updoc/delete_url_confirm.html:13
+#: updoc/templates/updoc/doc_properties.html:33
+#: updoc/templates/updoc/my_docs.html:21 updoc/templates/updoc/my_docs.html:53
 msgid "Delete"
 msgstr "Supprimer"
 
-#: templates/list_dir.html:40 templates/markdown.html:40
+#: updoc/templates/updoc/delete_url_confirm.html:5
+msgid "Are you sure to delete this URL replacement?"
+msgstr "Êtes-vous sûr de supprimer ce remplacement d'URL ?"
+
+#: updoc/templates/updoc/delete_url_confirm.html:8
+#, python-format
+msgid ""
+"Are you sure to delete the replacement of %(src)s by %(dst)s? This action "
+"cannot be undone."
+msgstr "Êtes-vous sûr de supprimer le remplacement de %(src)s par %(dst)s ? Cette action ne peut pas être annulée."
+
+#: updoc/templates/updoc/doc_properties.html:5
+msgid "Properties"
+msgstr "Propriétés"
+
+#: updoc/templates/updoc/doc_properties.html:10
+msgid "Uploaded by:"
+msgstr "Ajouté par : "
+
+#: updoc/templates/updoc/doc_properties.html:18
+msgid "Alternative link (no authentication)"
+msgstr "Lien sans authentification"
+
+#: updoc/templates/updoc/doc_properties.html:25
+msgid "Download as ZIP"
+msgstr "Format ZIP"
+
+#: updoc/templates/updoc/doc_properties.html:44
 msgid "Document:"
 msgstr "Documents :"
 
-#: templates/list_dir.html:42 templates/markdown.html:42
-msgid "Click here to edit the title, ESC to validate."
-msgstr "Ciquez ici pour modifier le titre (ESC pour valider)"
+#: updoc/templates/updoc/doc_properties.html:47
+msgid "please enter a name"
+msgstr "merci d'entrer un nom"
 
-#: templates/list_dir.html:44 templates/markdown.html:44
-msgid "Click to edit title"
-msgstr "Cliquez pour éditer le titre"
+#: updoc/templates/updoc/doc_properties.html:51
+#: updoc/templates/updoc/doc_properties.html:62
+msgid "Save"
+msgstr "Enregistrer"
 
-#: templates/list_dir.html:46 templates/list_dir.html.py:58
-#: templates/markdown.html:46 templates/markdown.html.py:58
-#: templates/upload.html:23
-msgid "loading…"
-msgstr "chargement…"
-
-#: templates/list_dir.html:51 templates/markdown.html:51
+#: updoc/templates/updoc/doc_properties.html:55
 msgid "Keywords:"
 msgstr "Mots-clefs :"
 
-#: templates/list_dir.html:53 templates/markdown.html:53
-msgid "Click here to edit keywords, ESC to validate."
-msgstr "Ciquez ici pour modifier les mots-clefs (ESC pour valider)"
+#: updoc/templates/updoc/doc_properties.html:58
+msgid "Please enter keywords"
+msgstr "Merci d'entrer des mots-clefs"
 
-#: templates/list_dir.html:56 templates/markdown.html:56
-msgid "Click to add keywords"
-msgstr "Cliquez pour les changer les mots-clefs"
+#: updoc/templates/updoc/index.html:7
+msgid "Last uploaded documents"
+msgstr "Derniers documents"
 
-#: templates/list_dir.html:74
+#: updoc/templates/updoc/index.html:18 updoc/templates/updoc/index.html:37
+#: updoc/templates/updoc/my_docs.html:25 updoc/templates/updoc/my_docs.html:36
+msgid "No document found"
+msgstr "Aucun document trouvé"
+
+#: updoc/templates/updoc/index.html:25
+msgid "Recently viewed"
+msgstr "Visites récentes"
+
+#: updoc/templates/updoc/index.html:25
+msgid "Feed with your most viewed documents"
+msgstr "Vos documents préférés"
+
+#: updoc/templates/updoc/index.html:45 updoc/views.py:407
+msgid "All documents"
+msgstr "Tous les documents"
+
+#: updoc/templates/updoc/index.html:54
+msgid "No keyword found"
+msgstr "Aucun mot-clef n'a été trouvé"
+
+#: updoc/templates/updoc/list_dir.html:17
 msgid "Size"
 msgstr "Taille"
 
-#: templates/list_dir.html:75
+#: updoc/templates/updoc/list_dir.html:18
 msgid "Modified on"
 msgstr "Modifié le"
 
-#: templates/list_favorites.html:5
+#: updoc/templates/updoc/list_favorites.html:5
 msgid "Groups"
 msgstr "Groupes de signets"
 
-#: templates/list_favorites.html:14
+#: updoc/templates/updoc/list_favorites.html:14
 msgid "No group found"
 msgstr "Aucun groupe de signets trouvé"
 
-#: templates/list_favorites.html:24
+#: updoc/templates/updoc/list_favorites.html:24
 msgid "No element found."
 msgstr "Aucun signet trouvé"
 
-#: templates/login.html:9 templates/upload_doc.html:6
-msgid "Validate!"
-msgstr "Valider !"
-
-#: templates/my_docs.html:12 templates/search.html:12
+#: updoc/templates/updoc/my_docs.html:12
 msgid ", upload date: "
 msgstr ", date d'ajout : "
 
-#: templates/my_docs.html:29
+#: updoc/templates/updoc/my_docs.html:30
 #, python-format
 msgid "%(total)s documents found."
 msgstr "%(total)s documents trouvés au total."
 
-#: templates/my_docs.html:42
+#: updoc/templates/updoc/my_docs.html:43
 msgid "My rewritten URLs"
 msgstr "URL à réécrire"
 
-#: templates/my_docs.html:48
+#: updoc/templates/updoc/my_docs.html:49
 msgid "redirected to:"
 msgstr "remplacé par : "
 
-#: templates/my_docs.html:51
-msgid "Delete this URL?"
-msgstr "Voulez-vous supprimer cette URL ?"
-
-#: templates/my_docs.html:57
+#: updoc/templates/updoc/my_docs.html:57
 msgid "No URL found"
 msgstr "Aucune URL trouvée"
 
-#: templates/my_docs.html:60
+#: updoc/templates/updoc/my_docs.html:60
 msgid "Add a new URL to rewrite"
 msgstr "Ajouter une nouvelle URL à remplacer"
 
-#: templates/my_docs.html:62
+#: updoc/templates/updoc/my_docs.html:62
 msgid "This URL will be rewritten in all HTML, CSS and JS files."
 msgstr "Cette URL sera remplacée dans tous les fichiers HTML, CSS et JS."
 
-#: templates/my_docs.html:68
+#: updoc/templates/updoc/my_docs.html:68
 msgid "Add this URL"
 msgstr "Ajouter cette URL"
 
-#: templates/root.html:15
-msgid "UpDoc"
-msgstr "UpDoc"
+#: updoc/templates/updoc/upload.html:2 updoc/views.py:228
+msgid "Upload a new file"
+msgstr "Ajouter un fichier"
 
-#: templates/root.html:17 templates/tpl_main.html:53
-msgid "Search"
-msgstr "Recherche"
+#: updoc/templates/updoc/upload.html:19
+msgid "loading…"
+msgstr "chargement…"
 
-#: templates/root.html:22 templates/tpl_main.html:31
-msgid "Upload a document"
-msgstr "Ajout…"
-
-#: templates/root.html:23
-msgid "My docs"
-msgstr "Mes documents"
-
-#: templates/tpl_main.html:5
-msgid "Documentations"
-msgstr "Documents"
-
-#: templates/tpl_main.html:14
-msgid "Most viewed feeds"
-msgstr "Flux RSS des docs les plus lues."
-
-#: templates/tpl_main.html:43
-msgid "proxy.pac"
-msgstr "proxy.pac"
-
-#: templates/tpl_main.html:45
-msgid "Administration"
-msgstr "Administration"
-
-#: templates/tpl_main.html:71
-msgid "&copy; Matthieu Gallet 2014, all rights reserved."
-msgstr "&copy; Matthieu Gallet 2014, tous droits réservés"
-
-#: templates/upload.html:24
+#: updoc/templates/updoc/upload.html:20
 msgid "Processing and indexing archive…"
 msgstr "Traitement et indexation de l'archive…"
 
-#: templates/upload.html:29
+#: updoc/templates/updoc/upload.html:24
 msgid "An error occured during the processing."
 msgstr "Une erreur est survenue lors du traitement."
 
-#: templates/upload.html:34
+#: updoc/templates/updoc/upload.html:29
 msgid ""
 "You can also upload a doc with curl. Any documentation with the same name "
 "(belonging to the same user) will be replaced!"
@@ -526,9 +433,172 @@ msgstr ""
 "Vous pouvez également ajouter une doc via cURL. Toute documentation avec le "
 "même nom sera remplacée !"
 
-#: tests/test_translation.py:32
-msgid "test_string"
-msgstr ""
+#: updoc/templates/updoc/upload_doc_progress.html:6
+msgid "Validate!"
+msgstr "Valider !"
+
+#: updoc/utils.py:24
+msgid "Documents"
+msgstr "Documents"
+
+#: updoc/utils.py:26
+msgid "Downloads"
+msgstr "Téléchargements"
+
+#: updoc/utils.py:28
+msgid "Library"
+msgstr "Bibliothèque"
+
+#: updoc/utils.py:30
+msgid "Movies"
+msgstr "Films"
+
+#: updoc/utils.py:32
+msgid "Music"
+msgstr "Musique"
+
+#: updoc/utils.py:34
+msgid "Pictures"
+msgstr "Images"
+
+#: updoc/utils.py:36
+msgid "Public"
+msgstr "Public"
+
+#: updoc/utils.py:38
+msgid "System"
+msgstr "Système"
+
+#: updoc/views.py:115 updoc/views.py:396
+msgid "You must be logged to see documentations."
+msgstr "Vous devez être connectés pour voir les documentations."
+
+#: updoc/views.py:126 updoc/views.py:405
+msgid "Updoc"
+msgstr "Updoc"
+
+#: updoc/views.py:128
+msgid "Recent uploads"
+msgstr "Ajouts récents"
+
+#: updoc/views.py:137
+msgid "You must be logged to see this page."
+msgstr "Vous devez être connectés pour voir cette page"
+
+#: updoc/views.py:176
+#, python-format
+msgid "URL %(src)s will be rewritten as %(dst)s"
+msgstr "L'URL %(src)s sera remplacée par %(dst)s"
+
+#: updoc/views.py:193
+#, python-format
+msgid "The replacement of %(src)s by %(dst)s has been removed"
+msgstr "Le remplacement de %(src)s par %(dst)s a été supprimée."
+
+#: updoc/views.py:202
+#, python-format
+msgid "%(doc)s will be quickly deleted"
+msgstr "%(doc)s sera prochainement supprimé"
+
+#: updoc/views.py:213
+msgid "File successfully uploaded"
+msgstr "Fichier ajouté correctement"
+
+#: updoc/views.py:223 updoc/views.py:225
+msgid "Unable to upload this file"
+msgstr "Impossible d'ajouter le fichier"
+
+#: updoc/views.py:263
+msgid "You must be logged to upload files.\n"
+msgstr "Vous devez être connectés pour ajouter des éléments.\n"
+
+#: updoc/views.py:265
+msgid "Only POST requests are allowed.\n"
+msgstr "Seules les requêtes POST sont autorisées.\n"
+
+#: updoc/views.py:268
+msgid "You must supply filename, name and keywords in your query.\n"
+msgstr "Vous devez fournir le nom de fichier, le nom et les mots-clefs dans votre requête.\n"
+
+#: updoc/views.py:279
+msgid "Empty file. You must POST a valid file.\n"
+msgstr "Fichier vide. Vous devez envoyer un fichier valide.\n"
+
+#: updoc/views.py:292
+msgid "File successfully uploaded. It will be uncompressed and indexed.\n"
+msgstr "Fichier ajouté correctement. Il sera indexé rapidement.\n"
+
+#: updoc/views.py:358
+msgid "You must be logged to search across docs."
+msgstr "Vous devez être connectés pour chercher dans les documentations."
+
+#: updoc/views.py:363
+msgid "Unable to use indexed search."
+msgstr "Impossible d'utiliser la recherche indexée."
+
+#: updoc/views.py:386
+msgid "Search results"
+msgstr "Résultats"
+
+#~ msgid "Unable to delete %(doc)s "
+#~ msgstr "Impossible de supprimer %(doc)s"
+
+#~ msgid "Users"
+#~ msgstr "Utilisateurs"
+
+#~ msgid "Read .ini configuration files: "
+#~ msgstr "Fichier(s) de configuration lu(s) :"
+
+#~ msgid "Content of the configuration, including default values:"
+#~ msgstr "Contenu du fichier, avec les valeurs par défaut :"
+
+#~ msgid "Permission denied"
+#~ msgstr "Permission refusée"
+
+#~ msgid "You do not have the permission to access this page."
+#~ msgstr "Vous n'avez pas la permission d'accéder à cette page"
+
+#~ msgid "Server error"
+#~ msgstr "Erreur serveur"
+
+#~ msgid "An error was encountered on the server."
+#~ msgstr "Une erreur est survenue sur le serveur"
+
+#~ msgid "Admin"
+#~ msgstr "Admin"
+
+#~ msgid "Delete this file?"
+#~ msgstr "Voulez-vous supprimer ce fichier ?"
+
+#~ msgid "Click here to edit the title, ESC to validate."
+#~ msgstr "Ciquez ici pour modifier le titre (ESC pour valider)"
+
+#~ msgid "Click to edit title"
+#~ msgstr "Cliquez pour éditer le titre"
+
+#~ msgid "Click here to edit keywords, ESC to validate."
+#~ msgstr "Ciquez ici pour modifier les mots-clefs (ESC pour valider)"
+
+#~ msgid "Click to add keywords"
+#~ msgstr "Cliquez pour les changer les mots-clefs"
+
+#~ msgid "Delete this URL?"
+#~ msgstr "Voulez-vous supprimer cette URL ?"
+
+#~ msgid "UpDoc"
+#~ msgstr "UpDoc"
+
+#~ msgid "My docs"
+#~ msgstr "Mes documents"
+
+#~ msgid "Documentations"
+#~ msgstr "Documents"
+
+#~ msgid "Most viewed feeds"
+#~ msgstr "Flux RSS des docs les plus lues."
+
+#~ msgid "&copy; Matthieu Gallet 2014, all rights reserved."
+#~ msgstr "&copy; Matthieu Gallet 2014, tous droits réservés"
 
 #~ msgid "Invalid user %(u)s"
 #~ msgstr "Utilisateur %(u)s invalide"

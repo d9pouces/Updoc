@@ -6,7 +6,6 @@ However, you can create pure Debian packages with `DjangoFloor <http://django-fl
 
 The source code provides several Bash scripts:
 
-    * `deb-debian-7-python3.sh`,
     * `deb-debian-8-python3.sh`,
     * `deb-ubuntu-14.04-15.10.sh`.
 
@@ -19,9 +18,22 @@ These scripts are designed to run on basic installation and are split in five st
     * install all packages and UpDoc!, prepare a simple configuration to test.
 
 If everything is ok, you can copy all the .deb packages to your private mirror or to the destination server.
-The configuration is set in `/etc/updoc/settings.ini`.
-By default, UpDoc! is installed with Apache 2.2 (or 2.4) and Supervisor.
-You can switch to Nginx or Systemd by tweaking the right `stdeb-XXX.cfg` file.
+By default, UpDoc! is installed with Apache 2.4 and systemd.
+You can switch to Nginx or supervisor by tweaking the right `stdeb-XXX.cfg` file.
+
+
+Configuration
+-------------
+
+Default configuration file is `/etc/updoc/settings.ini`.
+If you need more complex settings, you can override default values (given in `djangofloor.defaults` and
+`updoc.defaults`) by creating a file named `/etc/updoc/settings.py`.
+After any change in the database configuration or any upgrade, you must migrate the database to create the required tables.
+
+.. code-block:: bash
+
+    sudo -u updoc updoc-manage migrate
+
 
 After installation and configuration, do not forget to create a superuser:
 
@@ -30,9 +42,26 @@ After installation and configuration, do not forget to create a superuser:
     sudo -u updoc updoc-manage createsuperuser
 
 
-Default configuration file is `/etc/updoc/settings.ini`.
-If you need more complex settings, you can override default values (given in `djangofloor.defaults` and
-`updoc.defaults`) by creating a file named `/etc/updoc/settings.py`.
+
+
+
+Launch the service
+------------------
+
+The service can be stopped or started via the `service` command. By default, UpDoc! is not started.
+
+.. code-block:: bash
+
+    sudo service updoc-gunicorn start
+    sudo service updoc-celery start
+
+
+If you want UpDoc! to be started at startup, you have to enable it in systemd:
+
+.. code-block:: bash
+
+    systemctl enable moneta-gunicorn.service
+    systemctl enable moneta-celery.service
 
 
 
@@ -91,7 +120,7 @@ If you have a lot of files to backup, beware of the available disk place!
     missingok
     create 640 updoc updoc
     postrotate
-    tar -czf /var/backups/updoc/backup_media.tar.gz /var/backups/updoc/media/
+    tar -C /var/backups/updoc/media/ -czf /var/backups/updoc/backup_media.tar.gz .
     endscript
   }
   EOF
@@ -117,13 +146,16 @@ Monitoring
 ----------
 
 
+Nagios or Shinken
+~~~~~~~~~~~~~~~~~
+
 You can use Nagios checks to monitor several points:
 
   * connection to the application server (gunicorn or uwsgi):
   * connection to the database servers (PostgreSQL and Redis),
   * connection to the reverse-proxy server (apache or nginx),
   * the validity of the SSL certificate (can be combined with the previous check),
-  * time of the last backup (database and files),
+  * creation date of the last backup (database and files),
   * living processes for gunicorn, celery, redis, postgresql, apache,
   * standard checks for RAM, disk, swap…
 
@@ -141,5 +173,26 @@ Here is a sample NRPE configuration file:
   command[updoc_gunicorn]=/usr/lib/nagios/plugins/check_procs -C python -a '/usr/local/bin/updoc-gunicorn'
   command[updoc_celery]=/usr/lib/nagios/plugins/check_procs -C python -a '/usr/local/bin/updoc-celery worker'
   EOF
+
+Sentry
+~~~~~~
+
+For using Sentry to log errors, you must add `raven.contrib.django.raven_compat` to the installed apps.
+
+.. code-block:: ini
+
+  [global]
+  extra_apps = raven.contrib.django.raven_compat
+  [sentry]
+  dsn_url = https://[key]:[secret]@app.getsentry.com/[project]
+
+Of course, the Sentry client (Raven) must be separately installed, before testing the installation:
+
+.. code-block:: bash
+
+  sudo -u updoc -i
+  updoc-manage raven test
+
+
 
 
