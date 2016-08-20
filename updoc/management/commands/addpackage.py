@@ -1,4 +1,5 @@
 # coding=utf-8
+from argparse import ArgumentParser
 from optparse import make_option
 from urllib.parse import urlparse
 import requests
@@ -17,19 +18,18 @@ __author__ = 'Matthieu Gallet'
 
 class AddPackage(BaseCommand):
 
-    option_list = (
-        make_option('-k', '--keyword', action='append', dest='keyword', default=[],
-                    help='Keyword to append to the uploaded archive'),
-        make_option('-n', '--name', action='store', dest='name', default=None,
-                    help='Name of the archive. If an archive with the same name already exists, nothing is done'),
-        make_option('-u', '--user', action='store', dest='user', default=None,
-                    help='username in behalf the upload is done of.'),
-    ) + BaseCommand.option_list
+    def add_arguments(self, parser):
+        assert isinstance(parser, ArgumentParser)
+        parser.add_argument('filename', default=None,
+                            help='filename or http-URL to add'),
+        parser.add_argument('-k', '--keyword', action='append', dest='keyword', default=[],
+                            help='Keyword to append to the uploaded archive'),
+        parser.add_argument('-n', '--name', action='store', dest='name', default=None,
+                            help='Name of the archive. If an archive with the same name already exists, nothing is done'),
+        parser.add_argument('-u', '--user', action='store', dest='user', default=None,
+                            help='username in behalf the upload is done of.'),
 
     def handle(self, *args, **options):
-        if not args:
-            print('Please provid either a file or a URL ')
-            return 1
         # require
         request = HttpRequest()
         if options['user'] is None:
@@ -37,7 +37,7 @@ class AddPackage(BaseCommand):
         else:
             request.user = get_user_model().objects.get(username=options['user'])
 
-        filename = args[0]
+        filename = options['filename']
         if filename.startswith('file://'):
             filename = filename[7:]
         if filename.startswith('http://') or filename.startswith('https://'):
