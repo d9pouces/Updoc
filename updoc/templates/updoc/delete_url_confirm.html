@@ -1,4 +1,4 @@
-{% load i18n %}<form method="POST" action="{% url 'updoc.views.delete_url' url_id=url_id %}">
+{% load i18n %}<form method="POST" action="{% url 'updoc:delete_url' url_id=url_id %}">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="{% trans 'Close' %}"><span aria-hidden="true">&times;</span>
         </button>

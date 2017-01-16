@@ -15,13 +15,14 @@ with codecs.open(os.path.join(os.path.dirname(__file__), 'README.md'), encoding=
 
 entry_points = {
     'console_scripts': [
-        'updoc-manage = djangofloor.scripts:manage',
+        'updoc-manage = djangofloor.scripts:django',
         'updoc-celery = djangofloor.scripts:celery',
         'updoc-gunicorn = djangofloor.scripts:gunicorn',
     ]
 }
 
-requirements = ['djangofloor', 'elasticsearch>=2.0.0', 'requests', 'markdown', 'hiredis', ]
+requirements = ['djangofloor', 'elasticsearch>=2.0.0', 'requests', 'markdown', 'hiredis', 'django-allauth',
+                'django_redis']
 try:
     # noinspection PyPackageRequirements
     import ipaddress

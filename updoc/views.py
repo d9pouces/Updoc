@@ -1,35 +1,36 @@
 # -*- coding: utf-8 -*-
-import mimetypes
 import datetime
-import uuid
-import zipfile
-
+import mimetypes
 import os
 import re
 import stat
 import tarfile
 import tempfile
+import uuid
+import zipfile
+
+import markdown
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.db.models import F, Count, Q
-from django.http.response import HttpResponseRedirect, Http404, HttpResponse, StreamingHttpResponse, HttpResponseNotModified
+from django.http.response import HttpResponseRedirect, Http404, HttpResponse, StreamingHttpResponse,\
+    HttpResponseNotModified
+from django.shortcuts import get_object_or_404
+from django.template.response import TemplateResponse
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.timezone import utc
 from django.utils.translation import ugettext_lazy as _
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
 from django.views.decorators.cache import cache_page, never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.static import was_modified_since
-import markdown
+from djangofloor.views import send_file
+from djangofloor.tasks import scall, SERVER
 from elasticsearch.exceptions import ConnectionError as ESError
 
-from djangofloor.tasks import call
-from djangofloor.views import send_file
 from updoc.forms import UrlRewriteForm, FileUploadForm, UploadApiForm, MetadatadUploadForm, DocSearchForm
 from updoc.indexation import search_archive
 from updoc.models import ProxyfiedHost, RssRoot, RssItem, RewrittenUrl, UploadDoc, Keyword, LastDocs
@@ -57,7 +58,8 @@ def send_file_replace_url(request, filename, allow_replace=False):
     if not os.path.isfile(filename):
         raise Http404
     statobj = os.stat(filename)
-    if not was_modified_since(request.META.get('HTTP_IF_MODIFIED_SINCE'), statobj[stat.ST_MTIME], statobj[stat.ST_SIZE]):
+    if not was_modified_since(request.META.get('HTTP_IF_MODIFIED_SINCE'),
+                              statobj[stat.ST_MTIME], statobj[stat.ST_SIZE]):
         return HttpResponseNotModified()
     content_type = mimetypes.guess_type(filename)[0]
     extension = filename.rpartition('.')[2]
@@ -126,7 +128,7 @@ def index(request):
     template_values = {'recent_checked': recent_checked, 'title': _('Updoc'), 'rss_roots': rss_roots,
                        'recent_uploads': recent_uploads, 'keywords': keywords_with_counts,
                        'list_title': _('Recent uploads'), }
-    return render_to_response('updoc/index.html', template_values, RequestContext(request))
+    return TemplateResponse(request, 'updoc/index.html', template_values)
 
 
 @never_cache
@@ -150,7 +152,7 @@ def show_favorite(request, root_id=None):
         favorites = RssItem.objects.filter(root__id=root_id).order_by('name')
     template_values = {'roots': roots, 'values': favorites, 'current_root_name': current_root_name,
                        'current_id': int(root_id)}
-    return render_to_response('updoc/list_favorites.html', template_values, RequestContext(request))
+    return TemplateResponse(request, 'updoc/list_favorites.html', template_values)
 
 
 @cache_page(60 * 15)
@@ -163,44 +165,46 @@ def show_proxies(request):
     if not defaults:
         defaults = 'DIRECT'
     template_values = {'proxies': proxies, 'model': ProxyfiedHost, 'defaults': defaults}
-    return render_to_response('proxy.pac', template_values, content_type='application/x-ns-proxy-autoconfig')
+    return TemplateResponse(request, 'proxy.pac', template_values, content_type='application/x-ns-proxy-autoconfig')
 
 
 @never_cache
 def my_docs(request):
     user = request.user if request.user.is_authenticated() else None
-    if request.method == 'POST':
+    if request.method == 'POST' and user and user.has_perm('updoc.add_uploaddoc'):
         form = UrlRewriteForm(request.POST)
         if form.is_valid():
             RewrittenUrl(user=user, src=form.cleaned_data['src'], dst=form.cleaned_data['dst']).save()
             messages.info(request, _('URL %(src)s will be rewritten as %(dst)s') % form.cleaned_data)
-            return HttpResponseRedirect(reverse('updoc.views.my_docs'))
+            return HttpResponseRedirect(reverse('updoc:my_docs'))
     else:
         form = UrlRewriteForm()
     uploads = UploadDoc.query(request).order_by('-upload_time').select_related()
     rw_urls = RewrittenUrl.query(request).order_by('src')
     template_values = {'uploads': uploads, 'title': _('My documents'), 'rw_urls': rw_urls,
                        'rw_form': form, 'editable': True, 'has_search_results': False, }
-    return render_to_response('updoc/my_docs.html', template_values, RequestContext(request))
+    return TemplateResponse(request, 'updoc/my_docs.html', template_values)
 
 
 @csrf_exempt
+@permission_required('updoc.add_uploaddoc')
 def delete_url(request, url_id):
     if request.method != 'POST':
-        return HttpResponseRedirect(reverse('updoc.views.my_docs'))
+        return HttpResponseRedirect(reverse('updoc:my_docs'))
     url = get_object_or_404(RewrittenUrl.query(request), pk=url_id)
     RewrittenUrl.query(request).filter(pk=url_id).delete()
-    messages.info(request, _('The replacement of %(src)s by %(dst)s has been removed') % {'src': url.src, 'dst': url.dst, })
-    return HttpResponseRedirect(reverse('updoc.views.my_docs'))
+    messages.info(request, _('The replacement of %(src)s by %(dst)s has been removed') %
+                  {'src': url.src, 'dst': url.dst, })
+    return HttpResponseRedirect(reverse('updoc:my_docs'))
 
 
 @csrf_exempt
 def delete_doc(request, doc_id):
     obj = get_object_or_404(UploadDoc.query(request), id=doc_id)
     name = obj.name
-    call('updoc.delete_file', request, doc_id=doc_id)
+    scall(request, 'updoc.delete_file', to=[SERVER], doc_id=doc_id)
     messages.info(request, _('%(doc)s will be quickly deleted') % {'doc': name})
-    return HttpResponseRedirect(reverse('updoc.views.my_docs'))
+    return HttpResponseRedirect(reverse('updoc:my_docs'))
 
 
 @never_cache
@@ -216,7 +220,7 @@ def upload(request):
             for keyword in form.cleaned_data['keywords'].lower().split():
                 obj.keywords.add(Keyword.get(keyword))
             obj.save()
-            return HttpResponseRedirect(reverse('updoc.views.upload'))
+            return HttpResponseRedirect(reverse('upload'))
         elif 'pk' in form.cleaned_data:
             obj = get_object_or_404(UploadDoc.query(request), id=form.cleaned_data['pk'])
             obj.delete()
@@ -225,8 +229,8 @@ def upload(request):
             messages.error(request, _('Unable to upload this file'))
     else:
         form = FileUploadForm()
-    template_values = {'form': form, 'title': _('Upload a new file'), 'root_host': settings.HOST}
-    return render_to_response('updoc/upload.html', template_values, RequestContext(request))
+    template_values = {'form': form, 'title': _('Upload a new file'), 'root_host': settings.SERVER_BASE_URL[:-1]}
+    return TemplateResponse(request, 'updoc/upload.html', template_values)
 
 
 @csrf_exempt
@@ -247,13 +251,15 @@ def upload_doc_progress(request):
     basename = os.path.basename(uploaded_file.name).rpartition('.')[0]
     if basename.endswith('.tar'):
         basename = basename[:-4]
-    doc = UploadDoc(name=basename, user=request.user if request.user.is_authenticated() else None, uid=str(uuid.uuid1()))
+    doc = UploadDoc(name=basename, user=request.user if request.user.is_authenticated() else None,
+                    uid=str(uuid.uuid1()))
     doc.save()
-    call('updoc.process_file', request, doc_id=doc.id, filename=tmp_file.name, original_filename=uploaded_file.name)
+    scall(request, 'updoc.process_file', to=[SERVER], doc_id=doc.id, filename=tmp_file.name,
+          original_filename=uploaded_file.name)
     # offer a correct name for the newly uploaded document
     form = MetadatadUploadForm(initial={'pk': doc.pk, 'name': basename, })
     template_values = {'form': form, }
-    return render_to_response('updoc/upload_doc_progress.html', template_values, RequestContext(request))
+    return TemplateResponse(request, 'updoc/upload_doc_progress.html', template_values)
 
 
 @csrf_exempt
@@ -288,7 +294,8 @@ def upload_doc_api(request):
         doc.save()
     for keyword in strip_split(form.cleaned_data['keywords'].lower()):
         doc.keywords.add(Keyword.get(keyword))
-    call('updoc.process_file', request, doc_id=doc.id, filename=tmp_file.name, original_filename=os.path.basename(form.cleaned_data['filename']))
+    scall(request, 'updoc.process_file', to=[SERVER], doc_id=doc.id, filename=tmp_file.name,
+          original_filename=os.path.basename(form.cleaned_data['filename']))
     return HttpResponse(_('File successfully uploaded. It will be uncompressed and indexed.\n'), status=200)
 
 
@@ -308,8 +315,8 @@ def show_doc(request, doc_id, path=''):
         raise Http404
     user = request.user if request.user.is_authenticated() else None
     checked, created = LastDocs.objects.get_or_create(user=user, doc=doc)
-    use_auth = reverse('updoc.views.show_doc', kwargs={'doc_id': doc_id, 'path': path}) == request.path
-    view = 'updoc.views.show_doc' if use_auth else 'updoc.views.show_doc_alt'
+    use_auth = reverse('updoc:show_doc', kwargs={'doc_id': doc_id, 'path': path}) == request.path
+    view = 'updoc:show_doc' if use_auth else 'updoc:show_doc_alt'
     if not created:
         now = datetime.datetime.utcnow().replace(tzinfo=utc)
         LastDocs.objects.filter(user=user, doc=doc).update(count=F('count') + 1, last=now)
@@ -321,11 +328,11 @@ def show_doc(request, doc_id, path=''):
                                    show_dirs=True, show_parent=True, show_hidden=False)
         template_values = {'directory': directory, 'doc': doc, 'editable': editable, 'title': str(doc),
                            'keywords': ' '.join([keyword.value for keyword in doc.keywords.all()]), 'doc_id': doc_id, }
-        return render_to_response('updoc/list_dir.html', template_values, RequestContext(request))
+        return TemplateResponse(request, 'updoc/list_dir.html', template_values)
     if full_path.endswith('.md'):
-        view_name = 'updoc.views.show_doc'
+        view_name = 'updoc:show_doc'
         if request.user.is_anonymous():
-            view_name = 'updoc.views.show_doc_alt'
+            view_name = 'updoc:show_doc_alt'
         path_components = [(reverse(view_name, kwargs={'doc_id': doc_id, 'path': ''}), _('root'))]
         components = path.split('/')
         for index_, comp in enumerate(components):
@@ -337,7 +344,7 @@ def show_doc(request, doc_id, path=''):
             with open(full_path) as fd:
                 content = fd.read()
             template_values['content'] = mark_safe(markdown.markdown(content))
-            return render_to_response('updoc/markdown.html', template_values, RequestContext(request))
+            return TemplateResponse(request, 'updoc/markdown.html', template_values)
         except UnicodeDecodeError:
             pass
     return send_file_replace_url(request, full_path, allow_replace=True)
@@ -385,7 +392,7 @@ def show_search_results(request):
         docs = None
     template_values = {'uploads': docs, 'title': _('Search results'), 'rw_form': None,
                        'editable': False, 'es_data': es_data, 'doc_id': doc_id, }
-    return render_to_response('updoc/my_docs.html', template_values, RequestContext(request))
+    return TemplateResponse(request, 'updoc/my_docs.html', template_values)
 
 
 @never_cache
@@ -405,4 +412,4 @@ def show_all_docs(request):
     template_values = {'recent_checked': recent_checked, 'title': _('Updoc'), 'rss_roots': rss_roots,
                        'recent_uploads': recent_uploads, 'search': search, 'keywords': [],
                        'list_title': _('All documents'), }
-    return render_to_response('updoc/index.html', template_values, RequestContext(request))
+    return TemplateResponse(request, 'updoc/index.html', template_values)

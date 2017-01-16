@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
-from allauth.account.models import EmailAddress, EmailConfirmation
-from allauth.socialaccount.models import SocialToken, SocialAccount, SocialApp
+from django.contrib.admin import site, ModelAdmin, TabularInline
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.contrib.sites.models import Site
+
 from updoc.models import ProxyfiedHost, RssRoot, RssItem, RewrittenUrl
 
 __author__ = 'Matthieu Gallet'
-
-from django.contrib.admin import site, ModelAdmin, TabularInline
-from django.contrib.auth.models import Group
 
 
 class UserAdmin(ModelAdmin):
@@ -27,11 +25,11 @@ class RssAdmin(ModelAdmin):
 site.unregister(get_user_model())
 site.unregister(Group)
 site.unregister(Site)
-site.unregister(SocialToken)
-site.unregister(SocialAccount)
-site.unregister(SocialApp)
-site.unregister(EmailAddress)
-site.unregister(EmailConfirmation)
+# site.unregister(SocialToken)
+# site.unregister(SocialAccount)
+# site.unregister(SocialApp)
+# site.unregister(EmailAddress)
+# site.unregister(EmailConfirmation)
 site.register(get_user_model(), UserAdmin)
 site.register(RssRoot, RssAdmin)
 site.register(RewrittenUrl)

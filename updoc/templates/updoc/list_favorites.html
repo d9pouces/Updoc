@@ -7,8 +7,8 @@
                 {% for root in roots %}
                     <li class="list-group-item{% if root.id == current_id %} bg-info{% endif %}">
                         <a class="{% if root.id == current_id %} text-success{% endif %}"
-                           href="{% url 'updoc.views.show_favorite' root_id=root.id %}">{{ root.name }}</a>
-                        <a href="{% url 'favorites' root_id=root.id %}">{% fontawesome_icon 'rss-square' large=True %}</a>
+                           href="{% url 'updoc:show_favorite' root_id=root.id %}">{{ root.name }}</a>
+                        <a href="{% url 'updoc:favorites' root_id=root.id %}">{% fontawesome_icon 'rss-square' large=True %}</a>
                     </li>
                 {% empty %}
                     <li class="list-group-item">{% trans 'No group found' %}</li>

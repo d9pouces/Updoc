@@ -9,9 +9,9 @@
             <p>
             <ul class="list-unstyled">
                 {% for doc in recent_uploads %}
-                    <li class="updoc_{{ doc.id }}"><a href="{% url 'updoc.views.show_doc' doc_id=doc.id path='' %}">{{ doc.name }}</a>
+                    <li class="updoc_{{ doc.id }}"><a href="{% url 'updoc:show_doc' doc_id=doc.id path='' %}">{{ doc.name }}</a>
                         {% if doc.index %}<span>
-                                    [ <a href="{% url 'updoc.views.show_doc' doc_id=doc.id path=doc.index %}">{% trans 'Index' %}</a> ]
+                                    [ <a href="{% url 'updoc:show_doc' doc_id=doc.id path=doc.index %}">{% trans 'Index' %}</a> ]
                                     </span>{% endif %}
                     </li>
                     {% empty %}
@@ -28,9 +28,9 @@
             <ul class="list-unstyled">
                 {% for doc in recent_checked %}
                     <li class="updoc_{{ doc.id }}">
-                        <a href="{% url 'updoc.views.show_doc' doc_id=doc.doc.id path='' %}">{{ doc.doc.name }}</a>
+                        <a href="{% url 'updoc:show_doc' doc_id=doc.doc.id path='' %}">{{ doc.doc.name }}</a>
                         {% if doc.doc.index %}<span class="index_page">
-                                    [ <a href="{% url 'updoc.views.show_doc' doc_id=doc.doc.id path=doc.doc.index %}">{% trans 'Index' %}</a> ]
+                                    [ <a href="{% url 'updoc:show_doc' doc_id=doc.doc.id path=doc.doc.index %}">{% trans 'Index' %}</a> ]
                                     </span>{% endif %}
                     </li>
                     {% empty %}
@@ -42,13 +42,13 @@
         {% if keywords %}
             <div class="col-sm-6 col-lg-12 col-xs-12 col-md-12">
                 <h4>{% trans 'Keywords' %} [
-                    <small><a href="{% url 'updoc.views.show_all_docs' %}">{% trans 'All documents' %}</a></small>
+                    <small><a href="{% url 'updoc:show_all_docs' %}">{% trans 'All documents' %}</a></small>
                     ]
                 </h4>
                 <p>
                 <ul class="list-inline">
                     {% for kw in keywords %}
-                        <li><a href="{% url 'updoc.views.show_search_results' %}?search={{ kw.value }}">{{ kw.value }}</a>
+                        <li><a href="{% url 'updoc:show_search_results' %}?search={{ kw.value }}">{{ kw.value }}</a>
                         </li>
                         {% empty %}
                         <li>{% trans 'No keyword found' %}</li>

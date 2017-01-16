@@ -87,7 +87,8 @@ def delete_archive(archive_id):
     if not es_hosts():
         return
     es = elasticsearch.Elasticsearch(es_hosts())
-    es_query = {'query': {'filtered': {'filter': {'term': {'archive_id': archive_id}}}}, 'size': 100000, '_source': {'include': ['archive_id', 'path']}, }
+    es_query = {'query': {'filtered': {'filter': {'term': {'archive_id': archive_id}}}},
+                'size': 100000, '_source': {'include': ['archive_id', 'path']}, }
     values = es.search(index=settings.ES_INDEX, doc_type=settings.ES_DOC_TYPE, body=es_query)
     ids = [hit['_id'] for hit in values.get('hits', {}).get('hits', [])]
     if ids:
@@ -110,7 +111,8 @@ def search_archive(query, archive_id=None, extension=None):
     if extension:
         es_query['query']['filtered']['filter'].setdefault('term', {}).update({'extension': extension})
     values = es.search(index=settings.ES_INDEX, doc_type=settings.ES_DOC_TYPE, body=es_query)
-    result_objs = [(hit['_source']['archive_id'], hit['_source']['path']) for hit in values.get('hits', {}).get('hits', [])]
+    result_objs = [(hit['_source']['archive_id'], hit['_source']['path'])
+                   for hit in values.get('hits', {}).get('hits', [])]
     return result_objs, values['hits']['total']
 
 

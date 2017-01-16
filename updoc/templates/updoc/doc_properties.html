@@ -15,13 +15,13 @@
                     <li>
                         <p>
                             <small><a
-                                    href="{% url 'updoc.views.show_doc_alt' doc_id=doc.id path='' %}">{% trans 'Alternative link (no authentication)' %}</a>
+                                    href="{% url 'updoc:show_doc_alt' doc_id=doc.id path='' %}">{% trans 'Alternative link (no authentication)' %}</a>
                             </small>
                         </p>
                     </li>{% endif %}
                 <li>
                     <p><a class="btn btn-sm btn-primary" role="button"
-                          href="{% url 'updoc.views.compress_archive' doc_id=doc.id fmt='zip' %}">
+                          href="{% url 'updoc:compress_archive' doc_id=doc.id fmt='zip' %}">
                         {% bootstrap_icon "cloud-download" %} {% trans 'Download as ZIP' %}
                     </a></p>
                 </li>

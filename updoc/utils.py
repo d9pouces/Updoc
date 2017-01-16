@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-import locale
-
-__author__ = 'Matthieu Gallet'
-import os
 import datetime
-from django.core.urlresolvers import reverse
-from updoc.extensions import EXTENSIONS
+import locale
+import os
 
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
+
+from updoc.extensions import EXTENSIONS
+__author__ = 'Matthieu Gallet'
 
 
 class Element(object):

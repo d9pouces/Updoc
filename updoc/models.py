@@ -1,22 +1,24 @@
 # -*- coding: utf-8 -*-
-from django.http import HttpRequest
-from django.utils.functional import cached_property
-from djangofloor.decorators import SignalRequest
-
-__author__ = 'Matthieu Gallet'
 
 # noinspection PyPackageRequirements
 import ipaddress
-from heapq import heappop, heappush
 import os
 import shutil
+from heapq import heappop, heappush
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+from django.http import HttpRequest
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
+from djangofloor.wsgi.window_info import WindowInfo
 
 from updoc.indexation import delete_archive
+
+__author__ = 'Matthieu Gallet'
 
 
 def query(cls, request):
@@ -24,7 +26,7 @@ def query(cls, request):
         if request.user.is_anonymous():
             return cls.objects.filter(user=None)
         return cls.objects.filter(user=request.user)
-    assert isinstance(request, SignalRequest)
+    assert isinstance(request, WindowInfo)
     if request.user_pk:
         return cls.objects.filter(user__id=request.user_pk)
     return cls.objects.filter(user=None)
@@ -81,7 +83,7 @@ class UploadDoc(models.Model):
         verbose_name_plural = _('documentations')
 
     def get_absolute_url(self, path=''):
-        return settings.HOST + reverse('updoc.views.show_doc', kwargs={'doc_id': self.id, 'path': path})
+        return settings.SERVER_BASE_URL[:-1] + reverse('updoc:show_doc', kwargs={'doc_id': self.id, 'path': path})
 
     @cached_property
     def index(self):
@@ -108,14 +110,21 @@ class UploadDoc(models.Model):
         if self.id:
             delete_archive(self.id)
 
-    def delete(self, using=None):
+    def delete(self, using=None, keep_parents=False):
         self.clean_archive()
         self.keywords.clear()
-        super(UploadDoc, self).delete(using=using)
+        super(UploadDoc, self).delete(using=using, keep_parents=keep_parents)
 
     @classmethod
     def query(cls, request):
+        # noinspection PyTypeChecker
         return query(cls, request)
+
+
+# noinspection PyUnusedLocal
+@receiver(post_delete, sender=UploadDoc)
+def my_handler(sender, instance=None, **kwargs):
+    instance.clean_archive()
 
 
 class LastDocs(models.Model):
@@ -126,6 +135,7 @@ class LastDocs(models.Model):
 
     @classmethod
     def query(cls, request):
+        # noinspection PyTypeChecker
         return query(cls, request)
 
 
@@ -143,6 +153,7 @@ class RewrittenUrl(models.Model):
 
     @classmethod
     def query(cls, request):
+        # noinspection PyTypeChecker
         return query(cls, request)
 
 
@@ -183,9 +194,9 @@ class ProxyfiedHost(models.Model):
 class RssRoot(models.Model):
     name = models.CharField(_('name'), db_index=True, max_length=255)
 
-    # noinspection PyMethodMayBeStatic
-    def get_absolute_url(self):
-        return settings.HOST + reverse('updoc.views.index')
+    @staticmethod
+    def get_absolute_url():
+        return settings.SERVER_BASE_URL[:-1] + reverse('index')
 
     class Meta:
         verbose_name = _('favorite group')

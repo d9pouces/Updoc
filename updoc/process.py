@@ -1,19 +1,16 @@
-import uuid
-import zipfile
-from django.core.files.uploadedfile import UploadedFile
-
-import shutil
-
 import os
+import shutil
 import tarfile
 import tempfile
+import uuid
+import zipfile
+
 from django.conf import settings
+from django.core.files.uploadedfile import UploadedFile
 from django.http import HttpRequest
-from djangofloor.decorators import SignalRequest
 
-from updoc.indexation import index_archive, delete_archive
+from updoc.indexation import index_archive
 from updoc.models import UploadDoc
-
 
 __author__ = 'Matthieu Gallet'
 
@@ -43,10 +40,8 @@ def copy_to_path(in_fd, dst_path: str):
     :param dst_path:
     """
     with open_with_dir(dst_path) as out_fd:
-        data = in_fd.read(32768)
-        while data:
+        for data in iter(lambda: in_fd.read(32768), b''):
             out_fd.write(data)
-            data = in_fd.read(32768)
 
 
 def clean_archive(root_path: str):
@@ -74,6 +69,7 @@ def process_new_file(uploaded_file: UploadedFile, request: HttpRequest, obj: Upl
     """
     if obj is None:
         obj = UploadDoc(uid=str(uuid.uuid1()))
+    assert isinstance(obj, UploadDoc)
     # noinspection PyUnresolvedReferences
     obj.user = request.user if request.user.is_authenticated() else None
     basename = os.path.basename(uploaded_file.name)

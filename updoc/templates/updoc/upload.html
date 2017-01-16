@@ -4,7 +4,7 @@
     <div class="row" style="margin-top: 3em;">
         <div class="col-12 col-sm-12 col-lg-12">
             <div class="alert alert-info big" id="upload_input">
-                <input id="id_file" name="file" data-url="{% url 'updoc.views.upload_doc_progress' %}" type="file"/>
+                <input id="id_file" name="file" data-url="{% url 'upload_doc_progress' %}" type="file"/>
             </div>
 
             <div id="progress" class="progress hidden">
@@ -33,7 +33,7 @@ NAME=name-version
 KEYWORDS=keyword1,keyword2
 {% if not df_remote_authenticated %}USERNAME=
 PASSWORD=
-{% endif %}curl --data-binary @$FILENAME -u {% if not df_remote_authenticated %}$USERNAME:$PASSWORD --basic{% else %}: --anyauth{% endif %} "{{ root_host }}{% url 'updoc.views.upload_doc_api' %}?filename=$FILENAME&amp;name=$NAME&amp;keywords=$KEYWORDS"</pre>
+{% endif %}curl --data-binary @$FILENAME -u {% if not df_remote_authenticated %}$USERNAME:$PASSWORD --basic{% else %}: --anyauth{% endif %} "{{ root_host }}{% url 'upload_doc_api' %}?filename=$FILENAME&amp;name=$NAME&amp;keywords=$KEYWORDS"</pre>
 
     <script>
         $(function () {

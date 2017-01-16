@@ -23,7 +23,7 @@ class KeywordFeed(Feed):
 
     # noinspection PyMethodMayBeStatic
     def link(self, obj):
-        return reverse('updoc.views.index') + '?search=' + obj.value
+        return reverse('index') + '?search=' + obj.value
 
     # noinspection PyMethodMayBeStatic
     def description(self, obj):
@@ -68,7 +68,7 @@ class MostViewedDocsFeed(Feed):
     # noinspection PyMethodMayBeStatic,PyUnusedLocal
     def link(self, obj):
         """:type obj: django.contrib.auth.models.User"""
-        return reverse('updoc.views.my_docs')
+        return reverse('updoc:my_docs')
 
     # noinspection PyMethodMayBeStatic,PyUnusedLocal
     def description(self, obj):
@@ -116,8 +116,8 @@ class LastDocsFeed(Feed):
     def link(self, obj):
         """:type obj: django.contrib.auth.models.User"""
         if obj is not None:
-            return reverse('updoc.views.my_docs')
-        return reverse('updoc.views.index')
+            return reverse('updoc:my_docs')
+        return reverse('index')
 
     # noinspection PyMethodMayBeStatic,PyUnusedLocal
     def description(self, obj):
