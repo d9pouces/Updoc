@@ -21,7 +21,7 @@ def delete_url_confirm(window_info: WindowInfo, url_id: int):
     rewritten = get_object_or_404(RewrittenUrl.query(window_info), pk=url_id)
     template_values = {'src': rewritten.src, 'dst': rewritten.dst, 'url_id': url_id, }
     html = render_to_string('updoc/delete_url_confirm.html', template_values)
-    return [{'signal': 'df.modal.show', 'options': {'html': html, }, }]
+    scall(window_info, 'df.modal.show', to=[WINDOW], html=html)
 
 
 @signal(is_allowed_to=is_authenticated, path='updoc.delete_doc_confirm')
@@ -29,7 +29,7 @@ def delete_doc_confirm(window_info: WindowInfo, doc_id: int):
     doc = get_object_or_404(UploadDoc.query(window_info), pk=doc_id)
     template_values = {'name': doc.name, 'doc_id': doc_id, }
     html = render_to_string('updoc/delete_doc_confirm.html', template_values)
-    return [{'signal': 'df.modal.show', 'options': {'html': html, }, }]
+    scall(window_info, 'df.modal.show', to=[WINDOW], html=html)
 
 
 @signal(is_allowed_to=is_authenticated, path='updoc.edit_doc_name')

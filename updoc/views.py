@@ -28,7 +28,7 @@ from django.views.decorators.cache import cache_page, never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.static import was_modified_since
 from djangofloor.views import send_file
-from djangofloor.tasks import scall, SERVER
+from djangofloor.tasks import scall, SERVER, USER, set_websocket_topics, WINDOW
 from elasticsearch.exceptions import ConnectionError as ESError
 
 from updoc.forms import UrlRewriteForm, FileUploadForm, UploadApiForm, MetadatadUploadForm, DocSearchForm
@@ -113,6 +113,8 @@ def compress_archive(request, doc_id, fmt='zip'):
 
 @never_cache
 def index(request):
+    if request.user.is_authenticated():
+        set_websocket_topics(request)
     if request.user.is_anonymous() and not settings.PUBLIC_INDEX:
         messages.info(request, _('You must be logged to see documentations.'))
         keywords_with_counts, recent_uploads, recent_checked = [], [], []
@@ -133,6 +135,8 @@ def index(request):
 
 @never_cache
 def show_favorite(request, root_id=None):
+    if request.user.is_authenticated():
+        set_websocket_topics(request)
     if request.user.is_anonymous() and not settings.PUBLIC_BOOKMARKS:
         roots = []
         favorites = []
@@ -170,6 +174,8 @@ def show_proxies(request):
 
 @never_cache
 def my_docs(request):
+    if request.user.is_authenticated():
+        set_websocket_topics(request)
     user = request.user if request.user.is_authenticated() else None
     if request.method == 'POST' and user and user.has_perm('updoc.add_uploaddoc'):
         form = UrlRewriteForm(request.POST)
@@ -211,6 +217,7 @@ def delete_doc(request, doc_id):
 @login_required(login_url='/accounts/login/')
 def upload(request):
     """Index view, displaying and processing a form."""
+    set_websocket_topics(request)
     if request.method == 'POST':
         form = MetadatadUploadForm(request.POST)
         if form.is_valid():
@@ -299,16 +306,18 @@ def upload_doc_api(request):
     return HttpResponse(_('File successfully uploaded. It will be uncompressed and indexed.\n'), status=200)
 
 
-@cache_page(60 * 15)
+@never_cache
 def show_doc_alt(request, doc_id, path=''):
     return show_doc(request, doc_id, path=path)
 
 
-@cache_page(60 * 15)
+@never_cache
 def show_doc(request, doc_id, path=''):
     if request.user.is_anonymous() and not settings.PUBLIC_DOCS:
         raise Http404
     doc = get_object_or_404(UploadDoc, id=doc_id)
+    if request.user.is_authenticated():
+        set_websocket_topics(request, doc)
     root_path = doc.path
     full_path = os.path.join(root_path, path)
     if not full_path.startswith(root_path):
@@ -353,6 +362,8 @@ def show_doc(request, doc_id, path=''):
 @never_cache
 def show_search_results(request):
     """Index view, displaying and processing a form."""
+    if request.user.is_authenticated():
+        set_websocket_topics(request)
     search = DocSearchForm(request.GET)
     pattern, doc_id = '', ''
     if search.is_valid():
@@ -397,6 +408,8 @@ def show_search_results(request):
 
 @never_cache
 def show_all_docs(request):
+    if request.user.is_authenticated():
+        set_websocket_topics(request)
     user = request.user if request.user.is_authenticated() else None
     search = DocSearchForm(request.GET)
     if request.user.is_anonymous() and not settings.PUBLIC_INDEX:

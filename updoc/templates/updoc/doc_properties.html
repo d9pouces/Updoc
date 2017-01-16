@@ -29,7 +29,7 @@
                     <li>
                         <p>
                             <button class="btn btn-sm btn-danger"
-                                    onclick="return df.call('updoc.delete_doc_confirm', {doc_id: {{ doc.id }} });">{% bootstrap_icon "trash" %}
+                                    onclick="return $.df.call('updoc.delete_doc_confirm', {doc_id: {{ doc.id }} });">{% bootstrap_icon "trash" %}
                                 {% trans 'Delete' %}
                             </button>
                         </p>
@@ -70,7 +70,7 @@
                     onAccept: function (options) {
                         console.info({doc_id: {{ doc.pk }}, name: options.value});
                         document_name.placard('setValue', options.value);
-                        df.call('updoc.edit_doc_name', {doc_id: {{ doc.pk }}, name: options.value});
+                        $.df.call('updoc.edit_doc_name', {doc_id: {{ doc.pk }}, name: options.value});
                         document_name.placard('hide');
                     }
                 });
@@ -78,7 +78,7 @@
                 document_keywords.placard({
                     onAccept: function (options) {
                         document_keywords.placard('setValue', options.value);
-                        df.call('updoc.edit_doc_keywords', {doc_id: {{ doc.pk }}, keywords: options.value});
+                        $.df.call('updoc.edit_doc_keywords', {doc_id: {{ doc.pk }}, keywords: options.value});
                         document_keywords.placard('hide');
                     }
                 });

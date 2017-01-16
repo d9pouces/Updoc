@@ -17,7 +17,7 @@
                                     </span>{% endif %}
                         {% if editable %}
                             <button class="btn btn-xs btn-danger"
-                                    onclick="return df.call('updoc.delete_doc_confirm', {doc_id: {{ doc.id }} });">{% bootstrap_icon "trash" %}
+                                    onclick="return $.df.call('updoc.delete_doc_confirm', {doc_id: {{ doc.id }} });">{% bootstrap_icon "trash" %}
                                 {% trans 'Delete' %}
                             </button>{% endif %}
                     </li>
@@ -49,7 +49,7 @@
                             <a href="{{ url.src }}">{{ url.src }}</a> {% trans 'redirected to:' %}
                             <a href="{{ url.dst }}">{{ url.dst }}</a>
                             <button class="btn btn-xs btn-danger"
-                                    onclick="return df.call('updoc.delete_url_confirm', {url_id: {{ url.id }} });">{% bootstrap_icon "trash" %}
+                                    onclick="return $.df.call('updoc.delete_url_confirm', {url_id: {{ url.id }} });">{% bootstrap_icon "trash" %}
                                 {% trans 'Delete' %}
                             </button>
                         </li>

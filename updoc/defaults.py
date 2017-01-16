@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 __author__ = 'Matthieu Gallet'
-DF_URL_CONF = 'updoc.root_urls.urls'
 
 PUBLIC_BOOKMARKS = True
 PUBLIC_BOOKMARKS_HELP = 'Are bookmarks publicly available?'
@@ -23,23 +22,10 @@ ES_DOC_TYPE = 'document'
 ES_PLAIN_EXTENSIONS = 'txt,csv,md,rst'
 ES_EXCLUDED_DIR = '_sources,_static'
 
-DF_TEMPLATE_CONTEXT_PROCESSORS = [
-    'updoc.context_processors.most_checked',
-]
+DF_TEMPLATE_CONTEXT_PROCESSORS = ['updoc.context_processors.most_checked']
 DF_INDEX_VIEW = 'updoc.views.index'
 DF_PROJECT_NAME = 'UpDoc!'
-
-########################################################################################################################
-# django-redis-websocket
-########################################################################################################################
-
-########################################################################################################################
-# celery
-########################################################################################################################
-FLOOR_PROJECT_NAME = 'UpDoc!'
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = '5I0zJQuHzqcACuzGIwTAC3cV6RlZpjV8MNUETYd5KZXg6UoI4G'
-
-DF_JS = ['js/jquery.ui.widget.js', 'js/jquery.iframe-transport.js', 'js/jquery.fileupload.js',
-         'js/fuelux.min.js', 'js/updoc.js', ]
+DF_JS = ['js/jquery.ui.widget.js', 'js/jquery.iframe-transport.js', 'js/jquery.fileupload.js', 'js/fuelux.min.js',
+         'js/updoc.js', ]
 DF_CSS = ['css/fuelux.min.css', ]
+DF_URL_CONF = 'updoc.root_urls.urls'
