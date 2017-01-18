@@ -1,0 +1,4 @@
+<entry>
+<version>{{ doc.version }}</version>
+<url>{{ doc.docset_url }}</url>
+</entry>

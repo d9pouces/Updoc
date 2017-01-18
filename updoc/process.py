@@ -2,13 +2,14 @@ import os
 import shutil
 import tarfile
 import tempfile
-import uuid
 import zipfile
 
-from django.conf import settings
-from django.core.files.uploadedfile import UploadedFile
-from django.http import HttpRequest
+from django.db.models import F
+from django.utils.text import slugify
 
+from djangofloor.utils import ensure_dir
+
+from updoc.docset import Docset
 from updoc.indexation import index_archive
 from updoc.models import UploadDoc
 
@@ -27,6 +28,7 @@ def get_tempfile(uploaded_file):
     while chunk:
         temp_file.write(chunk)
         chunk = uploaded_file.read(16384)
+    temp_file.flush()
     temp_file.seek(0)
     return temp_file
 
@@ -63,84 +65,36 @@ def clean_archive(root_path: str):
                 index += 1
 
 
-def process_new_file(uploaded_file: UploadedFile, request: HttpRequest, obj: UploadDoc=None):
-    """takes a UploadedFile object and returns a saved UploadDoc object
-
-    """
-    if obj is None:
-        obj = UploadDoc(uid=str(uuid.uuid1()))
-    assert isinstance(obj, UploadDoc)
-    # noinspection PyUnresolvedReferences
-    obj.user = request.user if request.user.is_authenticated() else None
-    basename = os.path.basename(uploaded_file.name)
-    root = os.path.join(settings.MEDIA_ROOT, 'docs', obj.uid[0:2], obj.uid)
-    obj.path = root
-    try:
-        obj.name = basename
-        root += '/'
-
-        if basename[-7:] in ('.tar.gz', '.tar.xz') or basename[-8:] == '.tar.bz2' or \
-                basename[-4:] in ('.tar', '.tbz', '.tgz', '.txz'):
-            temp_file = get_tempfile(uploaded_file)
-            tar_file = tarfile.open(name=basename, mode='r:*', fileobj=temp_file)
-            names = filter(lambda name_: os.path.join(obj.uid, name_).startswith(obj.uid), tar_file.getnames())
-            common_prefix = '/'.join(os.path.commonprefix([name_.split('/') for name_ in names]))
-            common_prefix_len = len(common_prefix)
-            for member in tar_file.getmembers():
-                if not os.path.join(obj.uid, member.name).startswith(obj.uid):
-                    continue
-                dst_path = root + member.name[common_prefix_len:]
-                if member.isdir():
-                    # noinspection PyArgumentList
-                    os.makedirs(dst_path, mode=0o777, exist_ok=True)
-                elif member.issym():
-                    if not os.path.join(obj.uid, member.linkname).startswith(obj.uid):
-                        continue
-                    os.symlink(root + member.linkname[common_prefix_len:], dst_path)
-                elif member.isfile():
-                    copy_to_path(tar_file.extractfile(member), dst_path)
-            tar_file.close()
-            temp_file.close()
-        elif basename[-4:] == '.zip':
-            temp_file = get_tempfile(uploaded_file)
-            zip_file = zipfile.ZipFile(temp_file, mode='r')
-            uid = obj.uid
-            names = list(filter(lambda zip_: os.path.join(uid, zip_.filename).startswith(uid), zip_file.infolist()))
-            common_prefix = '/'.join(os.path.commonprefix([obj_.filename.split('/') for obj_ in names]))
-            common_prefix_len = len(common_prefix)
-            for obj_ in names:
-                if obj_.filename[-1:] == '/':
-                    continue
-                copy_to_path(zip_file.open(obj_.filename), root + obj_.filename[common_prefix_len:])
-            zip_file.close()
-            temp_file.close()
-        else:
-            with open_with_dir(os.path.join(root, basename)) as out_fd:
-                for chunk in uploaded_file.chunks():
-                    out_fd.write(chunk)
-        clean_archive(root)
-        obj.save()
-        index_archive(obj.id, root)
-    except Exception as e:
-        shutil.rmtree(root)
-        raise e
-    return obj
+def zip_archive(doc: UploadDoc):
+    ensure_dir(doc.zip_path)
+    arc_root = slugify(doc.name)
+    with open(doc.zip_path, 'wb') as tmp_file:
+        compression_file = zipfile.ZipFile(tmp_file, mode='w', compression=zipfile.ZIP_DEFLATED)
+        for (root, dirnames, filenames) in os.walk(doc.path):
+            for filename in filenames:
+                full_path = os.path.join(root, filename)
+                arcname = os.path.join(arc_root, os.path.relpath(full_path, doc.path))
+                compression_file.write(full_path, arcname)
+        compression_file.close()
 
 
-def process_uploaded_file(doc: UploadDoc, temp_file, original_filename: str, destination_root: str):
+def process_uploaded_file(doc: UploadDoc, temp_file, original_filename: str):
     """
     * Clean previous content if needed
     * Uncompress content
     * Index content
 
     :param doc:
-    :param temp_file:
-    :param original_filename:
-    :param destination_root:
+    :param temp_file: file descriptor
+    :param original_filename: nom d'origine du fichier
     """
+    assert isinstance(doc, UploadDoc)
+    destination_root = doc.uncompressed_root
     doc_id = doc.id
     doc_uid = doc.uid
-    UploadDoc.objects.filter(id=doc_id).update(path=destination_root)
+    UploadDoc.objects.filter(id=doc_id).update(path=destination_root, version=F('version') + 1)
+    doc.path = destination_root
+    doc.version += 1
     # first, we clean previous index and data
     doc.clean_archive()
 
@@ -184,3 +138,7 @@ def process_uploaded_file(doc: UploadDoc, temp_file, original_filename: str, des
     clean_archive(destination_root)
     # index
     index_archive(doc_id, destination_root)
+    # prepare docset
+    Docset(doc).prepare()
+    zip_archive(doc)
+    return doc

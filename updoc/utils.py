@@ -103,6 +103,7 @@ def list_directory(root, path, view_name, view_arg='path', view_kwargs=None,
         dir_view_arg = view_arg
     if dir_view_kwargs is None:
         dir_view_kwargs = view_kwargs
+    root = os.path.abspath(root)
     dir_path = os.path.abspath(os.path.join(root, path))
     directory = Directory(path)
     if show_dirs:

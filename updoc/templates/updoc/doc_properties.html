@@ -1,4 +1,4 @@
-{% extends "updoc/base.html" %}{% load i18n bootstrap3 staticfiles %}
+{% extends "updoc/base.html" %}{% load i18n bootstrap3 staticfiles updoc djangofloor %}
 {% block content %}
     <div class="row">
         <div class="col-lg-2 col-md-3 hidden-xs hidden-sm">
@@ -23,6 +23,18 @@
                     <p><a class="btn btn-sm btn-primary" role="button"
                           href="{% url 'updoc:compress_archive' doc_id=doc.id fmt='zip' %}">
                         {% bootstrap_icon "cloud-download" %} {% trans 'Download as ZIP' %}
+                    </a></p>
+                </li>
+                <li>
+                    <p><a class="btn btn-sm btn-primary" role="button"
+                          href="dash-feed://{{ doc.docset_feed|quote_feed }}">
+                        {% fontawesome_icon 'dashcube' %} {% trans 'Add to Dash' %}
+                    </a></p>
+                </li>
+                <li>
+                    <p><a class="btn btn-sm btn-primary" role="button"
+                          href="{{ doc.docset_url }}">
+                        {% fontawesome_icon "cloud-download" %} {% trans 'Download as Dash docset' %}
                     </a></p>
                 </li>
                 {% if editable %}

@@ -84,18 +84,24 @@ def send_file_replace_url(request, filename, allow_replace=False):
 def compress_archive(request, doc_id, fmt='zip'):
     if request.user.is_anonymous() and not settings.PUBLIC_DOCS:
         raise Http404
-    tmp_file = tempfile.NamedTemporaryFile()
+
     doc = get_object_or_404(UploadDoc, id=doc_id)
+    assert isinstance(doc, UploadDoc)
     arc_root = slugify(doc.name)
     if fmt == 'zip':
-        compression_file = zipfile.ZipFile(tmp_file, mode='w', compression=zipfile.ZIP_DEFLATED)
-        for (root, dirnames, filenames) in os.walk(doc.path):
-            for filename in filenames:
-                full_path = os.path.join(root, filename)
-                arcname = os.path.join(arc_root, os.path.relpath(full_path, doc.path))
-                compression_file.write(full_path, arcname)
+        if os.path.isfile(doc.zip_path):
+            tmp_file = open(doc.zip_path, 'rb')
+        else:
+            tmp_file = tempfile.NamedTemporaryFile(dir=settings.FILE_UPLOAD_TEMP_DIR)
+            compression_file = zipfile.ZipFile(tmp_file, mode='w', compression=zipfile.ZIP_DEFLATED)
+            for (root, dirnames, filenames) in os.walk(doc.path):
+                for filename in filenames:
+                    full_path = os.path.join(root, filename)
+                    arcname = os.path.join(arc_root, os.path.relpath(full_path, doc.path))
+                    compression_file.write(full_path, arcname)
         content_type = 'application/zip'
     elif fmt in ('gz', 'bz2', 'xz'):
+        tmp_file = tempfile.NamedTemporaryFile(dir=settings.FILE_UPLOAD_TEMP_DIR)
         compression_file = tarfile.open(name=arc_root + '.tar.' + fmt, mode='w:' + fmt, fileobj=tmp_file)
         for filename in os.listdir(doc.path):
             full_path = os.path.join(doc.path, filename)
@@ -426,3 +432,31 @@ def show_all_docs(request):
                        'recent_uploads': recent_uploads, 'search': search, 'keywords': [],
                        'list_title': _('All documents'), }
     return TemplateResponse(request, 'updoc/index.html', template_values)
+
+
+@cache_page(3600)
+def docset_feed(request, doc_id, doc_name=None):
+    # noinspection PyUnusedLocal
+    doc_name = doc_name
+    if request.user.is_anonymous() and not settings.PUBLIC_DOCS:
+        raise Http404
+    doc = get_object_or_404(UploadDoc, id=doc_id)
+    return TemplateResponse(request, 'updoc/docset.xml', {'doc': doc}, content_type='application/xml')
+
+
+@never_cache
+def docset(request, doc_id):
+    if request.user.is_anonymous() and not settings.PUBLIC_DOCS:
+        raise Http404
+    doc = get_object_or_404(UploadDoc, id=doc_id)
+    assert isinstance(doc, UploadDoc)
+    return send_file(doc.docset_path, mimetype='application/gzip')
+
+
+@never_cache
+def docset_tarix(request, doc_id):
+    # noinspection PyUnusedLocal
+    request = request
+    # noinspection PyUnusedLocal
+    doc_id = doc_id
+    return HttpResponse(status=404)

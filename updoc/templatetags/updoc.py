@@ -1,4 +1,7 @@
 # coding=utf-8
+from urllib import parse
+
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from django import template
 from django.template.defaultfilters import floatformat
@@ -26,3 +29,8 @@ def si_unit(value, unit=''):
                 break
             value /= 1000.
     return '%s%s %s%s' % (sign, floatformat(value, -2), prefix, _(unit))
+
+
+@register.filter()
+def quote_feed(value):
+    return mark_safe(parse.quote_plus(value))

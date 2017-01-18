@@ -1,17 +1,16 @@
 # coding=utf-8
-from argparse import ArgumentParser
-from optparse import make_option
-from urllib.parse import urlparse
-import requests
-import tempfile
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import AnonymousUser
-from django.core.files.uploadedfile import UploadedFile
-from django.core.management import BaseCommand
-from django.http.request import HttpRequest
 import os
-from updoc.process import process_new_file
-from updoc.models import Keyword
+import tempfile
+import uuid
+from argparse import ArgumentParser
+from urllib.parse import urlparse
+
+import requests
+from django.contrib.auth import get_user_model
+from django.core.management import BaseCommand
+
+from updoc.models import Keyword, UploadDoc
+from updoc.process import process_uploaded_file
 
 __author__ = 'Matthieu Gallet'
 
@@ -31,11 +30,9 @@ class AddPackage(BaseCommand):
 
     def handle(self, *args, **options):
         # require
-        request = HttpRequest()
-        if options['user'] is None:
-            request.user = AnonymousUser()
-        else:
-            request.user = get_user_model().objects.get(username=options['user'])
+        user = None
+        if options['user'] is not None:
+            user = get_user_model().objects.get(username=options['user'])
 
         filename = options['filename']
         if filename.startswith('file://'):
@@ -46,19 +43,15 @@ class AddPackage(BaseCommand):
             src_file = tempfile.NamedTemporaryFile()
             req = requests.get(filename, stream=True)
             chunk_size = 16384
-            size = 0
             for chunk in req.iter_content(chunk_size):
                 src_file.write(chunk)
-                size += len(chunk)
         else:
             src_file = open(filename, mode='rb')
             basename = os.path.basename(filename)
-            size = os.path.getsize(filename)
 
-        uploaded_file = UploadedFile(file=src_file, name=basename, size=size)
-        obj = process_new_file(uploaded_file, request)
-        if options['name'] is not None:
-            obj.name = options['name']
+        obj = UploadDoc(uid=str(uuid.uuid1()), user=user, name=options['name'] or basename)
+        obj.save()
+        process_uploaded_file(obj, src_file, basename)
         for keyword in options['keyword']:
             obj.keywords.add(Keyword.get(keyword.lower().strip()))
         obj.save()

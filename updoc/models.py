@@ -3,6 +3,7 @@
 # noinspection PyPackageRequirements
 import ipaddress
 import os
+import plistlib
 import shutil
 from heapq import heappop, heappush
 
@@ -73,6 +74,7 @@ class UploadDoc(models.Model):
     keywords = models.ManyToManyField(Keyword, db_index=True, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, db_index=True, null=True, blank=True)
     upload_time = models.DateTimeField(_('upload time'), db_index=True, auto_now_add=True)
+    version = models.IntegerField(_('version'), default=0, blank=True)
 
     def __str__(self):
         return self.name
@@ -85,17 +87,48 @@ class UploadDoc(models.Model):
     def get_absolute_url(self, path=''):
         return settings.SERVER_BASE_URL[:-1] + reverse('updoc:show_doc', kwargs={'doc_id': self.id, 'path': path})
 
+    @property
+    def uncompressed_root(self):
+        return os.path.join(settings.MEDIA_ROOT, 'docs', self.uid[0:2], self.uid)
+
+    @property
+    def docset_path(self):
+        return os.path.join(settings.MEDIA_ROOT, 'docsets', self.uid[0:2], self.uid + '.tgz')
+
+    @property
+    def docset_url(self):
+        return settings.SERVER_BASE_URL[:-1] + reverse('updoc:docset', kwargs={'doc_id': self.id})
+
+    @property
+    def docset_feed(self):
+        return settings.SERVER_BASE_URL[:-1] + reverse('updoc:docset_feed',
+                                                       kwargs={'doc_id': self.id, 'doc_name': self.name})
+
+    @property
+    def zip_path(self):
+        return os.path.join(settings.MEDIA_ROOT, 'zip', self.uid[0:2], self.uid + '.zip')
+
     @cached_property
     def index(self):
         path = str(self.path)
         index_path = None
+        prefix = ''
+        searched_files = ['index.html', 'index.htm', 'index.md', 'README.md']
         if os.path.isfile(path):
             index_path = path
         elif os.path.isdir(path):
+            documents_dir = os.path.join(path, 'Contents', 'Resources', 'Documents')
+            plist_path = os.path.join(path, 'Contents', 'Info.plist')
+            if os.path.isdir(documents_dir) and os.path.isfile(plist_path):
+                with open(plist_path, 'rb') as fd:
+                    content = plistlib.load(fd)
+                prefix = 'Contents/Resources/Documents/'
+                if 'dashIndexFilePath' in content:
+                    searched_files = [content['dashIndexFilePath']] + searched_files
             index_path = ''
-            for index in ('index.html', 'index.htm', 'index.md', 'README.md'):
-                if os.path.isfile(os.path.join(path, index)):
-                    index_path = index
+            for index in searched_files:
+                if os.path.isfile(os.path.join(path, prefix + index)):
+                    index_path = prefix + index
                     break
             else:
                 ldir = os.listdir(path)
@@ -104,9 +137,11 @@ class UploadDoc(models.Model):
         return index_path
 
     def clean_archive(self):
-        path = str(self.path)
-        if os.path.exists(path):
-            shutil.rmtree(path)
+        for path in str(self.path), self.docset_path, self.zip_path:
+            if os.path.isfile(path):
+                os.remove(path)
+            elif os.path.exists(path):
+                shutil.rmtree(path)
         if self.id:
             delete_archive(self.id)
 

@@ -15,5 +15,8 @@ urlpatterns = [
     url(r'^download/(?P<doc_id>\d+)\.(?P<fmt>zip|bz2|gz|xz)$', views.compress_archive, name='compress_archive'),
     url(r'^show_search_results\.html$', views.show_search_results, name='show_search_results'),
     url(r'^show_all_docs\.html$', views.show_all_docs, name='show_all_docs'),
+    url(r'^docsets/docset-(?P<doc_id>\d+)/(?P<doc_name>.*)\.xml$', views.docset_feed, name='docset_feed'),
+    url(r'^docsets/docset-(?P<doc_id>\d+)\.tgz$', views.docset, name='docset'),
+    url(r'^docsets/docset-(?P<doc_id>\d+)\.tgz\.tarix$', views.docset_tarix, name='docset_tarix'),
     # url(r'^edit/(?P<doc_id>\d+)/$', 'updoc.views.edit_doc'),
 ]
