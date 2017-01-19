@@ -70,7 +70,13 @@ def zip_archive(doc: UploadDoc):
     arc_root = slugify(doc.name)
     with open(doc.zip_path, 'wb') as tmp_file:
         compression_file = zipfile.ZipFile(tmp_file, mode='w', compression=zipfile.ZIP_DEFLATED)
-        for (root, dirnames, filenames) in os.walk(doc.path):
+        path = doc.path
+        documents_dir = os.path.join(path, 'Contents', 'Resources', 'Documents')
+        plist_path = os.path.join(path, 'Contents', 'Info.plist')
+        if os.path.isdir(documents_dir) and os.path.isfile(plist_path):
+            path = documents_dir
+
+        for (root, dirnames, filenames) in os.walk(path):
             for filename in filenames:
                 full_path = os.path.join(root, filename)
                 arcname = os.path.join(arc_root, os.path.relpath(full_path, doc.path))

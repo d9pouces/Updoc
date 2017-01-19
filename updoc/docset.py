@@ -33,9 +33,11 @@ class Docset(object):
         documents_dir = os.path.join(path, 'Contents', 'Resources', 'Documents')
         plist_path = os.path.join(path, 'Contents', 'Info.plist')
         if os.path.isdir(documents_dir) and os.path.isfile(plist_path):
-            self.write_docset(self.doc.path)
+            with tempfile.TemporaryDirectory(dir=settings.FILE_UPLOAD_TEMP_DIR) as dirname:
+                root = os.path.join(dirname, '%s.docset' % slugify(self.doc.name))
+                shutil.copytree(self.doc.path, root)
+                self.write_docset(dirname)
             return
-
         with tempfile.TemporaryDirectory(dir=settings.FILE_UPLOAD_TEMP_DIR) as dirname:
             root = os.path.join(dirname, '%s.docset' % slugify(self.doc.name), 'Contents')
             ensure_dir(os.path.join(root, 'Resources'), parent=False)
@@ -58,7 +60,7 @@ class Docset(object):
             compression_file = tarfile.open(name=arc_root + '.gz', mode='w:gz', fileobj=tmp_file)
             for filename in os.listdir(dirname):
                 full_path = os.path.join(dirname, filename)
-                arcname = os.path.join(arc_root, os.path.relpath(full_path, dirname))
+                arcname = os.path.join(os.path.relpath(full_path, dirname))
                 compression_file.add(full_path, arcname)
             compression_file.close()
 
