@@ -27,5 +27,5 @@ DF_INDEX_VIEW = 'updoc.views.index'
 DF_PROJECT_NAME = 'UpDoc!'
 DF_JS = ['js/jquery.ui.widget.js', 'js/jquery.iframe-transport.js', 'js/jquery.fileupload.js', 'js/fuelux.min.js',
          'js/updoc.js', ]
-DF_CSS = ['css/fuelux.min.css', ]
+DF_CSS = ['css/fuelux.min.css', 'css/updoc.css']
 DF_URL_CONF = 'updoc.root_urls.urls'
