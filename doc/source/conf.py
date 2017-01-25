@@ -57,7 +57,7 @@ master_doc = 'index'
 # General information about the project.
 project = 'UpDoc!'
 # noinspection PyShadowingBuiltins
-copyright = '2016, %s' % author
+copyright = '2017, %s' % author
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -237,7 +237,7 @@ man_pages = [
 epub_title = "UpDoc!"
 epub_author = author
 epub_publisher = "19pouces.net"
-epub_copyright = '2016, %s' % author
+epub_copyright = '2017, %s' % author
 
 # The language of the text. It defaults to the language option
 # or en if the language is not set.

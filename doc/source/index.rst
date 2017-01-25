@@ -14,20 +14,11 @@ Main features:
     * RSS feed with the docs that you frequently check,
     * upload archives with a single cURL request,
     * generate RSS feeds with your bookmarks,
-    * generate a proxy.PAC file.
+    * generate a proxy.PAC file for dealing with proxies.
 
 RSS feeds can be added as bookmarks folders in Firefox, so it is very easy to share sets of bookmarks in a company.
 Archives are fully indexed, so you can search any text inside all documentations, or inside a specific one.
 
-
-:doc:`installation`
-    Instruction on how to get the distribution
-
-:doc:`configuration`
-    All configuration options
-
-:doc:`debian`
-    Packaging UpDoc! for Debian or Ubuntu servers
 
 
 
@@ -44,9 +35,9 @@ Full table of contents
 .. toctree::
    :maxdepth: 1
 
+   quick-installation
    installation
    configuration
-   debian
 
 
 Indices and tables

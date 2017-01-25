@@ -17,12 +17,11 @@ entry_points = {
     'console_scripts': [
         'updoc-manage = djangofloor.scripts:django',
         'updoc-celery = djangofloor.scripts:celery',
-        'updoc-gunicorn = djangofloor.scripts:gunicorn',
+        'updoc-aiohttp = djangofloor.scripts:aiohttp',
     ]
 }
 
-requirements = ['djangofloor', 'elasticsearch>=2.0.0', 'requests', 'markdown', 'hiredis', 'django-allauth',
-                'django_redis']
+requirements = ['djangofloor', 'elasticsearch>=2.0.0', 'requests', 'markdown', 'django-allauth']
 try:
     # noinspection PyPackageRequirements
     import ipaddress

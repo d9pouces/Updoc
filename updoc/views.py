@@ -324,8 +324,8 @@ def show_doc(request, doc_id, path=''):
     doc = get_object_or_404(UploadDoc, id=doc_id)
     if request.user.is_authenticated():
         set_websocket_topics(request, doc)
-    root_path = doc.path
-    full_path = os.path.join(root_path, path)
+    root_path = os.path.abspath(doc.path)
+    full_path = os.path.abspath(os.path.join(root_path, path))
     if not full_path.startswith(root_path):
         raise Http404
     user = request.user if request.user.is_authenticated() else None
@@ -340,7 +340,7 @@ def show_doc(request, doc_id, path=''):
         directory = list_directory(root_path, path, view, view_arg='path',
                                    view_kwargs={'doc_id': doc.id}, dir_view_name=view,
                                    dir_view_arg='path', dir_view_kwargs={'doc_id': doc.id}, show_files=True,
-                                   show_dirs=True, show_parent=True, show_hidden=False)
+                                   show_dirs=True, show_parent=bool(path), show_hidden=False)
         template_values = {'directory': directory, 'doc': doc, 'editable': editable, 'title': str(doc),
                            'keywords': ' '.join([keyword.value for keyword in doc.keywords.all()]), 'doc_id': doc_id, }
         return TemplateResponse(request, 'updoc/list_dir.html', template_values)

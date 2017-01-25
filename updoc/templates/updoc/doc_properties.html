@@ -53,7 +53,7 @@
         <div class="col-lg-10 col-md-9 col-xs-12 col-sm-12 fuelux">
 
 
-            <h2>{% trans 'Document:' %}{% if editable %}
+            <h2><span class="hidden-xs hidden-sm">{% trans 'Document:' %}</span>{% if editable %}
                 <span class="placard" data-ellipsis="true" id="document_name_placard">
                     <div class="placard-popup"></div>
                     <input class="form-control placard-field" value="{{ doc.name }}" name="title" required="required" placeholder="{% trans 'please enter a name' %}">
@@ -64,7 +64,7 @@
                     </div>
                 </span>{% else %}{{ doc.name }}{% endif %}
             </h2>
-            <h4>{% trans 'Keywords:' %}{% if editable %}
+            <h4><span class="hidden-xs hidden-sm">{% trans 'Keywords:' %}</span>{% if editable %}
                 <span class="placard" data-ellipsis="true" id="document_keywords_placard">
                     <div class="placard-popup"></div>
                     <input class="form-control placard-field" value="{{ keywords }}" name="title" required="required" placeholder="{% trans 'Please enter keywords' %}">

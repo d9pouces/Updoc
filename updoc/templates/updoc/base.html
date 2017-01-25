@@ -31,8 +31,8 @@
                     <small>{{ doc.doc.name }}</small>
                 </a>
             {% endfor %}
-            <a class="navbar-brand" href="{% url 'updoc:show_favorite' %}" title="{% trans 'Bookmarks' %}">{% bootstrap_icon 'bookmark' %}</a>
-            <a class="navbar-brand" href="{% url 'updoc:show_proxies' %}" title="{% trans 'proxy.pac' %}">{% bootstrap_icon 'random' %}</a>
+            {% if has_rss_hosts %}<a class="navbar-brand" href="{% url 'updoc:show_favorite' %}" title="{% trans 'Bookmarks' %}">{% bootstrap_icon 'bookmark' %}</a>{% endif %}
+            {% if has_proxyfied_hosts %}<a class="navbar-brand" href="{% url 'updoc:show_proxies' %}" title="{% trans 'proxy.pac' %}">{% bootstrap_icon 'random' %}</a>{% endif %}
             {% if user.is_authenticated and not df_remote_authenticated %}
                 <a class="navbar-brand" href="{% url 'account_email' %}">{% fontawesome_icon 'pencil' %}&nbsp;
                     <small>{{ user }}</small>

@@ -18,3 +18,10 @@ h2 .placard-field {
     padding: 8% 10% 18% 10%;
     font-size: 22px;
 }
+
+input.form-control.placard-field {
+    padding: 0 10px;
+    height: 50px;
+    border-color: transparent;
+    min-width: 500px;
+}
