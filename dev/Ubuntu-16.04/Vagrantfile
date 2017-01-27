@@ -78,23 +78,24 @@ Vagrant.configure(2) do |config|
 sudo locale-gen `echo $LC_ALL`
 sudo apt-get update
 # sudo apt-get install -y libbz2-dev libdb-dev libc6-dev libgdbm-dev libncursesw5-dev libreadline-dev libsqlite3-dev libssl-dev libz-dev liblzma-dev tk-dev
-sudo apt-get install -y npm
 # sudo apt-get install -y ruby ruby-dev
 # sudo gem install fpm
+sudo apt-get install -y npm
 sudo npm -g install yuglify
-sudo apt-get install -y virtualenvwrapper python3.5 python3.5-dev python3-pip build-essential
+sudo apt-get install virtualenvwrapper python3.5 python3.5-dev python3-pip build-essential
 sudo -H pip3 install git+https://github.com/d9pouces/EasyDjango.git
-sudo -H pip3 install git+https://github.com/d9pouces/updoc.git
+sudo -H pip3 install updoc
 sudo mkdir -p /var/updoc/logs /etc/updoc
 sudo adduser --system --shell /bin/bash --disabled-password --gecos "" updoc
 cat << EOF | sudo -H tee /etc/updoc/settings.ini
 [global]
 data = /var/updoc
+listen_address = 0.0.0.0:8129
+server_url = http://localhost:10080/
 EOF
 sudo chown -R updoc: /var/updoc /etc/updoc
 sudo -H -u updoc updoc-manage migrate  # create the database (SQLite by default)
 sudo -H -u updoc updoc-manage collectstatic --noinput  # prepare static files (CSS, JS, …)
-
 sudo apt-get install -y supervisor
 cat << EOF | sudo tee /etc/supervisor/conf.d/updoc.conf
 [program:updoc_aiohttp]
@@ -119,9 +120,12 @@ u = M(username='admin', is_staff=True, is_superuser=True)
 u.set_password('admin')
 u.save()
 EOF
+
+
 # sudo apt-get install -y rng-tools git
 # echo "HRNGDEVICE=/dev/urandom" | sudo tee -a /etc/default/rng-tools
 # sudo /etc/init.d/rng-tools restart
+# git clone https://github.com/d9pouces/updoc.git
 # chown -R vagrant:vagrant updoc
 SHELL
 
