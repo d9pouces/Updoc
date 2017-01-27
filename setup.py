@@ -1,52 +1,14 @@
 # -*- coding: utf-8 -*-
-"""Setup file for the Updoc project.
-"""
-
-import codecs
-import os.path
-
 from setuptools import setup, find_packages
-from updoc import __version__ as version
-
-
-# get README content from README.md file
-with codecs.open(os.path.join(os.path.dirname(__file__), 'README.md'), encoding='utf-8') as fd:
-    long_description = fd.read()
-
-entry_points = {
-    'console_scripts': [
-        'updoc-manage = djangofloor.scripts:django',
-        'updoc-celery = djangofloor.scripts:celery',
-        'updoc-aiohttp = djangofloor.scripts:aiohttp',
-    ]
-}
-
-requirements = ['djangofloor', 'elasticsearch>=2.0.0', 'requests', 'markdown', 'django-allauth']
-try:
-    # noinspection PyPackageRequirements
-    import ipaddress
-except ImportError:  # Python 3.3+
-    ipaddress = None
-    requirements.append('ipaddress')
-
+from greatproject import __version__ as version
+entry_points = {'console_scripts': ['greatproject-manage = djangofloor.scripts:manage',
+                                    'greatproject-celery = djangofloor.scripts:celery',
+                                    'greatproject-uswgi = djangofloor.scripts:uswgi',
+                                    'greatproject-gunicorn = djangofloor.scripts:gunicorn']}
 setup(
-    name='updoc',
+    name='greatproject',
     version=version,
-    description='Upload HTML documentations and share bookmarks',
-    long_description=long_description,
-    author='Matthieu Gallet',
-    author_email='flanker@19pouces.net',
-    license='CeCILL-B',
-    url='https://github.com/d9pouces/Updoc',
     entry_points=entry_points,
     packages=find_packages(),
-    include_package_data=True,
-    zip_safe=False,
-    test_suite='updoc.tests',
-    install_requires=requirements,
-    setup_requires=[],
-    classifiers=[
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 3',
-    ],
+    install_requires=['djangofloor'],
 )
