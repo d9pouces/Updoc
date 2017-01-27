@@ -2,5 +2,5 @@
 # -*- coding: utf-8 -*-
 from djangofloor.scripts import celery
 import os
-os.environ['DJANGOFLOOR_PROJECT_NAME'] = 'updoc'
+os.environ['DF_CONF_NAME'] = 'updoc-celery'
 celery()

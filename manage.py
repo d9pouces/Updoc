@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from djangofloor.scripts import manage
+from djangofloor.scripts import django
 import os
-os.environ['DJANGOFLOOR_PROJECT_NAME'] = 'updoc'
-manage()
+os.environ['DF_CONF_NAME'] = 'updoc-django'
+django()
