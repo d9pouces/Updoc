@@ -52,8 +52,8 @@ PostgreSQL is often a good choice for Django sites:
    echo "ALTER ROLE updoc CREATEDB" | sudo -u postgres psql -d postgres
    echo "CREATE DATABASE updoc OWNER updoc" | sudo -u postgres psql -d postgres
 
-UpDoc! also requires Redis for websockets, background tasks, caching pages and storing sessions:
 
+UpDoc! also requires Redis for websockets, background tasks, caching pages and storing sessions:
 
 .. code-block:: bash
 
@@ -292,7 +292,7 @@ You can also use systemd to launch updoc:
     User=updoc
     Group=updoc
     WorkingDirectory=$VIRTUALENV/var/updoc/
-    ExecStart=/bin/updoc-aiohttp
+    ExecStart=$VIRTUAL_ENV/bin/updoc-aiohttp
     ExecReload=/bin/kill -s HUP \$MAINPID
     ExecStop=/bin/kill -s TERM \$MAINPID
     [Install]
