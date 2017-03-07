@@ -41,6 +41,7 @@ class Command(BaseCommand):
             index_archive(updoc.id, updoc.path)
             pb.add()
         pb.finish()
-        a = Group.objects.get_or_create(name=str(settings.FLOOR_DEFAULT_GROUP_NAME))[0]
-        p = Permission.objects.get(codename='add_uploaddoc')
-        a.permissions.add(p)
+        for group_name in settings.DF_DEFAULT_GROUPS:
+            a, __ = Group.objects.get_or_create(name=str(group_name))
+            p = Permission.objects.get(codename='add_uploaddoc')
+            a.permissions.add(p)

@@ -80,7 +80,6 @@
                 var document_name = $('#document_name_placard');
                 document_name.placard({
                     onAccept: function (options) {
-                        console.info({doc_id: {{ doc.pk }}, name: options.value});
                         document_name.placard('setValue', options.value);
                         $.df.call('updoc.edit_doc_name', {doc_id: {{ doc.pk }}, name: options.value});
                         document_name.placard('hide');

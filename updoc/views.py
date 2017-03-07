@@ -27,10 +27,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import cache_page, never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.static import was_modified_since
-from djangofloor.views import send_file
-from djangofloor.tasks import scall, SERVER, USER, set_websocket_topics, WINDOW
 from elasticsearch.exceptions import ConnectionError as ESError
 
+from djangofloor.tasks import scall, SERVER, set_websocket_topics
+from djangofloor.views import send_file
 from updoc.forms import UrlRewriteForm, FileUploadForm, UploadApiForm, MetadatadUploadForm, DocSearchForm
 from updoc.indexation import search_archive
 from updoc.models import ProxyfiedHost, RssRoot, RssItem, RewrittenUrl, UploadDoc, Keyword, LastDocs
@@ -88,6 +88,7 @@ def compress_archive(request, doc_id, fmt='zip'):
     doc = get_object_or_404(UploadDoc, id=doc_id)
     assert isinstance(doc, UploadDoc)
     arc_root = slugify(doc.name)
+    compression_file = None
     if fmt == 'zip':
         if os.path.isfile(doc.zip_path):
             tmp_file = open(doc.zip_path, 'rb')
@@ -110,7 +111,8 @@ def compress_archive(request, doc_id, fmt='zip'):
         content_type = 'application/x-tar'
     else:
         raise ValueError
-    compression_file.close()
+    if compression_file:
+        compression_file.close()
     tmp_file.seek(0)
     response = StreamingHttpResponse(tmp_file, content_type=content_type)
     response['Content-Disposition'] = 'attachment; filename="%s"' % arc_root
@@ -135,7 +137,7 @@ def index(request):
         rss_roots = RssRoot.objects.all().order_by('name')
     template_values = {'recent_checked': recent_checked, 'title': _('Updoc'), 'rss_roots': rss_roots,
                        'recent_uploads': recent_uploads, 'keywords': keywords_with_counts,
-                       'list_title': _('Recent uploads'), }
+                       'show_all_link': True, 'list_title': _('Recent uploads'), }
     return TemplateResponse(request, 'updoc/index.html', template_values)
 
 
@@ -319,23 +321,24 @@ def show_doc_alt(request, doc_id, path=''):
 
 @never_cache
 def show_doc(request, doc_id, path=''):
-    if request.user.is_anonymous() and not settings.PUBLIC_DOCS:
+    user = request.user if request.user.is_authenticated() else None
+    if not user and not settings.PUBLIC_DOCS:
         raise Http404
     doc = get_object_or_404(UploadDoc, id=doc_id)
-    if request.user.is_authenticated():
+    if user:
         set_websocket_topics(request, doc)
     root_path = os.path.abspath(doc.path)
     full_path = os.path.abspath(os.path.join(root_path, path))
     if not full_path.startswith(root_path):
         raise Http404
-    user = request.user if request.user.is_authenticated() else None
+
     checked, created = LastDocs.objects.get_or_create(user=user, doc=doc)
     use_auth = reverse('updoc:show_doc', kwargs={'doc_id': doc_id, 'path': path}) == request.path
     view = 'updoc:show_doc' if use_auth else 'updoc:show_doc_alt'
     if not created:
         now = datetime.datetime.utcnow().replace(tzinfo=utc)
         LastDocs.objects.filter(user=user, doc=doc).update(count=F('count') + 1, last=now)
-    editable = request.user.is_superuser or request.user == doc.user
+    editable = user and (user.is_superuser or user == doc.user)
     if not os.path.isfile(full_path):
         directory = list_directory(root_path, path, view, view_arg='path',
                                    view_kwargs={'doc_id': doc.id}, dir_view_name=view,
@@ -346,7 +349,7 @@ def show_doc(request, doc_id, path=''):
         return TemplateResponse(request, 'updoc/list_dir.html', template_values)
     if full_path.endswith('.md'):
         view_name = 'updoc:show_doc'
-        if request.user.is_anonymous():
+        if not user:
             view_name = 'updoc:show_doc_alt'
         path_components = [(reverse(view_name, kwargs={'doc_id': doc_id, 'path': ''}), _('root'))]
         components = path.split('/')
@@ -430,6 +433,7 @@ def show_all_docs(request):
         rss_roots = RssRoot.objects.all().order_by('name')
     template_values = {'recent_checked': recent_checked, 'title': _('Updoc'), 'rss_roots': rss_roots,
                        'recent_uploads': recent_uploads, 'search': search, 'keywords': [],
+                       'show_all_link': False,
                        'list_title': _('All documents'), }
     return TemplateResponse(request, 'updoc/index.html', template_values)
 

@@ -56,9 +56,9 @@
                 </ul>
                 </p>
             </div>
-        {% else %}
+        {% elif show_all_link %}
             <div class="col-sm-6 col-lg-12 col-xs-12 col-md-12">
-                <h4><a href="{% url 'updoc:show_all_docs' %}">{% trans 'All documents' %}</a> </h4>
+                <a href="{% url 'updoc:show_all_docs' %}">{% trans 'All documents' %}</a>
             </div>
         {% endif %}
     </div>

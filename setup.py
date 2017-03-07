@@ -32,13 +32,7 @@ entry_points = {
     ]
 }
 
-requirements = ['djangofloor', 'elasticsearch>=2.0.0', 'requests', 'markdown', 'django-allauth']
-try:
-    # noinspection PyPackageRequirements
-    import ipaddress
-except ImportError:  # Python 3.3+
-    ipaddress = None
-    requirements.append('ipaddress')
+requirements = ['djangofloor>=1.0.0', 'elasticsearch>=2.0.0', 'requests', 'markdown']
 
 setup(
     name='updoc',
@@ -59,7 +53,5 @@ setup(
     classifiers=['Operating System :: POSIX :: BSD', 'Operating System :: POSIX :: Linux',
                  'Operating System :: Unix',
                  'License :: OSI Approved :: CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)',
-                 'Programming Language :: Python :: 3.2', 'Programming Language :: Python :: 3.3',
-                 'Programming Language :: Python :: 3.4', 'Programming Language :: Python :: 3.5',
-                 'Programming Language :: Python :: 3 :: Only'],
+                 'Programming Language :: Python :: 3.5', 'Programming Language :: Python :: 3 :: Only'],
 )
