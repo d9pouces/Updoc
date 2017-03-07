@@ -34,12 +34,12 @@
             {% if has_rss_hosts %}<a class="navbar-brand" href="{% url 'updoc:show_favorite' %}" title="{% trans 'Bookmarks' %}">{% bootstrap_icon 'bookmark' %}</a>{% endif %}
             {% if has_proxyfied_hosts %}<a class="navbar-brand" href="{% url 'updoc:show_proxies' %}" title="{% trans 'proxy.pac' %}">{% bootstrap_icon 'random' %}</a>{% endif %}
             {% if user.is_authenticated and not df_remote_authenticated %}
-                <a class="navbar-brand" href="{% url 'account_email' %}">{% fontawesome_icon 'pencil' %}&nbsp;
+                <a class="navbar-brand" href="{% url 'df:set_password' %}">{% fontawesome_icon 'pencil' %}&nbsp;
                     <small>{{ user }}</small>
                 </a>
-                <a class="navbar-brand" href="{% url 'account_logout' %}">{% fontawesome_icon 'sign-out' %}</a>
+                <a class="navbar-brand" href="{% url 'df:logout' %}">{% fontawesome_icon 'sign-out' %}</a>
             {% elif user.is_anonymous %}
-                <a class="navbar-brand" href="{% url 'account_login' %}">{% fontawesome_icon 'sign-in' %}</a>
+                <a class="navbar-brand" href="{% url 'login' %}">{% fontawesome_icon 'sign-in' %}</a>
             {% endif %}
             {% if user and user.is_superuser %}
                 <a id="link_admin" class="navbar-brand" href="{% url 'admin:index' %}" title="{% trans 'Administration' %}">{% bootstrap_icon 'wrench' %}</a>

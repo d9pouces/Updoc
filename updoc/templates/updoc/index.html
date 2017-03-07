@@ -55,6 +55,11 @@
                     {% endfor %}
                 </ul>
                 </p>
-            </div>{% endif %}
+            </div>
+        {% else %}
+            <div class="col-sm-6 col-lg-12 col-xs-12 col-md-12">
+                <h4><a href="{% url 'updoc:show_all_docs' %}">{% trans 'All documents' %}</a> </h4>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
