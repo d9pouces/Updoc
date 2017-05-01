@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
 from django.contrib.syndication.views import Feed
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
@@ -54,7 +54,7 @@ class MostViewedDocsFeed(Feed):
     def get_object(self, request):
         user = request.user
         """:type user: django.contrib.auth.models.User"""
-        if user.is_authenticated():
+        if user.is_authenticated:
             return request.user
         return None
 
@@ -103,7 +103,7 @@ class LastDocsFeed(Feed):
     def get_object(self, request):
         user = request.user
         """:type user: django.contrib.auth.models.User"""
-        if user.is_authenticated():
+        if user.is_authenticated:
             return request.user
         return None
 

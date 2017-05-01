@@ -3,6 +3,7 @@ from django.conf.urls import url
 from updoc import views
 __author__ = 'Matthieu Gallet'
 
+app_name = 'updoc'
 urlpatterns = [
     url(r'^show_alt/proxy\.pac$', views.show_proxies, name='show_proxies'),
     url(r'^favorite\.html', views.show_favorite, name='show_favorite'),

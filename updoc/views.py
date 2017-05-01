@@ -14,7 +14,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db.models import F, Count, Q
 from django.http.response import HttpResponseRedirect, Http404, HttpResponse, StreamingHttpResponse,\
     HttpResponseNotModified
@@ -82,7 +82,7 @@ def send_file_replace_url(request, filename, allow_replace=False):
 
 
 def compress_archive(request, doc_id, fmt='zip'):
-    if request.user.is_anonymous() and not settings.PUBLIC_DOCS:
+    if request.user.is_anonymous and not settings.PUBLIC_DOCS:
         raise Http404
 
     doc = get_object_or_404(UploadDoc, id=doc_id)
@@ -121,9 +121,9 @@ def compress_archive(request, doc_id, fmt='zip'):
 
 @never_cache
 def index(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         set_websocket_topics(request)
-    if request.user.is_anonymous() and not settings.PUBLIC_INDEX:
+    if request.user.is_anonymous and not settings.PUBLIC_INDEX:
         messages.info(request, _('You must be logged to see documentations.'))
         keywords_with_counts, recent_uploads, recent_checked = [], [], []
     else:
@@ -131,7 +131,7 @@ def index(request):
             .order_by('-count')[0:15]
         recent_uploads = UploadDoc.objects.order_by('-upload_time')[0:10]
         recent_checked = LastDocs.query(request).select_related().order_by('-last')[0:20]
-    if request.user.is_anonymous() and not settings.PUBLIC_BOOKMARKS:
+    if request.user.is_anonymous and not settings.PUBLIC_BOOKMARKS:
         rss_roots = []
     else:
         rss_roots = RssRoot.objects.all().order_by('name')
@@ -143,9 +143,9 @@ def index(request):
 
 @never_cache
 def show_favorite(request, root_id=None):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         set_websocket_topics(request)
-    if request.user.is_anonymous() and not settings.PUBLIC_BOOKMARKS:
+    if request.user.is_anonymous and not settings.PUBLIC_BOOKMARKS:
         roots = []
         favorites = []
         messages.info(request, _('You must be logged to see this page.'))
@@ -171,7 +171,7 @@ def show_favorite(request, root_id=None):
 def show_proxies(request):
     proxies = ProxyfiedHost.objects.exclude(host='').order_by('priority')
     defaults = '; '.join([x.proxy_str() for x in ProxyfiedHost.objects.filter(host='').order_by('priority')])
-    if request.user.is_anonymous() and not settings.PUBLIC_PROXIES:
+    if request.user.is_anonymous and not settings.PUBLIC_PROXIES:
         proxies = []
         defaults = ''
     if not defaults:
@@ -182,9 +182,9 @@ def show_proxies(request):
 
 @never_cache
 def my_docs(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         set_websocket_topics(request)
-    user = request.user if request.user.is_authenticated() else None
+    user = request.user if request.user.is_authenticated else None
     if request.method == 'POST' and user and user.has_perm('updoc.add_uploaddoc'):
         form = UrlRewriteForm(request.POST)
         if form.is_valid():
@@ -266,7 +266,7 @@ def upload_doc_progress(request):
     basename = os.path.basename(uploaded_file.name).rpartition('.')[0]
     if basename.endswith('.tar'):
         basename = basename[:-4]
-    doc = UploadDoc(name=basename, user=request.user if request.user.is_authenticated() else None,
+    doc = UploadDoc(name=basename, user=request.user if request.user.is_authenticated else None,
                     uid=str(uuid.uuid1()))
     doc.save()
     scall(request, 'updoc.process_file', to=[SERVER], doc_id=doc.id, filename=tmp_file.name,
@@ -279,7 +279,7 @@ def upload_doc_progress(request):
 
 @csrf_exempt
 def upload_doc_api(request):
-    user = request.user if request.user.is_authenticated() else None
+    user = request.user if request.user.is_authenticated else None
     if user is None:
         return HttpResponse(_('You must be logged to upload files.\n'), status=401)
     elif request.method != 'POST':
@@ -321,7 +321,7 @@ def show_doc_alt(request, doc_id, path=''):
 
 @never_cache
 def show_doc(request, doc_id, path=''):
-    user = request.user if request.user.is_authenticated() else None
+    user = request.user if request.user.is_authenticated else None
     if not user and not settings.PUBLIC_DOCS:
         raise Http404
     doc = get_object_or_404(UploadDoc, id=doc_id)
@@ -371,7 +371,7 @@ def show_doc(request, doc_id, path=''):
 @never_cache
 def show_search_results(request):
     """Index view, displaying and processing a form."""
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         set_websocket_topics(request)
     search = DocSearchForm(request.GET)
     pattern, doc_id = '', ''
@@ -381,7 +381,7 @@ def show_search_results(request):
         # ElasticSearch
     es_search = []
     es_total = 0
-    if request.user.is_anonymous() and not settings.PUBLIC_INDEX:
+    if request.user.is_anonymous and not settings.PUBLIC_INDEX:
         messages.info(request, _('You must be logged to search across docs.'))
     else:
         try:
@@ -417,17 +417,17 @@ def show_search_results(request):
 
 @never_cache
 def show_all_docs(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         set_websocket_topics(request)
-    user = request.user if request.user.is_authenticated() else None
+    user = request.user if request.user.is_authenticated else None
     search = DocSearchForm(request.GET)
-    if request.user.is_anonymous() and not settings.PUBLIC_INDEX:
+    if request.user.is_anonymous and not settings.PUBLIC_INDEX:
         messages.info(request, _('You must be logged to see documentations.'))
         keywords_with_counts, recent_uploads, recent_checked = [], [], []
     else:
         recent_uploads = UploadDoc.objects.order_by('name')
         recent_checked = LastDocs.objects.filter(user=user).select_related().order_by('-last')[0:40]
-    if request.user.is_anonymous() and not settings.PUBLIC_BOOKMARKS:
+    if request.user.is_anonymous and not settings.PUBLIC_BOOKMARKS:
         rss_roots = []
     else:
         rss_roots = RssRoot.objects.all().order_by('name')
@@ -442,7 +442,7 @@ def show_all_docs(request):
 def docset_feed(request, doc_id, doc_name=None):
     # noinspection PyUnusedLocal
     doc_name = doc_name
-    if request.user.is_anonymous() and not settings.PUBLIC_DOCS:
+    if request.user.is_anonymous and not settings.PUBLIC_DOCS:
         raise Http404
     doc = get_object_or_404(UploadDoc, id=doc_id)
     return TemplateResponse(request, 'updoc/docset.xml', {'doc': doc}, content_type='application/xml')
@@ -450,7 +450,7 @@ def docset_feed(request, doc_id, doc_name=None):
 
 @never_cache
 def docset(request, doc_id):
-    if request.user.is_anonymous() and not settings.PUBLIC_DOCS:
+    if request.user.is_anonymous and not settings.PUBLIC_DOCS:
         raise Http404
     doc = get_object_or_404(UploadDoc, id=doc_id)
     assert isinstance(doc, UploadDoc)

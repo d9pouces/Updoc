@@ -8,7 +8,7 @@ __author__ = 'Matthieu Gallet'
 
 
 def most_checked(request):
-    user = request.user if request.user.is_authenticated() else None
+    user = request.user if request.user.is_authenticated else None
     most_checked_ = LastDocs.query(request).select_related('doc').order_by('-count')[0:5]
     if not settings.PUBLIC_INDEX and user is None:
         most_checked_ = []
