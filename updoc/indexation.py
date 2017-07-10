@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """all ElasticSearch-related functions are defined in this module.
 
 """

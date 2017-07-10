@@ -1,4 +1,3 @@
-# coding=utf-8
 from urllib import parse
 
 from django.utils.safestring import mark_safe

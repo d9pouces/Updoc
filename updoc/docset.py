@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Generate Dash docset
 ====================
 https://kapeli.com/docsets#dashDocset

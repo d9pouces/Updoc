@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Print basic but functionnal configurations for deployment.
 """

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 this module define which extensions own an icon.
 """

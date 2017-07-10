@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from djangofloor.conf.fields import BooleanConfigField, CharConfigField
 from djangofloor.conf.mapping import SENDFILE_MAPPING, INI_MAPPING as DEFAULT
 

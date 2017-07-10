@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from django.conf.urls import url
 from updoc import views
 __author__ = 'Matthieu Gallet'
