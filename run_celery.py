@@ -1,5 +1,7 @@
-#!/usr/bin/env python
-from djangofloor.scripts import celery
-import os
-os.environ['DF_CONF_NAME'] = 'updoc-celery'
+#!/usr/bin/env python3
+from djangofloor.scripts import celery, set_env
+
+__author__ = 'Matthieu Gallet'
+
+set_env(command_name='updoc-celery')
 celery()

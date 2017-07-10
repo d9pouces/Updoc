@@ -1,5 +1,7 @@
-#!/usr/bin/env python
-from djangofloor.scripts import django
-import os
-os.environ['DF_CONF_NAME'] = 'updoc-django'
+#!/usr/bin/env python3
+from djangofloor.scripts import django, set_env
+
+__author__ = 'Matthieu Gallet'
+
+set_env(command_name='updoc-django')
 django()
