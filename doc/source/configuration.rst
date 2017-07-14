@@ -107,7 +107,7 @@ Here is the complete list of settings:
   admin_email = admin@updoc.example.org 
   	# e-mail address for receiving logged errors
   data = $VIRTUALENV/var/updoc 
-  	# where all data will be stored (static/uploaded/temporary files, …)If you change it, you must run the collectstatic and migrate commands again.
+  	# where all data will be stored (static/uploaded/temporary files, …) If you change it, you must run the collectstatic and migrate commands again.
   language_code = fr-fr 
   	# default to fr_FR
   listen_address = 127.0.0.1:8129 
