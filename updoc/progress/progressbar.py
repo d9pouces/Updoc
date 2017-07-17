@@ -17,9 +17,6 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 """Main ProgressBar class."""
-
-from __future__ import division
-
 import math
 import os
 import signal
