@@ -31,8 +31,6 @@ entry_points = {
     ]
 }
 
-requirements = ['djangofloor>=1.0.0', 'elasticsearch>=2.0.0', 'requests', 'markdown']
-
 setup(
     name='updoc',
     version=version,
@@ -47,7 +45,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     test_suite='updoc.tests',
-    install_requires=requirements,
+    install_requires=['djangofloor>=1.0.5', 'elasticsearch>=2.0.0', 'requests', 'markdown'],
     setup_requires=[],
     classifiers=['Operating System :: POSIX :: BSD', 'Operating System :: POSIX :: Linux',
                  'Operating System :: Unix',
