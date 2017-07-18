@@ -5,10 +5,14 @@ __author__ = 'Matthieu Gallet'
 
 
 INI_MAPPING = DEFAULT + SENDFILE_MAPPING + [
-    BooleanConfigField('global.public_bookmarks', 'PUBLIC_BOOKMARKS'),
-    BooleanConfigField('global.public_proxies', 'PUBLIC_PROXIES'),
-    BooleanConfigField('global.public_index', 'PUBLIC_INDEX'),
-    BooleanConfigField('global.public_docs', 'PUBLIC_DOCS'),
+    BooleanConfigField('global.public_bookmarks', 'PUBLIC_BOOKMARKS',
+                       help_str='Are bookmarks publicly available?'),
+    BooleanConfigField('global.public_proxies', 'PUBLIC_PROXIES',
+                       help_str='Is proxy.pac file publicly available?'),
+    BooleanConfigField('global.public_index', 'PUBLIC_INDEX',
+                       help_str='Is the list of all documentations publicly available?'),
+    BooleanConfigField('global.public_docs', 'PUBLIC_DOCS',
+                       help_str='Are documentations publicly available?'),
     CharConfigField('elasticsearch.hosts', 'ES_HOSTS',
                     help_str='Comma-separated list of ElasticSearch servers.\n'
                              'ElasticSearch can be used to index all documents but remains optional.'

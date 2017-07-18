@@ -2,13 +2,9 @@
 __author__ = 'Matthieu Gallet'
 
 PUBLIC_BOOKMARKS = True
-PUBLIC_BOOKMARKS_HELP = 'Are bookmarks publicly available?'
 PUBLIC_PROXIES = True
-PUBLIC_PROXIES_HELP = 'Is proxy.pac file publicly available?'
 PUBLIC_INDEX = True
-PUBLIC_INDEX_HELP = 'Is the list of all documentations publicly available?'
 PUBLIC_DOCS = True
-PUBLIC_DOCS_HELP = 'Are documentations publicly available?'
 
 LISTEN_ADDRESS = '127.0.0.1:8129'
 ES_HOSTS = None
