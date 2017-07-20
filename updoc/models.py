@@ -71,7 +71,7 @@ class UploadDoc(models.Model):
     name = models.CharField(_('title'), max_length=255, db_index=True, default='')
     path = models.CharField(_('path'), max_length=255, db_index=True)
     keywords = models.ManyToManyField(Keyword, db_index=True, blank=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, db_index=True, null=True, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, db_index=True, null=True, blank=True, on_delete=models.CASCADE)
     upload_time = models.DateTimeField(_('upload time'), db_index=True, auto_now_add=True)
     version = models.IntegerField(_('version'), default=0, blank=True)
 
@@ -162,8 +162,8 @@ def my_handler(sender, instance=None, **kwargs):
 
 
 class LastDocs(models.Model):
-    doc = models.ForeignKey(UploadDoc, db_index=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, db_index=True, null=True, blank=True)
+    doc = models.ForeignKey(UploadDoc, db_index=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, db_index=True, null=True, blank=True, on_delete=models.CASCADE)
     count = models.IntegerField(db_index=True, blank=True, default=1)
     last = models.DateTimeField(_('last'), db_index=True, auto_now=True)
 
@@ -174,7 +174,7 @@ class LastDocs(models.Model):
 
 
 class RewrittenUrl(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, db_index=True, null=True, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, db_index=True, null=True, blank=True, on_delete=models.CASCADE)
     src = models.CharField(_('Original URL'), db_index=True, max_length=255)
     dst = models.CharField(_('New URL'), db_index=True, max_length=255, blank=True, default='')
 
@@ -241,7 +241,7 @@ class RssRoot(models.Model):
 
 
 class RssItem(models.Model):
-    root = models.ForeignKey(RssRoot, verbose_name=_('root'), db_index=True)
+    root = models.ForeignKey(RssRoot, verbose_name=_('root'), db_index=True, on_delete=models.CASCADE)
     name = models.CharField(_('name'), db_index=True, max_length=255)
     url = models.URLField(_('URL'), db_index=True, max_length=255)
 
