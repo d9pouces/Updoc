@@ -1,1 +1,3 @@
-DEBUG = False
+DEBUG = True
+LISTEN_ADDRESS = 'localhost:8139'
+
