@@ -47,7 +47,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, serialize=False, primary_key=True, verbose_name='ID')),
                 ('src', models.CharField(db_index=True, max_length=255, verbose_name='Original URL')),
                 ('dst', models.CharField(db_index=True, blank=True, default='', max_length=255, verbose_name='New URL')),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, null=True, blank=True)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'Rewritten URL',
@@ -86,7 +86,7 @@ class Migration(migrations.Migration):
                 ('path', models.CharField(db_index=True, max_length=255, verbose_name='path')),
                 ('upload_time', models.DateTimeField(db_index=True, auto_now_add=True, verbose_name='upload time')),
                 ('keywords', models.ManyToManyField(db_index=True, to='updoc.Keyword', blank=True)),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, null=True, blank=True)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'documentation',
@@ -96,16 +96,16 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='rssitem',
             name='root',
-            field=models.ForeignKey(to='updoc.RssRoot', verbose_name='root'),
+            field=models.ForeignKey(to='updoc.RssRoot', verbose_name='root', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='lastdocs',
             name='doc',
-            field=models.ForeignKey(to='updoc.UploadDoc'),
+            field=models.ForeignKey(to='updoc.UploadDoc', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='lastdocs',
             name='user',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, null=True, blank=True),
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE),
         ),
     ]
