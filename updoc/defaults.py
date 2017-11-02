@@ -24,3 +24,4 @@ DF_JS = ['js/jquery.ui.widget.js', 'js/jquery.iframe-transport.js', 'js/jquery.f
          'js/updoc.js', ]
 DF_CSS = ['css/fuelux.min.css', 'css/updoc.css']
 DF_URL_CONF = 'updoc.root_urls.urls'
+USE_HTTP_BASIC_AUTH = True
