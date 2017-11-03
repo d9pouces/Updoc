@@ -39,7 +39,7 @@
                 </a>
                 <a class="navbar-brand" href="{% url 'df:logout' %}">{% fontawesome_icon 'sign-out' %}</a>
             {% elif user.is_anonymous %}
-                <a class="navbar-brand" href="{% url 'login' %}">{% fontawesome_icon 'sign-in' %}</a>
+                <a class="navbar-brand" href="{% url 'df:login' %}">{% fontawesome_icon 'sign-in' %}</a>
             {% endif %}
             {% if user and user.is_superuser %}
                 <a class="navbar-brand" href="{% url 'df:system_state' %}" title="{% trans 'Check system state' %}">{% bootstrap_icon 'eye-open' %}</a>
