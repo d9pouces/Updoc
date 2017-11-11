@@ -79,7 +79,7 @@ class Docset(object):
                 full_path = os.path.join(root, filename)
                 with open(full_path, 'r', encoding='utf-8') as fd:
                     for line in fd:
-                        matcher = re.match('^.*<h[1-2]>(.*)</h[1-2]>.*$', line)
+                        matcher = re.match(r'^.*<h[1-2]>(.*)</h[1-2]>.*$', line)
                         if not matcher:
                             continue
                         path = os.path.relpath(full_path, src_path)

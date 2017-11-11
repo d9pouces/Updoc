@@ -5,7 +5,7 @@ __author__ = 'Matthieu Gallet'
 
 def avatar(request, hashed):
     size_str = request.GET.get('s', '64')
-    if re.match('^\d+$', size_str):
+    if re.match(r'^\d+$', size_str):
         size = max(1, min(200, int(size_str)))
     else:
         size = 80
