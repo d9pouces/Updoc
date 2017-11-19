@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, serialize=False, primary_key=True, verbose_name='ID')),
                 ('host', models.CharField(db_index=True, help_text='Can be a regexp on URL (like http://*.example.com:*/*) or a subnet (like 192.168.0.0/24). Leave it blank to use as default value.',
                                           default='', blank=True, max_length=255, verbose_name='URL to proxify')),
-                ('proxy', models.CharField(db_index=True, help_text='e.g. proxy.example.com:8080. Leave it empty if direct connexion. Several values can be given, separated by semi-colons (;).',
+                ('proxy', models.CharField(db_index=True, help_text='e.g. proxy.example.com:8080. Leave it empty if direct connection. Several values can be given, separated by semi-colons (;).',
                                            default='', blank=True, max_length=255, verbose_name='Proxy to use')),
                 ('priority', models.IntegerField(db_index=True, help_text='Low priorities are written first in proxy.pac', blank=True, default=0, verbose_name='Priority')),
             ],

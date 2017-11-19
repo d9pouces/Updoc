@@ -196,7 +196,7 @@ class ProxyfiedHost(models.Model):
                             help_text='Can be a regexp on URL (like http://*.example.com:*/*) or a '
                                       'subnet (like 192.168.0.0/24). Leave it blank to use as default value.')
     proxy = models.CharField(_('Proxy to use'), db_index=True, max_length=255, blank=True, default='',
-                             help_text=_('e.g. proxy.example.com:8080. Leave it empty if direct connexion. '
+                             help_text=_('e.g. proxy.example.com:8080. Leave it empty if direct connection. '
                                          'Several values can be given, separated by semi-colons (;).'))
     priority = models.IntegerField(_('Priority'), db_index=True, default=0, blank=True,
                                    help_text=_('Low priorities are written first in proxy.pac'))

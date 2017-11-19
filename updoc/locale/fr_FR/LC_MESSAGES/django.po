@@ -132,7 +132,7 @@ msgstr "Proxy à utiliser"
 
 #: updoc/models.py:154
 msgid ""
-"e.g. proxy.example.com:8080. Leave it empty if direct connexion. Several "
+"e.g. proxy.example.com:8080. Leave it empty if direct connection. Several "
 "values can be given, separated by semi-colons (;)."
 msgstr ""
 "ex. proxy.example.com:8080. Laisser vide pour une connexion directe. "
