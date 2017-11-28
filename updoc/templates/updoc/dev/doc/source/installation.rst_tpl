@@ -12,9 +12,9 @@
             </Location>
 {% endblock %}
 
-{% block post_application %}    {{ processes.django }} createsuperuser
+{% block post_application %}    {{ control_command }} createsuperuser
     # initialize the ElasticSearch index
-    {{ processes.django }} init_es
+    {{ control_command }} init_es
 {% endblock %}
 
 {% block webserver_ssl_media %}{% endblock %}
@@ -56,7 +56,7 @@ ElasticSearch indexing can be added at any time and allows to search words throu
 
 .. code-block:: bash
 
-    {{ processes.django }} init_es
+    {{ control_command }} init_es
 
 
 {% endblock %}
