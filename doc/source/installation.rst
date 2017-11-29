@@ -1,25 +1,15 @@
 Installation
 ============
 
-Like many Python packages, you can use several methods to install UpDoc!.
-UpDoc! designed to run with python3.5.x+.
-The following packages are also required:
-
-  * setuptools >= 3.0,
-  * djangofloor >= 1.0.0,
-  * elasticsearch >= 2.0.0 (optional; not installable via `"pip"`),
-  * requests,
-  * markdown.
-
-
-Of course you can install it from the source, but the preferred way is to install it as a standard Python package, via pip.
-
-
-Installing or Upgrading
------------------------
-
 Here is a simple tutorial to install UpDoc! on a basic Debian/Linux installation.
 You should easily adapt it on a different Linux or Unix flavor.
+
+Like many Python packages, you can use several methods to install UpDoc!.
+Of course you can install it from source, but the preferred way is to install it as a standard Python package, via pip.
+
+
+Upgrading
+---------
 
 If you want to upgrade an existing installation, just install the new version (with the `--upgrade` flag for `pip`) and run
 the `collectstatic` and `migrate` commands (for updating both static files and the database).
@@ -32,10 +22,10 @@ Preparing the environment
 .. code-block:: bash
 
     sudo adduser --disabled-password updoc
-    sudo chown updoc:www-data $VIRTUALENV/var/updoc
-    sudo apt-get install virtualenvwrapper python3.5 python3.5-dev build-essential postgresql-client libpq-dev
+    sudo chown updoc:www-data $DATA_ROOT
+    sudo apt-get install virtualenvwrapper python3.6 python3.6-dev build-essential postgresql-client libpq-dev
     sudo -u updoc -H -i
-    mkvirtualenv updoc -p `which python3.5`
+    mkvirtualenv updoc -p `which python3.6`
     workon updoc
 
 
@@ -69,6 +59,8 @@ Apache
 Only the Apache installation is presented, but an installation behind nginx should be similar.
 Only the chosen server name (like `updoc.example.org`) can be used for accessing your site. For example, you cannot use its IP address.
 
+
+
 .. code-block:: bash
 
     SERVICE_NAME=updoc.example.org
@@ -79,27 +71,44 @@ Only the chosen server name (like `updoc.example.org`) can be used for accessing
     cat << EOF | sudo tee /etc/apache2/sites-available/updoc.conf
     <VirtualHost *:80>
         ServerName $SERVICE_NAME
-        Alias /static/ $VIRTUALENV/var/updoc/static/
+        Alias /static/ $DATA_ROOT/static/
         ProxyPass /static/ !
         <Location /static/>
             Order deny,allow
             Allow from all
             Satisfy any
         </Location>
-        ProxyPass / http://127.0.0.1:8129/
-        ProxyPassReverse / http://127.0.0.1:8129/
-        DocumentRoot $VIRTUALENV/var/updoc/static/
+        # CAUTION: THE FOLLOWING LINES ALLOW PUBLIC ACCESS TO ANY UPLOADED CONTENT
+        Alias /media/ $DATA_ROOT/media/
+        # the right value is provided by "updoc-ctl config python | grep MEDIA_ROOT"
+        ProxyPass /media/ !
+        <Location /media/>
+            Order deny,allow
+            Allow from all
+            Satisfy any
+        </Location>
+        ProxyPass / http://localhost:8139/
+        ProxyPassReverse / http://localhost:8139/
+        DocumentRoot $DATA_ROOT/static/
+        # the right value is provided by "updoc-ctl config python | grep STATIC_ROOT"
         ServerSignature off
+        # the optional two following lines are useful
+        # for keeping uploaded content  private with good performance
         XSendFile on
-        XSendFilePath $VIRTUALENV/var/updoc/media/
+        XSendFilePath $DATA_ROOT/media/
+        # the right value is provided by "updoc-ctl config python | grep MEDIA_ROOT"
         # in older versions of XSendFile (<= 0.9), use XSendFileAllowAbove On
     </VirtualHost>
     EOF
-    sudo mkdir $VIRTUALENV/var/updoc
-    sudo chown -R www-data:www-data $VIRTUALENV/var/updoc
+    sudo mkdir $DATA_ROOT
+    sudo chown -R www-data:www-data $DATA_ROOT
     sudo a2ensite updoc.conf
     sudo apachectl -t
     sudo apachectl restart
+
+
+
+
 
 
 If you want to use SSL:
@@ -136,16 +145,26 @@ If you want to use SSL:
         ServerName $SERVICE_NAME
         SSLCertificateFile $PEM
         SSLEngine on
-        Alias /static/ $VIRTUALENV/var/updoc/static/
+        Alias /static/ $DATA_ROOT/static/
         ProxyPass /static/ !
         <Location /static/>
             Order deny,allow
             Allow from all
             Satisfy any
         </Location>
-        ProxyPass / http://127.0.0.1:8129/
-        ProxyPassReverse / http://127.0.0.1:8129/
-        DocumentRoot $VIRTUALENV/var/updoc/static/
+        # CAUTION: THE FOLLOWING LINES ALLOW PUBLIC ACCESS TO ANY UPLOADED CONTENT
+        Alias /media/ $DATA_ROOT/media/
+        # the right value is provided by "updoc-ctl config python | grep MEDIA_ROOT"
+        ProxyPass /media/ !
+        <Location /media/>
+            Order deny,allow
+            Allow from all
+            Satisfy any
+        </Location>
+        ProxyPass / http://localhost:8139/
+        ProxyPassReverse / http://localhost:8139/
+        DocumentRoot $DATA_ROOT/static/
+        # the right value is provided by "updoc-ctl config python | grep STATIC_ROOT"
         ServerSignature off
         RequestHeader set X_FORWARDED_PROTO https
         <Location />
@@ -161,18 +180,23 @@ If you want to use SSL:
             Require valid-user
             RequestHeader set REMOTE_USER %{REMOTE_USER}s
         </Location>
+        # the optional two following lines are useful
+        # for private uploaded content and good performance
         XSendFile on
-        XSendFilePath $VIRTUALENV/var/updoc/media/
+        XSendFilePath $DATA_ROOT/media/
+        # the right value is provided by "updoc-ctl config python | grep MEDIA_ROOT"
         # in older versions of XSendFile (<= 0.9), use XSendFileAllowAbove On
             <Location /updoc/show_alt/>
+            # this extra configuration is to display docs without being
+            # authenticated.
                 Order deny,allow
                 Allow from all
                 Satisfy any
             </Location>
     </VirtualHost>
     EOF
-    sudo mkdir $VIRTUALENV/var/updoc
-    sudo chown -R www-data:www-data $VIRTUALENV/var/updoc
+    sudo mkdir $DATA_ROOT
+    sudo chown -R www-data:www-data $DATA_ROOT
     sudo a2ensite updoc.conf
     sudo apachectl -t
     sudo apachectl restart
@@ -182,7 +206,7 @@ If you want to use SSL:
 Elasticsearch
 =============
 
-UpDoc uses ElasticSearch to index documents.
+UpDoc knows how to use ElasticSearch for indexing documents.
 If you have a recent Debian/Ubuntu distribution, you can directly install ElasticSearch.
 
 .. code-block:: bash
@@ -210,12 +234,12 @@ On Debian 7, you probably should use something like:
     sudo /etc/init.d/elasticsearch start
 
 Once ElasticSearch is installed, you need to configure your Updoc installation and change the `elasticsearch` section. The `hosts` value should be a list of at least one server (like `"db-es01.example.org:9200,db-es02.example.org:9200,db-es03.example.org:9200`).
-The ElasticSearch index must be initialized and existing documents indexed.
-ElasticSearch indexing can be added at any time and allows to search words through all documents (instead of only looking to documents and keywords).
+The ElasticSearch index must be initialized (and existing documents indexed if you already added some documents).
+ElasticSearch can be added at any time and allows to search words through all documents (instead of only looking to documents and keywords).
 
 .. code-block:: bash
 
-    updoc-manage init_es
+    updoc-ctl init_es
 
 
 
@@ -228,7 +252,7 @@ Now, it's time to install UpDoc!:
 
     pip install setuptools --upgrade
     pip install pip --upgrade
-    pip install updoc psycopg2 gevent
+    pip install updoc psycopg2
     mkdir -p $VIRTUAL_ENV/etc/updoc
     cat << EOF > $VIRTUAL_ENV/etc/updoc/settings.ini
     [global]
@@ -243,18 +267,20 @@ Now, it's time to install UpDoc!:
     EOF
     chmod 0400 $VIRTUAL_ENV/etc/updoc/settings.ini
     # protect passwords in the config files from by being readable by everyone
-    updoc-manage migrate
-    updoc-manage collectstatic --noinput
-    updoc-manage createsuperuser
+    updoc-ctl collectstatic --noinput
+    updoc-ctl migrate
+    updoc-ctl createsuperuser
     # initialize the ElasticSearch index
-    updoc-manage init_es
+    updoc-ctl init_es
+
+
 
 
 
 supervisor
 ----------
 
-Supervisor is required to automatically launch updoc:
+Supervisor can be used to automatically launch updoc:
 
 .. code-block:: bash
 
@@ -262,13 +288,13 @@ Supervisor is required to automatically launch updoc:
     sudo apt-get install supervisor
     cat << EOF | sudo tee /etc/supervisor/conf.d/updoc.conf
     [program:updoc_aiohttp]
-    command = $VIRTUAL_ENV/bin/updoc-aiohttp
+    command = $VIRTUAL_ENV/bin/updoc-ctl server
     user = updoc
     [program:updoc_celery_celery]
-    command = $VIRTUAL_ENV/bin/updoc-celery worker -Q celery
+    command = $VIRTUAL_ENV/bin/updoc-ctl worker -Q celery
     user = updoc
     [program:updoc_celery_slow]
-    command = $VIRTUAL_ENV/bin/updoc-celery worker -Q slow
+    command = $VIRTUAL_ENV/bin/updoc-ctl worker -Q slow
     user = updoc
     EOF
     sudo service supervisor stop
@@ -280,45 +306,27 @@ Now, Supervisor should start updoc after a reboot.
 systemd
 -------
 
-You can also use systemd to launch updoc:
+You can also use systemd (present in many modern Linux distributions) to launch updoc:
 
 .. code-block:: bash
 
-    cat << EOF | sudo tee /etc/systemd/system/updoc-aiohttp.service
+    cat << EOF | sudo tee /etc/systemd/system/updoc-ctl.service
     [Unit]
-    Description=UpDoc! aIOHTTP process
+    Description=UpDoc! HTTP process
     After=network.target
     [Service]
     User=updoc
     Group=updoc
-    WorkingDirectory=$VIRTUALENV/var/updoc/
-    ExecStart=$VIRTUAL_ENV/bin/updoc-aiohttp
+    WorkingDirectory=$DATA_ROOT/
+    ExecStart=$VIRTUAL_ENV/bin/updoc-ctl server
     ExecReload=/bin/kill -s HUP \$MAINPID
     ExecStop=/bin/kill -s TERM \$MAINPID
     [Install]
     WantedBy=multi-user.target
     EOF
-    systemctl enable updoc-aiohttp.service
-    sudo service updoc-aiohttp start
-    cat << EOF | sudo tee /etc/systemd/system/updoc-celery.service
-    [Unit]
-    Description=UpDoc! Celery process
-    After=network.target
-    [Service]
-    User=updoc
-    Group=updoc
-    Type=forking
-    WorkingDirectory=$VIRTUALENV/var/updoc/
-    ExecStart=$VIRTUAL_ENV/bin/updoc-celery worker -Q celery
-    ExecReload=/bin/kill -s HUP \$MAINPID
-    ExecStop=/bin/kill -s TERM \$MAINPID
-    [Install]
-    WantedBy=multi-user.target
-    EOF
-    mkdir -p /run
-    sudo systemctl enable updoc-celery.service
-    sudo service updoc-celery start
-    cat << EOF | sudo tee /etc/systemd/system/updoc-celery-slow.service
+    systemctl enable updoc-ctl.service
+    sudo service updoc-ctl start
+    cat << EOF | sudo tee /etc/systemd/system/updoc-ctl-celery.service
     [Unit]
     Description=UpDoc! Celery process
     After=network.target
@@ -326,16 +334,34 @@ You can also use systemd to launch updoc:
     User=updoc
     Group=updoc
     Type=forking
-    WorkingDirectory=$VIRTUALENV/var/updoc/
-    ExecStart=$VIRTUAL_ENV/bin/updoc-celery worker -Q slow
+    WorkingDirectory=$DATA_ROOT/
+    ExecStart=$VIRTUAL_ENV/bin/updoc-ctl worker -Q celery
     ExecReload=/bin/kill -s HUP \$MAINPID
     ExecStop=/bin/kill -s TERM \$MAINPID
     [Install]
     WantedBy=multi-user.target
     EOF
     mkdir -p /run
-    sudo systemctl enable updoc-celery-slow.service
-    sudo service updoc-celery-slow start
+    sudo systemctl enable updoc-ctl.service
+    sudo service updoc-ctl start
+    cat << EOF | sudo tee /etc/systemd/system/updoc-ctl-slow.service
+    [Unit]
+    Description=UpDoc! Celery process
+    After=network.target
+    [Service]
+    User=updoc
+    Group=updoc
+    Type=forking
+    WorkingDirectory=$DATA_ROOT/
+    ExecStart=$VIRTUAL_ENV/bin/updoc-ctl worker -Q slow
+    ExecReload=/bin/kill -s HUP \$MAINPID
+    ExecStop=/bin/kill -s TERM \$MAINPID
+    [Install]
+    WantedBy=multi-user.target
+    EOF
+    mkdir -p /run
+    sudo systemctl enable updoc-ctl-slow.service
+    sudo service updoc-ctl-slow start
 
 
 

@@ -1,11 +1,10 @@
 .. UpDoc! documentation master file, created by
 
-Welcome to UpDoc!'s documentation!
-==================================
+
+Updoc
+=====
 
 UpDoc is a web application for uploading developer documentations, with a few interesting tips.
-
-.. image:: _static/index.png
 
 Main features:
 
@@ -14,13 +13,15 @@ Main features:
     * RSS feed with the docs that you frequently check,
     * upload archives with a single cURL request,
     * generate RSS feeds with your bookmarks,
-    * generate a proxy.PAC file for dealing with proxies.
+    * generate a proxy.PAC file.
 
 RSS feeds can be added as bookmarks folders in Firefox, so it is very easy to share sets of bookmarks in a company.
 Archives are fully indexed, so you can search any text inside all documentations, or inside a specific one.
 
+You can find a complete documentation here: http://updoc.readthedocs.org/en/latest/ .
 
 
+.. image:: _static/index.png
 
 .. image:: _static/dirlist.png
 
@@ -29,21 +30,18 @@ Archives are fully indexed, so you can search any text inside all documentations
 .. image:: _static/bookmarks.png
 
 
-Full table of contents
-======================
+table of contents
+=================
 
 .. toctree::
    :maxdepth: 1
 
    quick-installation
+   requirements
    installation
    configuration
+   changes
 
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
 

@@ -6,6 +6,8 @@
   * markdown.{% endblock %}
 
 {% block webserver_ssl_extra %}            <Location /updoc/show_alt/>
+            # this extra configuration is to display docs without being
+            # authenticated.
                 Order deny,allow
                 Allow from all
                 Satisfy any
@@ -17,13 +19,10 @@
     {{ control_command }} init_es
 {% endblock %}
 
-{% block webserver_ssl_media %}{% endblock %}
-{% block webserver_media %}{% endblock %}
-
 {% block other_application %}Elasticsearch
 =============
 
-UpDoc uses ElasticSearch to index documents.
+UpDoc knows how to use ElasticSearch for indexing documents.
 If you have a recent Debian/Ubuntu distribution, you can directly install ElasticSearch.
 
 .. code-block:: bash
@@ -51,8 +50,8 @@ On Debian 7, you probably should use something like:
     sudo /etc/init.d/elasticsearch start
 
 Once ElasticSearch is installed, you need to configure your Updoc installation and change the `elasticsearch` section. The `hosts` value should be a list of at least one server (like `"db-es01.example.org:9200,db-es02.example.org:9200,db-es03.example.org:9200`).
-The ElasticSearch index must be initialized and existing documents indexed.
-ElasticSearch indexing can be added at any time and allows to search words through all documents (instead of only looking to documents and keywords).
+The ElasticSearch index must be initialized (and existing documents indexed if you already added some documents).
+ElasticSearch can be added at any time and allows to search words through all documents (instead of only looking to documents and keywords).
 
 .. code-block:: bash
 
