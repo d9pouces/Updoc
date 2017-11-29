@@ -1,7 +1,7 @@
 Quick installation
 ==================
 
-UpDoc! mainly requires Python (3.5) and a Redis server for background tasks.
+UpDoc! mainly requires Python (3.5, 3.6, 3.7) and a Redis server for background tasks.
 
 You should create a dedicated virtualenvironment on your system to isolate UpDoc!.
 You can use `pipenv <http://docs.python-guide.org/en/latest/dev/virtualenvs/>`_ or `virtualenvwrapper <https://virtualenvwrapper.readthedocs.io>`_.
@@ -37,7 +37,8 @@ editing the configuration file.
 
     CONFIG_FILENAME=`updoc-ctl config ini -v 2 | grep -m 1 ' - .ini file' | cut -d '"' -f 2`
     # prepare a limited configuration file
-    cat << EOF > $FILENAME
+    mkdir -p `dirname $CONFIG_FILENAME`
+    cat << EOF > $CONFIG_FILENAME
     [global]
     data = $HOME/updoc
     EOF

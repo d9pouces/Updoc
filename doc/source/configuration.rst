@@ -81,7 +81,7 @@ Here is the complete list of settings:
   session_duration = 1209600 
   	# Duration of the connection sessions (in seconds, default to 1,209,600 s / 14 days)
   social_providers =  
-  	# Comma-separated OAuth2 providers, among "untappd","vk","shopify","weixin","foursquare","bitly","coinbase","douban","slack","flickr","evernote","google","dropbox_oauth2","draugiem","persona","bitbucket_oauth2","auth0","vimeo","spotify","xing","discord","dropbox","fivehundredpx","naver","asana","twentythreeandme","windowslive","stackexchange","digitalocean","robinhood","mailru","tumblr","reddit","mailchimp","paypal","angellist","soundcloud","stripe","instagram","amazon","eveonline","line","orcid","basecamp","github","linkedin_oauth2","weibo","gitlab","kakao","pinterest","daum","facebook","openid","twitter","linkedin","twitch","edmodo","feedly","hubic","bitbucket","odnoklassniki","fxa","baidu". "django-allauth" package must be installed.
+  	# Comma-separated OAuth2 providers, among "coinbase","amazon","paypal","persona","soundcloud","reddit","weixin","tumblr","facebook","naver","asana","foursquare","angellist","edmodo","fivehundredpx","mailchimp","stripe","flickr","untappd","line","windowslive","kakao","fxa","instagram","baidu","dropbox","github","bitly","linkedin_oauth2","robinhood","digitalocean","basecamp","evernote","feedly","slack","linkedin","openid","gitlab","twentythreeandme","shopify","hubic","spotify","xing","auth0","draugiem","daum","google","twitter","vk","discord","orcid","bitbucket_oauth2","stackexchange","bitbucket","mailru","weibo","douban","eveonline","pinterest","twitch","vimeo","odnoklassniki","dropbox_oauth2". "django-allauth" package must be installed.
   
   [cache]
   db = 2 
