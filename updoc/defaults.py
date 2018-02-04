@@ -1,3 +1,4 @@
+from djangofloor.conf.callables import DefaultListenAddress
 
 __author__ = 'Matthieu Gallet'
 
@@ -5,8 +6,7 @@ PUBLIC_BOOKMARKS = True
 PUBLIC_PROXIES = True
 PUBLIC_INDEX = True
 PUBLIC_DOCS = True
-
-LISTEN_ADDRESS = '127.0.0.1:8129'
+LISTEN_ADDRESS = DefaultListenAddress(8129)
 ES_HOSTS = None
 ES_HOSTS_HELP = 'IP:port of your ElasticSearch database, leave it empty if you do not use ElasticSearch'
 ES_INDEX = 'updoc_index'
